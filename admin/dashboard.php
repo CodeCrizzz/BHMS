@@ -3,19 +3,17 @@ include '../includes/db.php';
 require_once '../includes/auth_check.php';
 checkLogin('admin');
 
-// --- 1. GET REAL STATS FROM DATABASE ---
-
-// A. Count Total Tenants
+// Count Total Tenants
 $sql_tenants = "SELECT COUNT(*) as total FROM users WHERE role='tenant'";
 $res_tenants = $conn->query($sql_tenants);
 $total_tenants = $res_tenants->fetch_assoc()['total'];
 
-// B. Count Occupied Rooms
+// Count Occupied Rooms
 $sql_rooms = "SELECT COUNT(*) as total FROM rooms WHERE status='occupied'";
 $res_rooms = $conn->query($sql_rooms);
 $occupied_rooms = $res_rooms->fetch_assoc()['total'];
 
-// C. Calculate Total Revenue (Only 'paid' status)
+// Calculate Total Revenue (Only 'paid' status)
 $sql_revenue = "SELECT SUM(amount) as total FROM payments WHERE status='paid'";
 $res_revenue = $conn->query($sql_revenue);
 $row_revenue = $res_revenue->fetch_assoc();
@@ -108,7 +106,6 @@ $total_revenue = $row_revenue['total'] ? $row_revenue['total'] : 0.00;
                 </thead>
                 <tbody>
                     <?php
-                    // Fetch last 5 payments
                     $sql_recent = "SELECT payments.*, users.fullname 
                                    FROM payments 
                                    JOIN users ON payments.tenant_id = users.id 

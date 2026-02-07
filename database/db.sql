@@ -56,7 +56,7 @@ ADD COLUMN lease_start_date DATE DEFAULT CURRENT_DATE;
 -- Add profile_image column
 ALTER TABLE users ADD COLUMN profile_image VARCHAR(255) DEFAULT 'default.png';
 
--- 1. Table for Admin Announcements
+-- Table for Admin Announcements
 CREATE TABLE announcements (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255),
@@ -64,7 +64,7 @@ CREATE TABLE announcements (
     date_posted TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. Table for Tenant Requests (Maintenance/Complaints)
+-- Table for Tenant Requests (Maintenance/Complaints)
 CREATE TABLE requests (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tenant_id INT,
@@ -75,11 +75,11 @@ CREATE TABLE requests (
     FOREIGN KEY (tenant_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 3. Insert a dummy announcement so you can see it immediately
+-- Insert a dummy announcement so you can see it immediately
 INSERT INTO announcements (title, message) 
 VALUES ('Welcome to BHMS!', 'Rent is due on the 5th of every month. Please check your billing tab.');
 
---- 4. Add image_path column to send images in chat messages
+---  Add image_path column to send images in chat messages
 ALTER TABLE messages ADD COLUMN image_path VARCHAR(255) DEFAULT NULL;
 
 -- To remove the image_path column if needed

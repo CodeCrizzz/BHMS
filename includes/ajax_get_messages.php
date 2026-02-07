@@ -19,10 +19,10 @@ if(isset($_POST['my_id']) && isset($_POST['other_id'])){
         while($row = $result->fetch_assoc()){
             $is_me = ($row['sender_id'] == $sender_id);
             
-            // 1. Determine Alignment (Right for Me, Left for Them)
+            // Determine Alignment 
             $alignment = $is_me ? 'justify-content-end' : 'justify-content-start';
             
-            // 2. Determine CSS Class (Using our new styles)
+            // Determine CSS Class 
             $bubble_class = $is_me ? 'msg-sent' : 'msg-received';
             
             echo '<div class="d-flex ' . $alignment . ' mb-3">';

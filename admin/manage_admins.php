@@ -280,7 +280,7 @@ if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'){
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/darkmode.js"></script>
 <script>
-    // JavaScript to fill the Edit Modal
+    // To fill the Edit Modal
     var editModal = document.getElementById('editAdminModal');
     editModal.addEventListener('show.bs.modal', function (event) {
         var button = event.relatedTarget;

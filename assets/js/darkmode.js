@@ -3,14 +3,14 @@ document.addEventListener("DOMContentLoaded", function() {
     const icon = toggleBtn.querySelector("i");
     const body = document.body;
 
-    // 1. Check LocalStorage for preference
+    // Check LocalStorage for preference
     if (localStorage.getItem("theme") === "dark") {
         body.classList.add("dark-mode");
         icon.classList.remove("fa-moon");
         icon.classList.add("fa-sun");
     }
 
-    // 2. Handle Click
+    // Handle Click
     toggleBtn.addEventListener("click", function(e) {
         e.preventDefault();
         body.classList.toggle("dark-mode");

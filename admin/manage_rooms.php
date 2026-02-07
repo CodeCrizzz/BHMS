@@ -11,7 +11,7 @@ checkLogin('admin');
 
 // --- BACKEND LOGIC ---
 
-// 1. ADD ROOM
+// ADD ROOM
 if (isset($_POST['add_room'])) {
     $room_no = $_POST['room_no'];
     $price = $_POST['price'];
@@ -30,15 +30,15 @@ if (isset($_POST['add_room'])) {
     }
 }
 
-// 2. DELETE ROOM
+// DELETE ROOM
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     $conn->query("DELETE FROM rooms WHERE id=$id");
-    header("Location: manage_rooms.php"); // Redirect to clear URL parameters
+    header("Location: manage_rooms.php"); 
     exit();
 }
 
-// 3. UPDATE ROOM
+// UPDATE ROOM
 if (isset($_POST['update_room'])) {
     $id = $_POST['room_id'];
     $room_no = $_POST['room_no'];
@@ -136,7 +136,6 @@ if (isset($_POST['update_room'])) {
                     $result = $conn->query("SELECT * FROM rooms ORDER BY id DESC");
                     if($result->num_rows > 0){
                         while($row = $result->fetch_assoc()){
-                            // Status Color Logic
                             $badge = ($row['status'] == 'available') ? 'bg-success' : 'bg-danger';
                     ?>
                     <tr>

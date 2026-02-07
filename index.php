@@ -16,7 +16,7 @@ if(isset($_GET['success']) && $_GET['success'] == 'registered'){
     $success_msg = "Account created successfully! Please Login.";
 }
 
-// 2. Check which Tab should be active (Default to 'tenant')
+// Check which Tab should be active (Default to 'tenant')
 $active_role = isset($_GET['role']) ? $_GET['role'] : 'tenant';
 
 // Helper variables for CSS classes

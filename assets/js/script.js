@@ -2,17 +2,16 @@
 
 // Function to print a specific area (Simulating PDF Export)
 function printDashboard() {
-    // 1. Get the content of the dashboard
+    // Get the content of the dashboard
     var printContents = document.getElementById('printableArea').innerHTML;
     var originalContents = document.body.innerHTML;
 
-    // 2. Swap the body content with just the printable area
+    // Swap the body content with just the printable area
     document.body.innerHTML = printContents;
 
-    // 3. Print
     window.print();
 
-    // 4. Restore original content so the buttons work again
+    // Restore original content so the buttons work again
     document.body.innerHTML = originalContents;
     location.reload(); // Reload to re-bind event listeners
 }

@@ -28,12 +28,12 @@ if (isset($_POST['login'])) {
             }
             exit();
         } else {
-            // Case 1: Wrong Password
+            // Wrong Password
             header("Location: index.php?error=wrong_password&role=$role"); 
             exit();
         }
     } else {
-        // Case 2: Account does not exist (or wrong role selected)
+        // Account does not exist or wrong role selected
         header("Location: index.php?error=user_not_found&role=$role");
         exit();
     }

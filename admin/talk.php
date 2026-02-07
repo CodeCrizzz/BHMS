@@ -13,7 +13,7 @@ if($selected_tenant_id){
     if($res->num_rows > 0) $selected_tenant_name = $res->fetch_assoc()['fullname'];
 }
 
-// Handle Send Message (Text Only - No Image Logic)
+// Handle Send Message 
 if(isset($_POST['send_msg']) && $selected_tenant_id){
     $msg = $_POST['message'];
     
