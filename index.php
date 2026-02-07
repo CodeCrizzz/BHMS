@@ -5,7 +5,7 @@ include 'includes/db.php';
 $error_msg = "";
 $success_msg = "";
 if(isset($_GET['error'])){
-    if($_GET['error'] == 'user_not_found') { $error_msg = "Account not found!"; 
+    if($_GET['error'] == 'user_not_found') { 
         $error_msg = "Account not found! Please check your email.";
     } elseif($_GET['error'] == 'wrong_password'){
         $error_msg = "Incorrect Password! Please try again.";
@@ -39,9 +39,9 @@ $admin_show    = ($active_role == 'admin') ? 'show active' : '';
 </head>
 <body class="login-body">
 <div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="card card-custom p-4 shadow-lg" style="width: 400px; background: white;">
+    <div class="card card-custom p-4 shadow-lg" style="width: 400px;">
         
-        <h3 class="text-center mb-3 fw-bold text-primary-custom">StudyStay Boarding House Login</h3>
+        <h3 class="text-center mb-3 fw-bold text-primary-custom">StudyStay Boarding House</h3>
         
         <?php if($error_msg): ?>
             <div class="alert alert-danger d-flex align-items-center" role="alert">
