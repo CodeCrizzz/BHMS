@@ -9,10 +9,7 @@
     --secondary: #64748b;     
     --sidebar-bg: #1e293b;    
     --sidebar-hover: #334155; 
-    
-    /* "Dim Mode" Background (Eye Comfort) */
     --bg-body: #cbd5e1;       
-    
     --text-main: #1e293b;    
     --text-light: #94a3b8;    
     --white: #ffffff;
@@ -24,20 +21,17 @@ body {
     color: var(--text-main);
 }
 
-/* LOCK SCROLL FOR FULL SCREEN APP FEEL */
 html, body {
     height: 100%;
     margin: 0;
     overflow: hidden; 
 }
 
-/* Dark Mode Adjustment for Login Card */
 body.dark-mode.login-body .card {
     background-color: rgba(30, 30, 30, 0.95) !important;
     border: 1px solid #444 !important;
 }
 
-/* Force overrides for Bootstrap light backgrounds */
 .bg-light {
     background-color: var(--bg-body) !important;
 }
@@ -72,14 +66,12 @@ body.dark-mode.login-body .card {
     transition: all 0.3s ease;
 }
 
-/* Hover Effect: Soft slide + color change */
 .sidebar a:hover {
     background-color: var(--sidebar-hover);
     color: var(--white);
     transform: translateX(5px); 
 }
 
-/* Active Link: Bright Blue Gradient */
 .sidebar a.active {
     background: linear-gradient(90deg, var(--primary), var(--primary-dark));
     color: var(--white);
@@ -90,7 +82,7 @@ body.dark-mode.login-body .card {
    3. CARD & COMPONENT STYLES
    ========================================= */
 .card-custom, .card {
-    background-color: #ffffff; /* Keep cards white against grey bg */
+    background-color: #ffffff; 
     border: none;
     border-radius: 12px; 
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -121,7 +113,7 @@ body.dark-mode.login-body .card {
     color: white; 
 }
 .bg-dark-custom:hover {
-    color: #cccccc !important; /* Grey text on hover */
+    color: #cccccc !important; 
 }
 
 /* =========================================
@@ -167,7 +159,7 @@ body.dark-mode.login-body .card {
 }
 
 /* =========================================
-   6. DARK MODE (THEME SWITCHER)
+   6. DARK MODE
    ========================================= */
 
 /* Main Backgrounds */
@@ -186,7 +178,6 @@ body.dark-mode .sidebar {
     border-color: #333333; 
 }
 
-/* Navbar Dark */
 body.dark-mode .navbar-custom {
     background-color: #252525 !important; 
     border-bottom: 1px solid #444;
@@ -220,7 +211,6 @@ body.dark-mode .form-control::placeholder {
     color: #888;
 }
 
-/* Dark Mode Tables (Fixes White Background Issue) */
 body.dark-mode .table {
     color: #e0e0e0;
 }
@@ -239,7 +229,6 @@ body.dark-mode .table tbody tr {
     color: #e0e0e0;
 }
 
-/* List Groups */
 body.dark-mode .list-group-item {
     background-color: #1e1e1e;
     color: #fff;
@@ -249,7 +238,6 @@ body.dark-mode .list-group-item-action:hover {
     background-color: #333; 
 }
 
-/* Text Readability */
 body.dark-mode .text-muted {
     color: #a0a0a0 !important; 
 }
@@ -260,7 +248,6 @@ body.dark-mode small {
     color: #b0b0b0 !important;
 }
 
-/* Dark Mode Chat Bubbles & Fixes */
 body.dark-mode .msg-sent {
     background-color: #2563eb; 
     color: #fff;
@@ -274,9 +261,8 @@ body.dark-mode .msg-timestamp {
     color: #94a3b8 !important; 
 }
 
-/* FIX: Chat Background & Input in Dark Mode */
 body.dark-mode #chat-box {
-    background-color: #0f172a !important; /* Deep Navy */
+    background-color: #0f172a !important; 
 }
 body.dark-mode .bg-white,
 body.dark-mode .border-top,
@@ -286,7 +272,6 @@ body.dark-mode .border-bottom {
     border-color: #334155 !important;
 }
 
-/* FIX: Dark Mode Announcements (Make readable) */
 body.dark-mode .alert-info, 
 body.dark-mode .bg-light-custom {
     background-color: #1e293b !important; 
@@ -461,10 +446,10 @@ body.dark-mode .profile-img-container {
     }
     
     .navbar-brand-custom {
-        font-size: 1rem !important; /* Smaller font on mobile */
+        font-size: 1rem !important;
         white-space: nowrap;
         overflow: hidden;
-        text-overflow: ellipsis; /* Adds "..." if still too long */
+        text-overflow: ellipsis; 
     }
     
     .navbar-custom {
