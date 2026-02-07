@@ -1,0 +1,494 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* =========================================
+   1. CORE VARIABLES (Theme Colors)
+   ========================================= */
+:root {
+    --primary: #3b82f6;       
+    --primary-dark: #2563eb;  
+    --secondary: #64748b;     
+    --sidebar-bg: #1e293b;    
+    --sidebar-hover: #334155; 
+    
+    /* "Dim Mode" Background (Eye Comfort) */
+    --bg-body: #cbd5e1;       
+    
+    --text-main: #1e293b;    
+    --text-light: #94a3b8;    
+    --white: #ffffff;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-body) !important; 
+    color: var(--text-main);
+}
+
+/* LOCK SCROLL FOR FULL SCREEN APP FEEL */
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden; 
+}
+
+/* Dark Mode Adjustment for Login Card */
+body.dark-mode.login-body .card {
+    background-color: rgba(30, 30, 30, 0.95) !important;
+    border: 1px solid #444 !important;
+}
+
+/* Force overrides for Bootstrap light backgrounds */
+.bg-light {
+    background-color: var(--bg-body) !important;
+}
+
+/* =========================================
+   2. SIDEBAR STYLES
+   ========================================= */
+.sidebar {
+    min-height: 100vh;
+    background: var(--sidebar-bg); 
+    color: var(--text-light);
+    box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+}
+
+.sidebar h4 {
+    color: var(--white);
+    font-weight: 700;
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 1.1rem;
+}
+
+.sidebar a {
+    color: var(--text-light);
+    text-decoration: none;
+    padding: 14px 20px;
+    display: block;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Hover Effect: Soft slide + color change */
+.sidebar a:hover {
+    background-color: var(--sidebar-hover);
+    color: var(--white);
+    transform: translateX(5px); 
+}
+
+/* Active Link: Bright Blue Gradient */
+.sidebar a.active {
+    background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); 
+}
+
+/* =========================================
+   3. CARD & COMPONENT STYLES
+   ========================================= */
+.card-custom, .card {
+    background-color: #ffffff; /* Keep cards white against grey bg */
+    border: none;
+    border-radius: 12px; 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s;
+    color: #334155;
+}
+
+.card-custom:hover {
+    transform: translateY(-2px);
+}
+
+.bg-primary-custom { 
+    background-color: var(--primary) !important; 
+    color: white; 
+    border: none;
+}
+.bg-primary-custom:hover {
+    background-color: var(--primary-dark) !important;
+}
+
+.text-primary-custom { 
+    color: var(--primary) !important; 
+    font-weight: 600;
+}
+
+.bg-dark-custom { 
+    background-color: var(--sidebar-bg) !important; 
+    color: white; 
+}
+.bg-dark-custom:hover {
+    color: #cccccc !important; /* Grey text on hover */
+}
+
+/* =========================================
+   4. NAVBAR STYLES
+   ========================================= */
+.navbar-custom {
+    background-color: var(--white) !important;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+.navbar-brand-custom {
+    color: var(--sidebar-bg) !important; 
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+/* =========================================
+   5. CHAT BUBBLE STYLES
+   ========================================= */
+.msg-sent {
+    background-color: #3b82f6; 
+    color: #ffffff;
+    border-radius: 15px;
+    border-top-right-radius: 0; 
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.msg-received {
+    background-color: #ffffff;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    border-top-left-radius: 0; 
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.msg-timestamp {
+    font-size: 0.65rem; 
+    opacity: 0.8;
+    margin-top: 5px;
+    text-align: right;
+    display: block;
+}
+
+/* =========================================
+   6. DARK MODE (THEME SWITCHER)
+   ========================================= */
+
+/* Main Backgrounds */
+body.dark-mode {
+    background-color: #121212 !important; 
+    color: #e0e0e0 !important; 
+}
+
+/* Secondary Backgrounds */
+body.dark-mode .bg-light,
+body.dark-mode .card,
+body.dark-mode .card-custom,
+body.dark-mode .sidebar {
+    background-color: #1e1e1e !important; 
+    color: #ffffff !important;
+    border-color: #333333; 
+}
+
+/* Navbar Dark */
+body.dark-mode .navbar-custom {
+    background-color: #252525 !important; 
+    border-bottom: 1px solid #444;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+body.dark-mode .navbar-brand-custom {
+    color: #ffffff !important; 
+}
+body.dark-mode .navbar-custom .btn-outline-secondary {
+    color: #cccccc;
+    border-color: #666;
+}
+body.dark-mode .navbar-custom .btn-outline-secondary:hover {
+    background-color: #444;
+    color: #fff;
+}
+
+/* Inputs & Forms */
+body.dark-mode .form-control, 
+body.dark-mode .form-select {
+    background-color: #2d2d2d;
+    border: 1px solid #444;
+    color: #ffffff; 
+}
+body.dark-mode .form-control:focus {
+    background-color: #333;
+    border-color: #888;
+    color: #fff;
+}
+body.dark-mode .form-control::placeholder {
+    color: #888;
+}
+
+/* Dark Mode Tables (Fixes White Background Issue) */
+body.dark-mode .table {
+    color: #e0e0e0;
+}
+body.dark-mode .table thead, 
+body.dark-mode .table thead th,
+body.dark-mode .table .bg-light {
+    background-color: #2c2c2c !important;
+    color: #ffffff !important;
+    border-bottom: 2px solid #555;
+    border-color: #444 !important;
+}
+body.dark-mode .table td,
+body.dark-mode .table tbody tr {
+    background-color: #1e1e1e !important;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+/* List Groups */
+body.dark-mode .list-group-item {
+    background-color: #1e1e1e;
+    color: #fff;
+    border-color: #444;
+}
+body.dark-mode .list-group-item-action:hover {
+    background-color: #333; 
+}
+
+/* Text Readability */
+body.dark-mode .text-muted {
+    color: #a0a0a0 !important; 
+}
+body.dark-mode .text-dark {
+    color: #ffffff !important; 
+}
+body.dark-mode small {
+    color: #b0b0b0 !important;
+}
+
+/* Dark Mode Chat Bubbles & Fixes */
+body.dark-mode .msg-sent {
+    background-color: #2563eb; 
+    color: #fff;
+}
+body.dark-mode .msg-received {
+    background-color: #334155 !important; 
+    color: #e2e8f0 !important;
+    border: 1px solid #475569 !important;
+}
+body.dark-mode .msg-timestamp {
+    color: #94a3b8 !important; 
+}
+
+/* FIX: Chat Background & Input in Dark Mode */
+body.dark-mode #chat-box {
+    background-color: #0f172a !important; /* Deep Navy */
+}
+body.dark-mode .bg-white,
+body.dark-mode .border-top,
+body.dark-mode .border-bottom {
+    background-color: #1e293b !important; 
+    color: #ffffff !important;
+    border-color: #334155 !important;
+}
+
+/* FIX: Dark Mode Announcements (Make readable) */
+body.dark-mode .alert-info, 
+body.dark-mode .bg-light-custom {
+    background-color: #1e293b !important; 
+    border: 1px solid #334155 !important; 
+}
+body.dark-mode .alert-info strong,
+body.dark-mode .alert-info .text-dark {
+    color: #ffffff !important;
+}
+body.dark-mode .alert-info .text-secondary,
+body.dark-mode .alert-info .text-muted {
+    color: #cbd5e1 !important; 
+}
+
+/* FIX: Export PDF Button in Dark Mode */
+body.dark-mode .btn-outline-dark {
+    background-color: #ffffff !important;
+    color: #212529 !important;
+    border-color: #ffffff !important;
+}
+body.dark-mode .btn-outline-dark:hover {
+    background-color: #d1d5db !important;
+    color: #000000 !important;
+    border-color: #d1d5db !important;
+}
+
+/* =========================================
+   7. CUSTOM SCROLLBARS (Slim & Modern)
+   ========================================= */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent; 
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1; 
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8; 
+}
+
+/* Dark Mode Scrollbar */
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: #444;
+}
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+
+/* =========================================
+   8. BROWSER DEFAULTS
+   ========================================= */
+input[type="password"]::-webkit-text-security-disc { -webkit-appearance: none; }
+input[type="password"]::-webkit-password-reveal-button,
+input[type="password"]::-webkit-clear-button { display: none !important; -webkit-appearance: none !important; }
+input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { display: none !important; }
+
+/* =========================================
+   9. PROFILE PAGE FIXES
+   ========================================= */
+.profile-header { 
+    color: #3d5a80; 
+    font-weight: 700; 
+    margin-bottom: 20px; 
+    border-bottom: 1px solid #dee2e6; 
+    padding-bottom: 10px; 
+    font-size: 1.1rem; 
+}
+.label-text { 
+    font-size: 0.85rem; 
+    color: #6c757d; 
+    font-weight: 600; 
+    margin-bottom: 2px; 
+}
+.info-text { 
+    font-size: 1rem; 
+    color: #212529; 
+    margin-bottom: 20px; 
+    font-weight: 500; 
+}
+.profile-img-container {
+    width: 150px; 
+    height: 150px; 
+    margin: 0 auto 30px auto;
+    border-radius: 50%; 
+    overflow: hidden; 
+    border: 4px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.profile-img-container img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+}
+
+/* Dark Mode Overrides for Profile */
+body.dark-mode .profile-header { 
+    color: #60a5fa !important; 
+    border-bottom-color: #334155;
+}
+body.dark-mode .label-text { 
+    color: #94a3b8 !important; 
+}
+body.dark-mode .info-text { 
+    color: #ffffff !important; 
+}
+body.dark-mode .profile-img-container {
+    border-color: #1e293b; 
+}
+
+/* =========================================
+   10. PRINT / PDF EXPORT STYLES
+   ========================================= */
+@media print {
+    body, body.dark-mode {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .card, .card-custom, .bg-light, .bg-white {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+    }
+    .sidebar, .navbar, .btn, button, #darkModeToggle {
+        display: none !important;
+    }
+    .d-flex, .flex-grow-1, .p-4 {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        height: auto !important;
+    }
+    .table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        color: #000000 !important;
+    }
+    .table th, .table td {
+        border: 1px solid #000 !important;
+        background-color: #fff !important;
+    }
+    .badge {
+        border: 1px solid #000;
+        color: #000 !important;
+    }
+}
+
+/* =========================================
+   11. MOBILE RESPONSIVENESS
+   ========================================= */
+@media (max-width: 991px) {
+    .sidebar {
+        position: fixed;
+        left: -260px; 
+        top: 0;
+        height: 100vh;
+        z-index: 9999;
+        transition: left 0.3s ease-in-out;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+    }
+
+    .sidebar.show {
+        left: 0;
+    }
+    
+    .navbar-brand-custom {
+        font-size: 1rem !important; /* Smaller font on mobile */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; /* Adds "..." if still too long */
+    }
+    
+    .navbar-custom {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+    
+    .d-flex.flex-grow-1 { 
+        flex-direction: column; 
+    }
+    .bg-white.border-end.flex-shrink-0 {
+        width: 100% !important;
+        height: 35% !important; 
+        border-right: none !important;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .flex-grow-1.d-flex.flex-column {
+        height: 65% !important;
+    }
+    .p-5 { padding: 1.5rem !important; }
+    .p-4 { padding: 1rem !important; }
+    h2 { font-size: 1.5rem; } 
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}

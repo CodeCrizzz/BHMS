@@ -1,0 +1,30 @@
+// assets/js/script.js
+
+// Function to print a specific area (Simulating PDF Export)
+function printDashboard() {
+    // 1. Get the content of the dashboard
+    var printContents = document.getElementById('printableArea').innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    // 2. Swap the body content with just the printable area
+    document.body.innerHTML = printContents;
+
+    // 3. Print
+    window.print();
+
+    // 4. Restore original content so the buttons work again
+    document.body.innerHTML = originalContents;
+    location.reload(); // Reload to re-bind event listeners
+}
+
+// Auto-hide alerts after 3 seconds
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+        let alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            var bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 3000);
+});
+
