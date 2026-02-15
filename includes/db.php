@@ -1,10 +1,10 @@
 <?php
 date_default_timezone_set('Asia/Manila');
 
-$servername = "sql103.infinityfree.com";
-$username   = "if0_40612478";
-$password   = "oDunxhXQGpur";
-$dbname     = "if0_40612478_bhms";
+$servername = "localhost"; //"sql103.infinityfree.com"; 
+$username   = "root"; //"if0_40612478";
+$password   = ""; //"oDunxhXQGpur";
+$dbname     = "boarding_house_db"; //"if0_40612478_bhms";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

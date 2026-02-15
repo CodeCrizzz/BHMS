@@ -38,39 +38,29 @@ if(isset($_POST['send_msg']) && $selected_tenant_id){
 </head>
 <body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
 
-    <nav class="navbar navbar-expand-lg navbar-custom px-4 py-3 shadow-sm d-flex justify-content-between flex-shrink-0" style="z-index: 1000;">
-         <div class="d-flex align-items-center gap-3">
-            <button class="btn btn-outline-secondary d-lg-none" id="sidebarToggle">
-                <i class="fa fa-bars"></i>
-            </button>
-
-            <div class="navbar-brand-custom fw-bold">
-                <i class="fa fa-building me-2"></i> BHMS System
-            </div>
+    <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap" style="z-index: 1000;">
+        <div class="d-flex align-items-center gap-2" style="min-width: 0;"> 
+            <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle"><i class="fa fa-bars"></i></button>
+            <div class="navbar-brand-custom fw-bold text-truncate"><i class="fa fa-building me-2"></i> StudyStay Boarding House</div>
         </div>
-         
-         <div class="d-flex align-items-center gap-3">
-             <button id="darkModeToggle" class="btn btn-outline-secondary rounded-circle" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
-                <i class="fa fa-moon"></i>
-             </button>
-             
-             <a href="../logout.php" class="btn btn-danger btn-sm d-flex align-items-center" style="height: 38px;">
-                <i class="fa fa-sign-out-alt me-2"></i> Logout
-             </a>
-         </div>
+        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <button id="darkModeToggle" class="btn btn-outline-secondary rounded-circle" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center;"><i class="fa fa-moon"></i></button>
+            <a href="../logout.php" class="btn btn-danger btn-sm d-flex align-items-center" style="height: 36px; white-space: nowrap;"><i class="fa fa-sign-out-alt me-1"></i> <span class="d-none d-sm-inline">Logout</span></a>
+        </div>
     </nav>
 
     <div class="d-flex flex-grow-1" style="overflow: hidden;">
         
-        <div class="sidebar p-3" style="width: 250px; overflow-y: auto;">
-            <h4 class="text-center mb-4 mt-2">BHMS Admin</h4>
-            <a href="dashboard.php"><i class="fa fa-home me-2"></i> Dashboard</a>
-            <a href="manage_tenants.php"><i class="fa fa-users me-2"></i> Manage Tenants</a>
-            <a href="manage_rooms.php"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
-            <a href="billing.php"><i class="fa fa-file-invoice-dollar me-2"></i> Billing</a>
-            <a href="manage_requests.php"><i class="fa fa-wrench me-2"></i> Manage Requests</a>
-            <a href="chat.php" class="active"><i class="fa fa-comments me-2"></i> Chat Support</a>
-            <a href="manage_admins.php"><i class="fa fa-user-shield me-2"></i> Manage Admins</a>
+        <div class="sidebar p-3 flex-shrink-0 d-flex flex-column gap-2" style="width: 250px; min-height: 100vh; overflow-y: auto;">
+            <h4 class="text-center mb-4 mt-2 flex-shrink-0">System Admin</h4>
+            
+            <a href="dashboard.php" class="nav-dashboard"><i class="fa fa-home me-2"></i> Dashboard</a>
+            <a href="manage_tenants.php" class="nav-tenants"><i class="fa fa-users me-2"></i> Manage Tenants</a>
+            <a href="manage_rooms.php" class="nav-rooms"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
+            <a href="billing.php" class="nav-billing"><i class="fa fa-file-invoice-dollar me-2"></i> Billing</a>
+            <a href="manage_requests.php" class="nav-requests"><i class="fa fa-wrench me-2"></i> Manage Requests</a>
+            <a href="talk.php" class="nav-talk active"><i class="fa fa-comments me-2"></i> Chat Support</a>
+            <a href="manage_admins.php" class="nav-admins"><i class="fa fa-user-shield me-2"></i> Manage Admins</a>
         </div>
 
         <div class="d-flex flex-grow-1" style="overflow: hidden;">
@@ -84,7 +74,23 @@ if(isset($_POST['send_msg']) && $selected_tenant_id){
                     $tenants = $conn->query("SELECT * FROM users WHERE role='tenant'");
                     while($t = $tenants->fetch_assoc()){
                         $active = ($selected_tenant_id == $t['id']) ? 'active' : '';
-                        echo '<a href="chat.php?tenant_id='.$t['id'].'" class="list-group-item list-group-item-action '.$active.'">'.$t['fullname'].'</a>';
+                        
+                        // 1. Path to your default profile picture
+                        $profile_image = "../assets/uploads/profile.jpg"; 
+                        
+                        // 2. Fallback API: Generates an avatar with initials if the image above is missing
+                        $fallback = "https://ui-avatars.com/api/?name=".urlencode($t['fullname'])."&background=cbd5e1&color=1e293b&bold=true";
+
+                        // 3. Output the bigger, flexbox-styled list item
+                        echo '<a href="talk.php?tenant_id='.$t['id'].'" class="list-group-item list-group-item-action py-3 d-flex align-items-center '.$active.'">';
+                        
+                        // Profile Image (Width & Height set to 45px)
+                        echo '<img src="'.$profile_image.'" onerror="this.src=\''.$fallback.'\'" class="rounded-circle me-3 border border-2 shadow-sm" style="width: 45px; height: 45px; object-fit: cover; background: #fff;" alt="DP">';
+                        
+                        // Tenant Name
+                        echo '<div class="fw-bold text-truncate" style="max-width: 170px;">'.htmlspecialchars($t['fullname']).'</div>';
+                        
+                        echo '</a>';
                     }
                     ?>
                 </div>

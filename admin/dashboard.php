@@ -55,15 +55,16 @@ $total_revenue = $row_revenue['total'] ? $row_revenue['total'] : 0.00;
 </nav>
 
 <div class="d-flex">
-    <div class="sidebar p-3" style="width: 250px; min-height: 100vh;">
-        <h4 class="text-center mb-4">System Admin</h4>
-        <a href="dashboard.php" class="active"><i class="fa fa-home me-2"></i> Dashboard</a>
-        <a href="manage_tenants.php"><i class="fa fa-users me-2"></i> Manage Tenants</a>
-        <a href="manage_rooms.php"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
-        <a href="billing.php"><i class="fa fa-file-invoice-dollar me-2"></i> Billing</a>
-        <a href="manage_requests.php"><i class="fa fa-wrench me-2"></i> Manage Requests</a>
-        <a href="talk.php"><i class="fa fa-comments me-2"></i> Chat Support</a>
-        <a href="manage_admins.php"><i class="fa fa-user-shield me-2"></i> Manage Admins</a>
+    <div class="sidebar p-3 flex-shrink-0 d-flex flex-column gap-2" style="width: 250px; min-height: 100vh; overflow-y: auto;">
+        <h4 class="text-center mb-4 mt-2 flex-shrink-0">System Admin</h4>
+        
+        <a href="dashboard.php" class="nav-dashboard active"><i class="fa fa-home me-2"></i> Dashboard</a>
+        <a href="manage_tenants.php" class="nav-tenants"><i class="fa fa-users me-2"></i> Manage Tenants</a>
+        <a href="manage_rooms.php" class="nav-rooms"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
+        <a href="billing.php" class="nav-billing"><i class="fa fa-file-invoice-dollar me-2"></i> Billing</a>
+        <a href="manage_requests.php" class="nav-requests"><i class="fa fa-wrench me-2"></i> Manage Requests</a>
+        <a href="talk.php" class="nav-talk"><i class="fa fa-comments me-2"></i> Chat Support</a>
+        <a href="manage_admins.php" class="nav-admins"><i class="fa fa-user-shield me-2"></i> Manage Admins</a>
     </div>
 
     <div class="flex-grow-1 p-4" id="printableArea">

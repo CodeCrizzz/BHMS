@@ -35,6 +35,19 @@ html, body {
 /* =========================================
    2. SIDEBAR STYLES
    ========================================= */
+/* SMART SIDEBAR (CSS-ONLY ACTIVE STATES) */
+#page-dashboard .nav-dashboard,
+#page-tenants .nav-tenants,
+#page-rooms .nav-rooms,
+#page-billing .nav-billing,
+#page-requests .nav-requests,
+#page-talk .nav-talk,
+#page-admins .nav-admins {
+    background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); 
+}
+
 .sidebar {
     min-height: 100vh;
     background: var(--sidebar-bg); 
@@ -57,7 +70,7 @@ html, body {
     padding: 14px 20px;
     display: block;
     border-radius: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 0 !important;
     font-weight: 500;
     transition: all 0.3s ease;
 }
@@ -72,6 +85,7 @@ html, body {
     background: linear-gradient(90deg, var(--primary), var(--primary-dark));
     color: var(--white);
     box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); 
+    transform: translateX(5px);
 }
 
 /* =========================================
@@ -282,7 +296,6 @@ body.dark-mode .alert-info .text-muted {
     color: #cbd5e1 !important; 
 }
 
-/* FIX: Export PDF Button in Dark Mode */
 body.dark-mode .btn-outline-dark {
     background-color: #ffffff !important;
     color: #212529 !important;
