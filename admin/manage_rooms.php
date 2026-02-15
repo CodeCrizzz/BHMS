@@ -96,7 +96,6 @@ if (isset($_POST['update_room'])) {
 <div class="d-flex">
     <div class="sidebar p-3 flex-shrink-0 d-flex flex-column gap-2" style="width: 250px; min-height: 100vh; overflow-y: auto;">
         <h4 class="text-center mb-4 mt-2 flex-shrink-0">System Admin</h4>
-        
         <a href="dashboard.php" class="nav-dashboard"><i class="fa fa-home me-2"></i> Dashboard</a>
         <a href="manage_tenants.php" class="nav-tenants"><i class="fa fa-users me-2"></i> Manage Tenants</a>
         <a href="manage_rooms.php" class="nav-rooms active"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
@@ -107,21 +106,18 @@ if (isset($_POST['update_room'])) {
     </div>
 
     <div class="flex-grow-1 p-4">
-        
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-primary-custom">Manage Rooms</h2>
             <button class="btn bg-primary-custom" data-bs-toggle="modal" data-bs-target="#addRoomModal">
                 <i class="fa fa-plus"></i> Add New Room
             </button>
         </div>
-
         <?php if(isset($msg)): ?>
             <div class="alert alert-<?php echo $msg_type; ?> alert-dismissible fade show" role="alert">
                 <?php echo $msg; ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
-
         <div class="card card-custom p-3 bg-white">
             <table class="table table-hover align-middle">
                 <thead class="bg-light">
@@ -141,9 +137,7 @@ if (isset($_POST['update_room'])) {
                     ?>
                     <tr>
                         <td class="fw-bold"><?php echo $row['room_no']; ?></td>
-
                         <td>Php <?php echo number_format($row['price'], 2); ?></td>
-
                         <td><span class="badge <?php echo $badge; ?>"><?php echo ucfirst($row['status']); ?></span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary me-2 edit-btn" 
@@ -155,7 +149,6 @@ if (isset($_POST['update_room'])) {
                                 data-status="<?php echo $row['status']; ?>">
                                 <i class="fa fa-edit"></i>
                             </button>
-
                             <a href="manage_rooms.php?delete=<?php echo $row['id']; ?>" 
                                class="btn btn-sm btn-outline-danger"
                                onclick="return confirm('Are you sure you want to delete this room?');">
@@ -248,12 +241,12 @@ if (isset($_POST['update_room'])) {
 <script src="../assets/js/darkmode.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // This script grabs the data from the Edit button and fills the modal
+    //grabs the data from the Edit button and fills the modal
     var editModal = document.getElementById('editRoomModal');
     editModal.addEventListener('show.bs.modal', function (event) {
         var button = event.relatedTarget; // Button that triggered the modal
         
-        // Extract info from data-* attributes
+        // Extract info from data attributes
         var id = button.getAttribute('data-id');
         var room = button.getAttribute('data-room');
         var price = button.getAttribute('data-price');

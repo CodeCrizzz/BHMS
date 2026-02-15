@@ -101,10 +101,8 @@ if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'){
     </nav>
 
     <div class="d-flex flex-grow-1" style="overflow: hidden;">
-        
         <div class="sidebar p-3 flex-shrink-0 d-flex flex-column gap-2" style="width: 250px; min-height: 100vh; overflow-y: auto;">
             <h4 class="text-center mb-4 mt-2 flex-shrink-0">System Admin</h4>
-            
             <a href="dashboard.php" class="nav-dashboard"><i class="fa fa-home me-2"></i> Dashboard</a>
             <a href="manage_tenants.php" class="nav-tenants active"><i class="fa fa-users me-2"></i> Manage Tenants</a>
             <a href="manage_rooms.php" class="nav-rooms"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
@@ -115,7 +113,6 @@ if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'){
         </div>
 
         <div class="flex-grow-1 p-4" style="overflow-y: auto;">
-            
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="text-primary-custom">Manage Tenants</h2>
                 <button class="btn bg-primary-custom text-white" data-bs-toggle="modal" data-bs-target="#addTenantModal">
@@ -246,7 +243,6 @@ if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'){
                 <form method="POST">
                     <div class="modal-body">
                         <input type="hidden" name="tenant_id" id="edit_id">
-                        
                         <div class="mb-3">
                             <label>Full Name</label>
                             <input type="text" name="fullname" id="edit_name" class="form-control" required>

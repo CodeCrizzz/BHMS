@@ -27,7 +27,6 @@ html, body {
     overflow: hidden; 
 }
 
-/* Force overrides for Bootstrap light backgrounds */
 .bg-light {
     background-color: var(--bg-body) !important;
 }
@@ -35,7 +34,6 @@ html, body {
 /* =========================================
    2. SIDEBAR STYLES
    ========================================= */
-/* SMART SIDEBAR (CSS-ONLY ACTIVE STATES) */
 #page-dashboard .nav-dashboard,
 #page-tenants .nav-tenants,
 #page-rooms .nav-rooms,

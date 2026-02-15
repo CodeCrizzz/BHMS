@@ -57,7 +57,6 @@ $total_revenue = $row_revenue['total'] ? $row_revenue['total'] : 0.00;
 <div class="d-flex">
     <div class="sidebar p-3 flex-shrink-0 d-flex flex-column gap-2" style="width: 250px; min-height: 100vh; overflow-y: auto;">
         <h4 class="text-center mb-4 mt-2 flex-shrink-0">System Admin</h4>
-        
         <a href="dashboard.php" class="nav-dashboard active"><i class="fa fa-home me-2"></i> Dashboard</a>
         <a href="manage_tenants.php" class="nav-tenants"><i class="fa fa-users me-2"></i> Manage Tenants</a>
         <a href="manage_rooms.php" class="nav-rooms"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
@@ -66,13 +65,11 @@ $total_revenue = $row_revenue['total'] ? $row_revenue['total'] : 0.00;
         <a href="talk.php" class="nav-talk"><i class="fa fa-comments me-2"></i> Chat Support</a>
         <a href="manage_admins.php" class="nav-admins"><i class="fa fa-user-shield me-2"></i> Manage Admins</a>
     </div>
-
     <div class="flex-grow-1 p-4" id="printableArea">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Dashboard Overview</h2>
             <button onclick="printDashboard()" class="btn btn-outline-dark"><i class="fa fa-file-pdf"></i> Export PDF</button>
         </div>
-
         <div class="row">
             <div class="col-md-3">
                 <div class="card card-custom bg-primary-custom text-white p-3">

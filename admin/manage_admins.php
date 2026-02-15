@@ -107,7 +107,6 @@ if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'){
         
         <div class="sidebar p-3 flex-shrink-0 d-flex flex-column gap-2" style="width: 250px; min-height: 100vh; overflow-y: auto;">
             <h4 class="text-center mb-4 mt-2 flex-shrink-0">System Admin</h4>
-            
             <a href="dashboard.php" class="nav-dashboard"><i class="fa fa-home me-2"></i> Dashboard</a>
             <a href="manage_tenants.php" class="nav-tenants"><i class="fa fa-users me-2"></i> Manage Tenants</a>
             <a href="manage_rooms.php" class="nav-rooms"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
@@ -116,7 +115,6 @@ if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'){
             <a href="talk.php" class="nav-talk"><i class="fa fa-comments me-2"></i> Chat Support</a>
             <a href="manage_admins.php" class="nav-admins active"><i class="fa fa-user-shield me-2"></i> Manage Admins</a>
         </div>
-
         <div class="flex-grow-1 p-4" style="overflow-y: auto;">
             
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -193,57 +191,55 @@ if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'){
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
     <div class="modal fade" id="addAdminModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-primary-custom text-white">
-                <h5 class="modal-title">Create Admin Account</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label>Full Name</label>
-                        <input type="text" name="fullname" class="form-control" required placeholder="Admin Name">
-                    </div>
-                    <div class="mb-3">
-                        <label>Email Address</label>
-                        <input type="email" name="email" class="form-control" required placeholder="admin@bhms.com">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label>Password</label>
-                        <div class="input-group">
-                            <input type="password" name="password" id="addPass1" class="form-control" required placeholder="******">
-                            <button class="btn btn-outline-secondary" type="button" onclick="toggleModalPass('addPass1', this)">
-                                <i class="fa fa-eye"></i>
-                            </button>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary-custom text-white">
+                    <h5 class="modal-title">Create Admin Account</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label>Full Name</label>
+                            <input type="text" name="fullname" class="form-control" required placeholder="Admin Name">
                         </div>
-                    </div>
+                        <div class="mb-3">
+                            <label>Email Address</label>
+                            <input type="email" name="email" class="form-control" required placeholder="admin@bhms.com">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label>Password</label>
+                            <div class="input-group">
+                                <input type="password" name="password" id="addPass1" class="form-control" required placeholder="******">
+                                <button class="btn btn-outline-secondary" type="button" onclick="toggleModalPass('addPass1', this)">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
 
-                    <div class="mb-3">
-                        <label>Confirm Password</label>
-                        <div class="input-group">
-                            <input type="password" name="confirm_password" id="addPass2" class="form-control" required placeholder="******">
-                            <button class="btn btn-outline-secondary" type="button" onclick="toggleModalPass('addPass2', this)">
-                                <i class="fa fa-eye"></i>
-                            </button>
+                        <div class="mb-3">
+                            <label>Confirm Password</label>
+                            <div class="input-group">
+                                <input type="password" name="confirm_password" id="addPass2" class="form-control" required placeholder="******">
+                                <button class="btn btn-outline-secondary" type="button" onclick="toggleModalPass('addPass2', this)">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" name="add_admin" class="btn bg-primary-custom text-white">Create Account</button>
-                </div>
-            </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="add_admin" class="btn bg-primary-custom text-white">Create Account</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-
     <div class="modal fade" id="editAdminModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -277,40 +273,39 @@ if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'){
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/darkmode.js"></script>
+    <script>
+        // To fill the Edit Modal
+        var editModal = document.getElementById('editAdminModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            
+            var id = button.getAttribute('data-id');
+            var name = button.getAttribute('data-name');
+            var email = button.getAttribute('data-email');
+            
+            document.getElementById('edit_id').value = id;
+            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_email').value = email;
+        });
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../assets/js/darkmode.js"></script>
-<script>
-    // To fill the Edit Modal
-    var editModal = document.getElementById('editAdminModal');
-    editModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        
-        var id = button.getAttribute('data-id');
-        var name = button.getAttribute('data-name');
-        var email = button.getAttribute('data-email');
-        
-        document.getElementById('edit_id').value = id;
-        document.getElementById('edit_name').value = name;
-        document.getElementById('edit_email').value = email;
-    });
-
-    // Function to toggle password visibility inside modals
-    function toggleModalPass(inputId, btn) {
-        var input = document.getElementById(inputId);
-        var icon = btn.querySelector("i");
-        
-        if (input.type === "password") {
-            input.type = "text";
-            icon.classList.remove("fa-eye");
-            icon.classList.add("fa-eye-slash");
-        } else {
-            input.type = "password";
-            icon.classList.remove("fa-eye-slash");
-            icon.classList.add("fa-eye");
+        // Function to toggle password visibility inside modals
+        function toggleModalPass(inputId, btn) {
+            var input = document.getElementById(inputId);
+            var icon = btn.querySelector("i");
+            
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
         }
-    }
-</script>
-<script src="../assets/js/sidebar.js"></script>
+    </script>
+    <script src="../assets/js/sidebar.js"></script>
 </body>
 </html>

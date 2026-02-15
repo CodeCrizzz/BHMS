@@ -53,7 +53,6 @@ if(isset($_POST['send_msg']) && $selected_tenant_id){
         
         <div class="sidebar p-3 flex-shrink-0 d-flex flex-column gap-2" style="width: 250px; min-height: 100vh; overflow-y: auto;">
             <h4 class="text-center mb-4 mt-2 flex-shrink-0">System Admin</h4>
-            
             <a href="dashboard.php" class="nav-dashboard"><i class="fa fa-home me-2"></i> Dashboard</a>
             <a href="manage_tenants.php" class="nav-tenants"><i class="fa fa-users me-2"></i> Manage Tenants</a>
             <a href="manage_rooms.php" class="nav-rooms"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
@@ -74,22 +73,13 @@ if(isset($_POST['send_msg']) && $selected_tenant_id){
                     $tenants = $conn->query("SELECT * FROM users WHERE role='tenant'");
                     while($t = $tenants->fetch_assoc()){
                         $active = ($selected_tenant_id == $t['id']) ? 'active' : '';
-                        
-                        // 1. Path to your default profile picture
                         $profile_image = "../assets/uploads/profile.jpg"; 
                         
-                        // 2. Fallback API: Generates an avatar with initials if the image above is missing
+                        //Generates an avatar with initials if the image above is missing
                         $fallback = "https://ui-avatars.com/api/?name=".urlencode($t['fullname'])."&background=cbd5e1&color=1e293b&bold=true";
-
-                        // 3. Output the bigger, flexbox-styled list item
                         echo '<a href="talk.php?tenant_id='.$t['id'].'" class="list-group-item list-group-item-action py-3 d-flex align-items-center '.$active.'">';
-                        
-                        // Profile Image (Width & Height set to 45px)
                         echo '<img src="'.$profile_image.'" onerror="this.src=\''.$fallback.'\'" class="rounded-circle me-3 border border-2 shadow-sm" style="width: 45px; height: 45px; object-fit: cover; background: #fff;" alt="DP">';
-                        
-                        // Tenant Name
-                        echo '<div class="fw-bold text-truncate" style="max-width: 170px;">'.htmlspecialchars($t['fullname']).'</div>';
-                        
+                        echo '<div class="fw-bold text-truncate" style="max-width: 170px;">'.htmlspecialchars($t['fullname']).'</div>';     
                         echo '</a>';
                     }
                     ?>

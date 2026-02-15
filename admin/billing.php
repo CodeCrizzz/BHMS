@@ -73,7 +73,6 @@ if (isset($_GET['delete'])) {
 <div class="d-flex">
     <div class="sidebar p-3 flex-shrink-0 d-flex flex-column gap-2" style="width: 250px; min-height: 100vh; overflow-y: auto;">
         <h4 class="text-center mb-4 mt-2 flex-shrink-0">System Admin</h4>
-        
         <a href="dashboard.php" class="nav-dashboard"><i class="fa fa-home me-2"></i> Dashboard</a>
         <a href="manage_tenants.php" class="nav-tenants"><i class="fa fa-users me-2"></i> Manage Tenants</a>
         <a href="manage_rooms.php" class="nav-rooms"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
@@ -82,9 +81,7 @@ if (isset($_GET['delete'])) {
         <a href="talk.php" class="nav-talk"><i class="fa fa-comments me-2"></i> Chat Support</a>
         <a href="manage_admins.php" class="nav-admins"><i class="fa fa-user-shield me-2"></i> Manage Admins</a>
     </div>
-
     <div class="flex-grow-1 p-4">
-        
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-primary-custom">Billing & Payments</h2>
             <button class="btn bg-primary-custom" data-bs-toggle="modal" data-bs-target="#invoiceModal">
@@ -171,7 +168,6 @@ if (isset($_GET['delete'])) {
             </div>
             <form action="" method="POST">
                 <div class="modal-body">
-                    
                     <div class="mb-3">
                         <label>Select Tenant</label>
                         <select name="tenant_id" class="form-select" required>
@@ -185,7 +181,6 @@ if (isset($_GET['delete'])) {
                             ?>
                         </select>
                     </div>
-
                     <div class="mb-3">
                         <label>Description</label>
                         <input type="text" name="description" class="form-control" placeholder="e.g. Rent for November" required>
@@ -200,7 +195,6 @@ if (isset($_GET['delete'])) {
                         <label>Date</label>
                         <input type="date" name="date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
