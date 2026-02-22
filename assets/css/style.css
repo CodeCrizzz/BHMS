@@ -107,6 +107,7 @@ html, body {
     color: white; 
     border: none;
 }
+
 .bg-primary-custom:hover {
     background-color: var(--primary-dark) !important;
 }
@@ -120,6 +121,7 @@ html, body {
     background-color: var(--sidebar-bg) !important; 
     color: white; 
 }
+
 .bg-dark-custom:hover {
     color: #cccccc !important; 
 }
@@ -132,6 +134,7 @@ html, body {
     border-bottom: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 }
+
 .navbar-brand-custom {
     color: var(--sidebar-bg) !important; 
     font-weight: 800;
@@ -191,13 +194,16 @@ body.dark-mode .navbar-custom {
     border-bottom: 1px solid #444;
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
+
 body.dark-mode .navbar-brand-custom {
     color: #ffffff !important; 
 }
+
 body.dark-mode .navbar-custom .btn-outline-secondary {
     color: #cccccc;
     border-color: #666;
 }
+
 body.dark-mode .navbar-custom .btn-outline-secondary:hover {
     background-color: #444;
     color: #fff;
@@ -210,11 +216,13 @@ body.dark-mode .form-select {
     border: 1px solid #444;
     color: #ffffff; 
 }
+
 body.dark-mode .form-control:focus {
     background-color: #333;
     border-color: #888;
     color: #fff;
 }
+
 body.dark-mode .form-control::placeholder {
     color: #888;
 }
@@ -222,6 +230,7 @@ body.dark-mode .form-control::placeholder {
 body.dark-mode .table {
     color: #e0e0e0;
 }
+
 body.dark-mode .table thead, 
 body.dark-mode .table thead th,
 body.dark-mode .table .bg-light {
@@ -230,6 +239,7 @@ body.dark-mode .table .bg-light {
     border-bottom: 2px solid #555;
     border-color: #444 !important;
 }
+
 body.dark-mode .table td,
 body.dark-mode .table tbody tr {
     background-color: #1e1e1e !important;
@@ -242,6 +252,7 @@ body.dark-mode .list-group-item {
     color: #fff;
     border-color: #444;
 }
+
 body.dark-mode .list-group-item-action:hover {
     background-color: #333; 
 }
@@ -249,9 +260,11 @@ body.dark-mode .list-group-item-action:hover {
 body.dark-mode .text-muted {
     color: #a0a0a0 !important; 
 }
+
 body.dark-mode .text-dark {
     color: #ffffff !important; 
 }
+
 body.dark-mode small {
     color: #b0b0b0 !important;
 }
@@ -260,11 +273,13 @@ body.dark-mode .msg-sent {
     background-color: #2563eb; 
     color: #fff;
 }
+
 body.dark-mode .msg-received {
     background-color: #334155 !important; 
     color: #e2e8f0 !important;
     border: 1px solid #475569 !important;
 }
+
 body.dark-mode .msg-timestamp {
     color: #94a3b8 !important; 
 }
@@ -272,6 +287,7 @@ body.dark-mode .msg-timestamp {
 body.dark-mode #chat-box {
     background-color: #0f172a !important; 
 }
+
 body.dark-mode .bg-white,
 body.dark-mode .border-top,
 body.dark-mode .border-bottom {
@@ -285,10 +301,12 @@ body.dark-mode .bg-light-custom {
     background-color: #1e293b !important; 
     border: 1px solid #334155 !important; 
 }
+
 body.dark-mode .alert-info strong,
 body.dark-mode .alert-info .text-dark {
     color: #ffffff !important;
 }
+
 body.dark-mode .alert-info .text-secondary,
 body.dark-mode .alert-info .text-muted {
     color: #cbd5e1 !important; 
@@ -299,27 +317,66 @@ body.dark-mode .btn-outline-dark {
     color: #212529 !important;
     border-color: #ffffff !important;
 }
+
 body.dark-mode .btn-outline-dark:hover {
     background-color: #d1d5db !important;
     color: #000000 !important;
     border-color: #d1d5db !important;
 }
 
+/* Scrollbar Styles */
+.tenant-card { 
+    transition: all 0.2s ease; 
+    border-radius: 8px; 
+    margin: 4px 8px; 
+}
+
+.tenant-card:hover { 
+    background-color: #f1f5f9 !important; 
+    transform: translateX(4px); 
+}
+
+.story-avatar { 
+    width: 60px; 
+    height: 60px; 
+    padding: 3px; 
+    transition: transform 0.2s ease; 
+}
+
+.story-avatar:hover { 
+    transform: scale(1.05); 
+}
+
 /* =========================================
-   7. CUSTOM SCROLLBARS (Slim & Modern)
+   7. CUSTOM SCROLLBARS
    ========================================= */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
+
 ::-webkit-scrollbar-track {
     background: transparent; 
 }
+
 ::-webkit-scrollbar-thumb {
     background: #cbd5e1; 
     border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8; 
+}
+
+.chat-scroll::-webkit-scrollbar { 
+    width: 6px; height: 6px; 
+}
+
+.chat-scroll::-webkit-scrollbar-thumb { 
+    background: #cbd5e1; border-radius: 10px; 
+}
+
+.chat-scroll::-webkit-scrollbar-thumb:hover { 
     background: #94a3b8; 
 }
 
@@ -331,16 +388,43 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
     background: #666;
 }
 
+body.dark-mode .tenant-card:hover { 
+    background-color: #2d2d2d !important; 
+}
+
+body.dark-mode .mobile-tenant-strip { 
+    background-color: #1e1e1e !important; 
+    border-bottom: 1px solid #333 !important; 
+}
+
+body.dark-mode .chat-input-wrapper { 
+    background-color: #2d2d2d !important; 
+    border-color: #444 !important; 
+}
+
+body.dark-mode .chat-input-wrapper input { 
+    color: #fff !important; 
+}
+
 /* =========================================
    8. BROWSER DEFAULTS
    ========================================= */
-input[type="password"]::-webkit-text-security-disc { -webkit-appearance: none; }
+input[type="password"]::-webkit-text-security-disc { 
+    -webkit-appearance: none; 
+}
+
 input[type="password"]::-webkit-password-reveal-button,
-input[type="password"]::-webkit-clear-button { display: none !important; -webkit-appearance: none !important; }
-input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { display: none !important; }
+input[type="password"]::-webkit-clear-button { 
+    display: none !important; 
+    -webkit-appearance: none !important; 
+}
+
+input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { 
+    display: none !important; 
+}
 
 /* =========================================
-   9. PROFILE PAGE FIXES
+   9. PROFILE PAGE
    ========================================= */
 .profile-header { 
     color: #3d5a80; 
@@ -350,18 +434,21 @@ input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { display:
     padding-bottom: 10px; 
     font-size: 1.1rem; 
 }
+
 .label-text { 
     font-size: 0.85rem; 
     color: #6c757d; 
     font-weight: 600; 
     margin-bottom: 2px; 
 }
+
 .info-text { 
     font-size: 1rem; 
     color: #212529; 
     margin-bottom: 20px; 
     font-weight: 500; 
 }
+
 .profile-img-container {
     width: 150px; 
     height: 150px; 
@@ -371,23 +458,26 @@ input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { display:
     border: 4px solid #fff;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+
 .profile-img-container img { 
     width: 100%; 
     height: 100%; 
     object-fit: cover; 
 }
 
-/* Dark Mode Overrides for Profile */
 body.dark-mode .profile-header { 
     color: #60a5fa !important; 
     border-bottom-color: #334155;
 }
+
 body.dark-mode .label-text { 
     color: #94a3b8 !important; 
 }
+
 body.dark-mode .info-text { 
     color: #ffffff !important; 
 }
+
 body.dark-mode .profile-img-container {
     border-color: #1e293b; 
 }
@@ -402,15 +492,18 @@ body.dark-mode .profile-img-container {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
+
     .card, .card-custom, .bg-light, .bg-white {
         background-color: #ffffff !important;
         color: #000000 !important;
         border: 1px solid #ccc !important;
         box-shadow: none !important;
     }
+
     .sidebar, .navbar, .btn, button, #darkModeToggle {
         display: none !important;
     }
+
     .d-flex, .flex-grow-1, .p-4 {
         display: block !important;
         width: 100% !important;
@@ -419,15 +512,18 @@ body.dark-mode .profile-img-container {
         overflow: visible !important;
         height: auto !important;
     }
+
     .table {
         width: 100% !important;
         border-collapse: collapse !important;
         color: #000000 !important;
     }
+
     .table th, .table td {
         border: 1px solid #000 !important;
         background-color: #fff !important;
     }
+
     .badge {
         border: 1px solid #000;
         color: #000 !important;
@@ -467,17 +563,15 @@ body.dark-mode .profile-img-container {
     .d-flex.flex-grow-1 { 
         flex-direction: column; 
     }
-    .bg-white.border-end.flex-shrink-0 {
-        width: 100% !important;
-        height: 35% !important; 
-        border-right: none !important;
-        border-bottom: 1px solid #dee2e6;
+    
+    .p-5 { 
+        padding: 1.5rem !important; 
     }
-    .flex-grow-1.d-flex.flex-column {
-        height: 65% !important;
+
+    .p-4 { 
+        padding: 1rem !important; 
     }
-    .p-5 { padding: 1.5rem !important; }
-    .p-4 { padding: 1rem !important; }
+
     h2 { font-size: 1.5rem; } 
     .table-responsive {
         overflow-x: auto;

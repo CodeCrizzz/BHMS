@@ -23,6 +23,15 @@ if(isset($_POST['send_msg']) && $selected_tenant_id){
         $stmt->execute();
     }
 }
+
+// Pre-fetch all tenants into an array so we can loop it smoothly for Desktop & Mobile views
+$tenants_data = [];
+$tenants_query = $conn->query("SELECT * FROM users WHERE role='tenant'");
+if ($tenants_query) {
+    while($t = $tenants_query->fetch_assoc()){
+        $tenants_data[] = $t;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -30,7 +39,7 @@ if(isset($_POST['send_msg']) && $selected_tenant_id){
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title>Admin Chat</title>
+    <title>Admin Chat Support</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
@@ -64,54 +73,84 @@ if(isset($_POST['send_msg']) && $selected_tenant_id){
 
         <div class="d-flex flex-grow-1" style="overflow: hidden;">
             
-            <div class="bg-white border-end flex-shrink-0" style="width: 300px; overflow-y: auto;">
+            <div class="bg-white border-end flex-shrink-0 d-none d-lg-flex flex-column shadow-sm z-2" style="width: 300px;">
                 <div class="p-3 bg-light border-bottom sticky-top">
-                    <h5 class="m-0 text-primary-custom">Tenants</h5>
+                    <h5 class="m-0 fw-bold text-primary-custom"><i class="fa fa-inbox me-2"></i> Messages</h5>
                 </div>
-                <div class="list-group list-group-flush">
+                <div class="list-group list-group-flush flex-grow-1 chat-scroll" style="overflow-y: auto;">
                     <?php
-                    $tenants = $conn->query("SELECT * FROM users WHERE role='tenant'");
-                    while($t = $tenants->fetch_assoc()){
-                        $active = ($selected_tenant_id == $t['id']) ? 'active' : '';
-                        $profile_image = "../assets/uploads/profile.jpg"; 
-                        
-                        //Generates an avatar with initials if the image above is missing
+                    foreach($tenants_data as $t){
+                        $active = ($selected_tenant_id == $t['id']) ? 'bg-primary-custom text-white shadow-sm' : 'tenant-card border-bottom border-light';
+                        $text_color = ($selected_tenant_id == $t['id']) ? 'text-white' : 'text-dark';
                         $fallback = "https://ui-avatars.com/api/?name=".urlencode($t['fullname'])."&background=cbd5e1&color=1e293b&bold=true";
-                        echo '<a href="talk.php?tenant_id='.$t['id'].'" class="list-group-item list-group-item-action py-3 d-flex align-items-center '.$active.'">';
-                        echo '<img src="'.$profile_image.'" onerror="this.src=\''.$fallback.'\'" class="rounded-circle me-3 border border-2 shadow-sm" style="width: 45px; height: 45px; object-fit: cover; background: #fff;" alt="DP">';
-                        echo '<div class="fw-bold text-truncate" style="max-width: 170px;">'.htmlspecialchars($t['fullname']).'</div>';     
+
+                        echo '<a href="talk.php?tenant_id='.$t['id'].'" class="list-group-item list-group-item-action py-3 d-flex align-items-center border-0 '.$active.'">';
+                        echo '<img src="../assets/uploads/profile.jpg" onerror="this.src=\''.$fallback.'\'" class="rounded-circle me-3 border border-2 shadow-sm bg-white" style="width: 45px; height: 45px; object-fit: cover;">';
+                        echo '<div class="fw-bold text-truncate '.$text_color.'" style="max-width: 160px; font-size: 0.95rem;">'.htmlspecialchars($t['fullname']).'</div>';     
                         echo '</a>';
                     }
                     ?>
                 </div>
             </div>
 
-            <div class="flex-grow-1 d-flex flex-column" style="overflow: hidden;">
+            <div class="flex-grow-1 d-flex flex-column position-relative" style="overflow: hidden;">
+
+                <div class="mobile-tenant-strip bg-white d-lg-none z-2 chat-scroll p-2 shadow-sm" style="overflow-x: auto; min-height: fit-content;">
+                    <div class="d-flex gap-3 px-2 align-items-center" style="min-width: max-content;">
+                        <?php
+                        foreach($tenants_data as $t){
+                            $active_border = ($selected_tenant_id == $t['id']) ? 'border-primary border-3 shadow-sm' : 'border-secondary border-opacity-25';
+                            $active_text = ($selected_tenant_id == $t['id']) ? 'fw-bold text-primary-custom' : 'text-muted';
+                            $fallback = "https://ui-avatars.com/api/?name=".urlencode($t['fullname'])."&background=cbd5e1&color=1e293b&bold=true";
+
+                            echo '<a href="talk.php?tenant_id='.$t['id'].'" class="text-decoration-none text-center d-flex flex-column align-items-center" style="width: 70px;">';
+                            echo '<div class="story-avatar rounded-circle d-flex align-items-center justify-content-center '.$active_border.'">';
+                            echo '<img src="../assets/uploads/profile.jpg" onerror="this.src=\''.$fallback.'\'" class="rounded-circle w-100 h-100 bg-white" style="object-fit: cover;">';
+                            echo '</div>';
+                            echo '<div class="text-truncate mt-1 w-100 '.$active_text.'" style="font-size: 0.7rem;">'.htmlspecialchars($t['fullname']).'</div>';
+                            echo '</a>';
+                        }
+                        ?>
+                    </div>
+                </div>
+
                 <?php if($selected_tenant_id): ?>
                     
-                    <div class="p-3 bg-white border-bottom flex-shrink-0">
-                        <h5 class="m-0"><?php echo $selected_tenant_name; ?></h5>
+                    <div class="p-3 bg-white border-bottom shadow-sm z-1 d-flex align-items-center gap-3">
+                        <?php $header_fallback = "https://ui-avatars.com/api/?name=".urlencode($selected_tenant_name)."&background=3b82f6&color=fff&bold=true"; ?>
+                        <img src="../assets/uploads/profile.jpg" onerror="this.src='<?php echo $header_fallback; ?>'" class="rounded-circle border" style="width: 45px; height: 45px; object-fit: cover;">
+                        <div>
+                            <h5 class="m-0 fw-bold"><?php echo htmlspecialchars($selected_tenant_name); ?></h5>
+                            <small class="text-success fw-bold"><i class="fa fa-circle me-1" style="font-size: 8px;"></i>Online</small>
+                        </div>
                     </div>
                     
-                    <div id="chat-box" class="flex-grow-1 p-4" style="overflow-y: auto;">
+                    <div id="chat-box" class="flex-grow-1 p-4 chat-scroll" style="overflow-y: auto;">
                          </div>
 
-                    <div class="p-3 bg-white border-top flex-shrink-0">
-                        <form method="POST" autocomplete="off">
-                            <div class="input-group">
-                                <input type="text" name="message" class="form-control" placeholder="Type a message..." required>
-                                <button type="submit" name="send_msg" class="btn bg-primary-custom text-white"><i class="fa fa-paper-plane"></i></button>
+                    <div class="p-3 bg-white border-top shadow-lg z-2">
+                        <form method="POST" autocomplete="off" class="m-0">
+                            <div class="input-group bg-light rounded-pill p-1 border shadow-sm chat-input-wrapper">
+                                <input type="text" name="message" class="form-control border-0 bg-transparent shadow-none px-4" placeholder="Type a message..." required style="height: 45px;">
+                                <button type="submit" name="send_msg" class="btn bg-primary-custom text-white rounded-circle me-1 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                    <i class="fa fa-paper-plane ms-[-2px]"></i>
+                                </button>
                             </div>
                         </form>
                     </div>
 
                 <?php else: ?>
-                    <div class="d-flex justify-content-center align-items-center h-100 text-muted">
-                        <div class="text-center">
-                            <i class="fa fa-comments fa-3x mb-3 text-secondary opacity-25"></i>
-                            <h4>Select a tenant to start chatting</h4>
+                    
+                    <div class="d-flex flex-column justify-content-center align-items-center h-100 text-center p-4">
+                        <div class="bg-white p-5 rounded-4 shadow-sm border" style="max-width: 400px;">
+                            <div class="bg-light text-primary-custom rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4 shadow-sm" style="width: 80px; height: 80px;">
+                                <i class="fa fa-comments fa-3x"></i>
+                            </div>
+                            <h4 class="fw-bold text-dark mb-2">Welcome to Support</h4>
+                            <p class="text-secondary mb-0">Select a tenant from the list to view their messages and reply.</p>
                         </div>
                     </div>
+
                 <?php endif; ?>
             </div>
 
@@ -142,5 +181,6 @@ $(document).ready(function(){
 });
 </script>
 <script src="../assets/js/sidebar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

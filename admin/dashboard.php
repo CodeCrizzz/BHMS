@@ -70,68 +70,86 @@ $total_revenue = $row_revenue['total'] ? $row_revenue['total'] : 0.00;
             <h2>Dashboard Overview</h2>
             <button onclick="printDashboard()" class="btn btn-outline-dark"><i class="fa fa-file-pdf"></i> Export PDF</button>
         </div>
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card card-custom bg-primary-custom text-white p-3">
+        <div class="row g-3">
+            <div class="col-12 col-md-4">
+                <div class="card card-custom bg-primary-custom text-white p-3 h-100 shadow-sm border-0">
                     <h5>Total Tenants</h5>
                     <h2><?php echo $total_tenants; ?></h2>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card card-custom bg-info text-white p-3">
+            <div class="col-12 col-md-4">
+                <div class="card card-custom bg-info text-white p-3 h-100 shadow-sm border-0">
                     <h5>Occupied Rooms</h5>
                     <h2><?php echo $occupied_rooms; ?></h2>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card card-custom bg-success text-white p-3">
+            <div class="col-12 col-md-4">
+                <div class="card card-custom bg-success text-white p-3 h-100 shadow-sm border-0">
                     <h5>Total Revenue</h5>
                     <h2>Php. <?php echo number_format($total_revenue, 2); ?></h2>
                 </div>
             </div>
         </div>
         <div class="mt-5">
-            <h4>Recent Payments</h4>
-            <table class="table table-hover bg-white rounded shadow-sm">
-                <thead class="bg-light">
-                    <tr>
-                        <th>Date</th>
-                        <th>Tenant</th>
-                        <th>Description</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $sql_recent = "SELECT payments.*, users.fullname 
-                                   FROM payments 
-                                   JOIN users ON payments.tenant_id = users.id 
-                                   ORDER BY date_created DESC LIMIT 5";
+            <h4 class="mb-3 text-primary-custom fw-bold"><i class="fa fa-clock-rotate-left me-2"></i>Recent Payments</h4>
+            <div class="card card-custom border-0 shadow-sm overflow-hidden" style="border-radius: 15px;">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4 py-3 text-uppercase text-muted" style="font-size: 0.8rem; letter-spacing: 0.5px;">Date</th>
+                                    <th class="py-3 text-uppercase text-muted" style="font-size: 0.8rem; letter-spacing: 0.5px;">Tenant Name</th>
+                                    <th class="py-3 text-uppercase text-muted" style="font-size: 0.8rem; letter-spacing: 0.5px;">Description</th>
+                                    <th class="py-3 text-uppercase text-muted" style="font-size: 0.8rem; letter-spacing: 0.5px;">Amount</th>
+                                    <th class="py-3 text-uppercase text-muted" style="font-size: 0.8rem; letter-spacing: 0.5px;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $sql_recent = "SELECT payments.*, users.fullname 
+                                               FROM payments 
+                                               JOIN users ON payments.tenant_id = users.id 
+                                               ORDER BY date_created DESC LIMIT 5";
 
-                    $result = $conn->query($sql_recent);
+                                $result = $conn->query($sql_recent);
 
-                    if($result->num_rows > 0){
-                        while($row = $result->fetch_assoc()){
-                            $badge = ($row['status'] == 'paid') ? 'bg-success' : 'bg-warning text-dark';
-                    ?>
-                    <tr>
-                        <td><?php echo $row['date_created']; ?></td>
-                        <td><?php echo $row['fullname']; ?></td>
-                        <td><?php echo $row['description']; ?></td>
-
-                        <td>Php <?php echo number_format($row['amount'], 2); ?></td>
-
-                        <td><span class="badge <?php echo $badge; ?>"><?php echo ucfirst($row['status']); ?></span></td>
-                    </tr>
-                    <?php 
-                        }
-                    } else {
-                        echo "<tr><td colspan='5' class='text-center text-muted'>No recent activities found.</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
+                                if($result->num_rows > 0){
+                                    while($row = $result->fetch_assoc()){
+                                        $badge = ($row['status'] == 'paid') ? 'bg-success' : 'bg-warning text-dark';
+                                        $icon = ($row['status'] == 'paid') ? '<i class="fa fa-check-circle me-1"></i>' : '<i class="fa fa-clock me-1"></i>';
+                                ?>
+                                <tr>
+                                    <td class="ps-4 text-secondary small">
+                                        <i class="fa fa-calendar-alt me-2 opacity-50"></i>
+                                        <?php echo date('M d, Y', strtotime($row['date_created'])); ?>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark"><?php echo htmlspecialchars($row['fullname']); ?></div>
+                                    </td>
+                                    <td class="text-secondary"><?php echo htmlspecialchars($row['description']); ?></td>
+                                    
+                                    <td class="fw-bold text-primary-custom">
+                                        Php <?php echo number_format($row['amount'], 2); ?>
+                                    </td>
+                                    
+                                    <td>
+                                        <span class="badge <?php echo $badge; ?> px-3 py-2 rounded-pill shadow-sm" style="font-size: 0.75rem;">
+                                            <?php echo $icon . ucfirst($row['status']); ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <?php 
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='5' class='text-center py-5 text-muted'><i class='fa fa-folder-open fa-2x mb-2 opacity-25 d-block'></i>No recent activities found.</td></tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

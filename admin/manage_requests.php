@@ -91,7 +91,7 @@ if(isset($_GET['delete'])){
                 </div>
             <?php endif; ?>
 
-            <div class="card card-custom border-0 shadow-sm">
+            <div class="card card-custom border-0 shadow-sm overflow-hidden mb-4" style="border-radius: 15px;">
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
