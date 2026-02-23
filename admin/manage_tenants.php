@@ -20,7 +20,12 @@ if(isset($_POST['add_tenant'])){
     } else {
         $stmt = $conn->prepare("INSERT INTO users (fullname, email, password, role, room_assigned) VALUES (?, ?, ?, 'tenant', ?)");
         $stmt->bind_param("ssss", $fullname, $email, $password, $room_assigned);
+        
         if($stmt->execute()){
+            // SMART LOGIC: If a room was assigned, automatically mark it as occupied
+            if(!empty($room_assigned)) {
+                $conn->query("UPDATE rooms SET status='occupied' WHERE room_no='$room_assigned'");
+            }
             $msg = "New tenant added successfully!";
             $msg_type = "success";
         } else {
@@ -32,11 +37,18 @@ if(isset($_POST['add_tenant'])){
 
 // --- 2. UPDATE TENANT ---
 if(isset($_POST['update_tenant'])){
-    $id = $_POST['tenant_id'];
+    $id = intval($_POST['tenant_id']);
     $fullname = $_POST['fullname'];
     $email = $_POST['email'];
     $room_assigned = empty($_POST['room_assigned']) ? NULL : $_POST['room_assigned'];
     $new_password = $_POST['password'];
+
+    // SMART LOGIC PRE-CHECK: Get the tenant's OLD room before we change it
+    $old_room = null;
+    $get_old = $conn->query("SELECT room_assigned FROM users WHERE id=$id");
+    if($get_old->num_rows > 0) {
+        $old_room = $get_old->fetch_assoc()['room_assigned'];
+    }
 
     if(!empty($new_password)){
         $stmt = $conn->prepare("UPDATE users SET fullname=?, email=?, room_assigned=?, password=? WHERE id=?");
@@ -47,6 +59,25 @@ if(isset($_POST['update_tenant'])){
     }
 
     if($stmt->execute()){
+        // SMART LOGIC POST-CHECK: Did the tenant change rooms?
+        if($old_room !== $room_assigned) {
+            
+            // 1. Mark the NEW room as occupied
+            if(!empty($room_assigned)) {
+                $conn->query("UPDATE rooms SET status='occupied' WHERE room_no='$room_assigned'");
+            }
+            
+            // 2. Check if the OLD room is now completely empty
+            if(!empty($old_room)) {
+                $check_old = $conn->query("SELECT COUNT(*) as total_occupants FROM users WHERE room_assigned='$old_room' AND role='tenant'");
+                $old_data = $check_old->fetch_assoc();
+                
+                // If nobody is left in the old room, make it available
+                if($old_data['total_occupants'] == 0) {
+                    $conn->query("UPDATE rooms SET status='available' WHERE room_no='$old_room'");
+                }
+            }
+        }
         $msg = "Tenant updated successfully!";
         $msg_type = "success";
     } else {
@@ -57,8 +88,32 @@ if(isset($_POST['update_tenant'])){
 
 // --- 3. DELETE TENANT ---
 if(isset($_GET['delete'])){
-    $id = $_GET['delete'];
+    $id = intval($_GET['delete']); // intval() adds security
+    
+    // STEP 1: Find out what room this tenant is in BEFORE deleting them
+    $room_assigned = null;
+    $get_room = $conn->query("SELECT room_assigned FROM users WHERE id=$id");
+    if($get_room->num_rows > 0) {
+        $row = $get_room->fetch_assoc();
+        $room_assigned = $row['room_assigned'];
+    }
+
+    // STEP 2: Delete the tenant from the database
     $conn->query("DELETE FROM users WHERE id=$id");
+    
+    // STEP 3: If they were assigned to a room, check if the room is now empty
+    if(!empty($room_assigned)) {
+        // Count how many tenants are STILL in this specific room
+        $check_room = $conn->query("SELECT COUNT(*) as total_occupants FROM users WHERE room_assigned='$room_assigned' AND role='tenant'");
+        $room_data = $check_room->fetch_assoc();
+        
+        // STEP 4: If 0 people are left, set the room to 'available'
+        if($room_data['total_occupants'] == 0) {
+            $conn->query("UPDATE rooms SET status='available' WHERE room_no='$room_assigned'");
+        }
+    }
+
+    // Refresh the page
     header("Location: manage_tenants.php?msg=deleted");
     exit();
 }
