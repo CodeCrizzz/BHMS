@@ -37,8 +37,7 @@ $admin_show    = ($active_role == 'admin') ? 'show active' : '';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="login-body">
-<div class="container d-flex justify-content-center align-items-center vh-100">
+<body class="d-flex justify-content-center align-items-center vh-100 m-0" style="background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('assets/img/bg.png') no-repeat center center fixed !important; background-size: cover !important;"><div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card card-custom p-4 shadow-lg" style="width: 400px;">
         
         <h3 class="text-center mb-3 fw-bold text-primary-custom">StudyStay Boarding House</h3>
