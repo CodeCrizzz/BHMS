@@ -37,6 +37,8 @@ CREATE TABLE payments (
     FOREIGN KEY (tenant_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+ALTER TABLE rooms ADD COLUMN capacity INT NOT NULL DEFAULT 1;
+
 -- Default Admin Account (Email: admin@local, Pass: admin123)
 INSERT INTO users (fullname, email, password, role) 
 VALUES ('Admin', 'admin@local', 'admin123', 'admin');
