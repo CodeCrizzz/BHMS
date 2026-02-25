@@ -6,7 +6,7 @@ checkLogin('admin');
 // --- 1. ADD ROOM ---
 if (isset($_POST['add_room'])) {
     $room_no = $_POST['room_no'];
-    $capacity = intval($_POST['capacity']); // New Capacity Field
+    $capacity = intval($_POST['capacity']); 
     $price = $_POST['price'];
     $status = $_POST['status'];
 
@@ -35,7 +35,7 @@ if (isset($_GET['delete'])) {
 if (isset($_POST['update_room'])) {
     $id = $_POST['room_id'];
     $room_no = $_POST['room_no'];
-    $capacity = intval($_POST['capacity']); // New Capacity Field
+    $capacity = intval($_POST['capacity']); 
     $price = $_POST['price'];
     $status = $_POST['status'];
 
@@ -111,21 +111,38 @@ if (isset($_POST['update_room'])) {
                     <thead class="bg-light">
                         <tr>
                             <th class="ps-3">Room No</th>
-                            <th>Capacity</th> <th>Price (Php.)</th>
+                            <th>Capacity</th>
+                            <th>Price (Php.)</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        // Fetch all rooms
                         $result = $conn->query("SELECT * FROM rooms ORDER BY id DESC");
                         
                         if($result->num_rows > 0){
                             while($row = $result->fetch_assoc()){
-                                $badge = ($row['status'] == 'available') ? 'bg-success' : 'bg-danger';
-                                // Simple logic: Check current occupants (optional improvement)
-                                $current_occupants = $conn->query("SELECT COUNT(*) as c FROM users WHERE room_assigned='".$row['room_no']."'")->fetch_assoc()['c'];
+                                // 1. Count actual people in this room
+                                $count_query = $conn->query("SELECT COUNT(*) as c FROM users WHERE room_assigned='".$row['room_no']."' AND role='tenant'");
+                                $current_occupants = $count_query->fetch_assoc()['c'];
+
+                                // 2. SMART STATUS LOGIC (Updated)
+                                if ($current_occupants >= $row['capacity']) {
+                                    // Condition: Capacity is Full
+                                    $display_status = "Full";
+                                    $badge_class = "bg-danger"; // Red
+                                    
+                                } elseif ($current_occupants > 0) {
+                                    // Condition: Not full, but has occupants (e.g. 1/5)
+                                    $display_status = "Vacant";
+                                    $badge_class = "bg-success"; // Green
+                                    
+                                } else {
+                                    // Condition: 0 occupants (0/0 or 0/X)
+                                    $display_status = "Empty";
+                                    $badge_class = "bg-warning text-dark"; // Yellow/Amber to signify completely empty
+                                }
                         ?>
                         <tr>
                             <td class="fw-bold ps-3 text-primary-custom"><?php echo $row['room_no']; ?></td>
@@ -138,7 +155,11 @@ if (isset($_POST['update_room'])) {
                             </td>
 
                             <td class="fw-bold">Php <?php echo number_format($row['price'], 2); ?></td>
-                            <td><span class="badge <?php echo $badge; ?>"><?php echo ucfirst($row['status']); ?></span></td>
+                            
+                            <td>
+                                <span class="badge <?php echo $badge_class; ?>"><?php echo ucfirst($display_status); ?></span>
+                            </td>
+                            
                             <td>
                                 <button class="btn btn-sm btn-outline-primary me-2 edit-btn" 
                                     data-bs-toggle="modal" 
@@ -184,12 +205,10 @@ if (isset($_POST['update_room'])) {
                         <label>Room Number</label>
                         <input type="text" name="room_no" class="form-control" required placeholder="e.g. 101">
                     </div>
-                    
                     <div class="mb-3">
                         <label>Room Capacity (Max Tenants)</label>
                         <input type="number" name="capacity" class="form-control" required min="1" value="2">
                     </div>
-
                     <div class="mb-3">
                         <label>Price (Monthly)</label>
                         <input type="number" name="price" class="form-control" required placeholder="e.g. 500">
@@ -226,12 +245,10 @@ if (isset($_POST['update_room'])) {
                         <label>Room Number</label>
                         <input type="text" name="room_no" id="edit_room_no" class="form-control" required>
                     </div>
-
                     <div class="mb-3">
                         <label>Room Capacity</label>
                         <input type="number" name="capacity" id="edit_capacity" class="form-control" required min="1">
                     </div>
-
                     <div class="mb-3">
                         <label>Price (Monthly)</label>
                         <input type="number" name="price" id="edit_price" class="form-control" required>
@@ -259,11 +276,9 @@ if (isset($_POST['update_room'])) {
     var editModal = document.getElementById('editRoomModal');
     editModal.addEventListener('show.bs.modal', function (event) {
         var button = event.relatedTarget; 
-        
-        // Fill the modal with data from the button
         document.getElementById('edit_room_id').value = button.getAttribute('data-id');
         document.getElementById('edit_room_no').value = button.getAttribute('data-room');
-        document.getElementById('edit_capacity').value = button.getAttribute('data-capacity'); // NEW
+        document.getElementById('edit_capacity').value = button.getAttribute('data-capacity');
         document.getElementById('edit_price').value = button.getAttribute('data-price');
         document.getElementById('edit_status').value = button.getAttribute('data-status');
     });
