@@ -18,15 +18,36 @@ if(isset($_POST['add_tenant'])){
         $msg = "Email already exists!";
         $msg_type = "danger";
     } else {
-        $stmt = $conn->prepare("INSERT INTO users (fullname, email, password, role, room_assigned) VALUES (?, ?, ?, 'tenant', ?)");
-        $stmt->bind_param("ssss", $fullname, $email, $password, $room_assigned);
+        
+        // --- SMART LOGIC: GENERATE UNIQUE 5-DIGIT ID ---
+        $is_unique = false;
+        $new_tenant_id = 0;
+        
+        while (!$is_unique) {
+            $new_tenant_id = rand(10000, 99999); // Generates a random number from 10000 to 99999
+            
+            // Ask the database if this 5-digit ID already exists
+            $check_id = $conn->query("SELECT id FROM users WHERE id='$new_tenant_id'");
+            if($check_id->num_rows == 0){
+                $is_unique = true; // If 0 results come back, the ID is unique and safe to use!
+            }
+        }
+        // ------------------------------------------------
+
+        // Insert the new tenant using the generated $new_tenant_id
+        $stmt = $conn->prepare("INSERT INTO users (id, fullname, email, password, role, room_assigned) VALUES (?, ?, ?, ?, 'tenant', ?)");
+        
+        // Note: "issss" means Integer, String, String, String, String
+        $stmt->bind_param("issss", $new_tenant_id, $fullname, $email, $password, $room_assigned);
         
         if($stmt->execute()){
-            // SMART LOGIC: If a room was assigned, automatically mark it as occupied
+            // Automatically mark room as occupied if one was assigned
             if(!empty($room_assigned)) {
                 $conn->query("UPDATE rooms SET status='occupied' WHERE room_no='$room_assigned'");
             }
-            $msg = "New tenant added successfully!";
+            
+            // Display the new 5-digit ID in the success message
+            $msg = "New tenant added successfully! ID: #" . $new_tenant_id;
             $msg_type = "success";
         } else {
             $msg = "Error adding tenant.";
@@ -309,14 +330,15 @@ if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'){
                         <div class="mb-3">
                             <label>Assign Room</label>
                             <select name="room_assigned" id="edit_room" class="form-select">
-                                <option value="">-- No Room Assigned --</option>
-                                <?php
-                                $all_rooms = $conn->query("SELECT room_no FROM rooms");
-                                while($r = $all_rooms->fetch_assoc()){
-                                    echo "<option value='".$r['room_no']."'>Room ".$r['room_no']."</option>";
-                                }
-                                ?>
-                            </select>
+                            <option value="">-- No Room Assigned --</option>
+                            <?php
+                            $all_rooms = $conn->query("SELECT room_no, capacity, (SELECT COUNT(*) FROM users WHERE room_assigned=rooms.room_no AND role='tenant') as occupants FROM rooms");
+                            while($r = $all_rooms->fetch_assoc()){
+                                $status_label = ($r['occupants'] >= $r['capacity']) ? " (FULL)" : " (".$r['occupants']."/".$r['capacity'].")";
+                                echo "<option value='".$r['room_no']."'>Room ".$r['room_no'].$status_label."</option>";
+                            }
+                            ?>
+                        </select>
                         </div>
                         <hr>
                         <div class="mb-3">
