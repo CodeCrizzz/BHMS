@@ -39,6 +39,8 @@ CREATE TABLE payments (
 
 ALTER TABLE rooms ADD COLUMN capacity INT NOT NULL DEFAULT 1;
 
+ALTER TABLE users ADD COLUMN profile_picture VARCHAR(255) NULL;
+
 -- Default Admin Account (Email: admin@local, Pass: admin123)
 INSERT INTO users (fullname, email, password, role) 
 VALUES ('Admin', 'admin@local', 'admin123', 'admin');

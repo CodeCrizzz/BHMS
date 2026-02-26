@@ -6,11 +6,15 @@ checkLogin('admin');
 $admin_id = $_SESSION['user_id'];
 $selected_tenant_id = isset($_GET['tenant_id']) ? intval($_GET['tenant_id']) : null;
 $selected_tenant_name = "Select a Tenant";
+$active_tenant_pic = ""; 
 
-// Fetch Tenant Name
-if($selected_tenant_id){
-    $res = $conn->query("SELECT fullname FROM users WHERE id = $selected_tenant_id");
-    if($res->num_rows > 0) $selected_tenant_name = $res->fetch_assoc()['fullname'];
+// Change this query to select profile_image
+$res = $conn->query("SELECT fullname, profile_image FROM users WHERE id = $selected_tenant_id");
+if($res->num_rows > 0) {
+    $row = $res->fetch_assoc();
+    $selected_tenant_name = $row['fullname'];
+    // Change the variable here too
+    $active_tenant_pic = !empty($row['profile_image']) ? $row['profile_image'] : 'default.png';
 }
 
 // Handle Send Message 
@@ -24,7 +28,7 @@ if(isset($_POST['send_msg']) && $selected_tenant_id){
     }
 }
 
-// Pre-fetch all tenants into an array so we can loop it smoothly for Desktop & Mobile views
+// Pre-fetch all tenants into an array
 $tenants_data = [];
 $tenants_query = $conn->query("SELECT * FROM users WHERE role='tenant'");
 if ($tenants_query) {
@@ -73,19 +77,21 @@ if ($tenants_query) {
 
         <div class="d-flex flex-grow-1" style="overflow: hidden;">
             
-            <div class="bg-white border-end flex-shrink-0 d-none d-lg-flex flex-column shadow-sm z-2" style="width: 300px;">
+            <div class="bg-white border-end flex-shrink-0 d-none d-lg-flex flex-column shadow-sm z-2" style="width: 320px;">
                 <div class="p-3 bg-light border-bottom sticky-top">
-                    <h5 class="m-0 fw-bold text-primary-custom"><i class="fa fa-inbox me-2"></i> Messages</h5>
+                    <h5 class="m-0 fw-bold text-primary-custom"><i class="fa fa-inbox me-2"></i> Tenants</h5>
                 </div>
                 <div class="list-group list-group-flush flex-grow-1 chat-scroll" style="overflow-y: auto;">
                     <?php
                     foreach($tenants_data as $t){
                         $active = ($selected_tenant_id == $t['id']) ? 'bg-primary-custom text-white shadow-sm' : 'tenant-card border-bottom border-light';
                         $text_color = ($selected_tenant_id == $t['id']) ? 'text-white' : 'text-dark';
-                        $fallback = "https://ui-avatars.com/api/?name=".urlencode($t['fullname'])."&background=cbd5e1&color=1e293b&bold=true";
-
+                        
+                        // Check if they have an uploaded picture
+                        $fallback_avatar = "https://ui-avatars.com/api/?name=".urlencode($t['fullname'])."&background=cbd5e1&color=1e293b&bold=true";
+                        $profile_img_src = !empty($t['profile_image']) ? "../assets/uploads/" . htmlspecialchars($t['profile_image']) : $fallback_avatar;
                         echo '<a href="talk.php?tenant_id='.$t['id'].'" class="list-group-item list-group-item-action py-3 d-flex align-items-center border-0 '.$active.'">';
-                        echo '<img src="../assets/uploads/profile.jpg" onerror="this.src=\''.$fallback.'\'" class="rounded-circle me-3 border border-2 shadow-sm bg-white" style="width: 45px; height: 45px; object-fit: cover;">';
+                        echo '<img src="'.$profile_img_src.'" onerror="this.src=\''.$fallback_avatar.'\'" class="rounded-circle me-3 border border-2 shadow-sm bg-white" style="width: 45px; height: 45px; object-fit: cover;">';
                         echo '<div class="fw-bold text-truncate '.$text_color.'" style="max-width: 160px; font-size: 0.95rem;">'.htmlspecialchars($t['fullname']).'</div>';     
                         echo '</a>';
                     }
@@ -101,11 +107,13 @@ if ($tenants_query) {
                         foreach($tenants_data as $t){
                             $active_border = ($selected_tenant_id == $t['id']) ? 'border-primary border-3 shadow-sm' : 'border-secondary border-opacity-25';
                             $active_text = ($selected_tenant_id == $t['id']) ? 'fw-bold text-primary-custom' : 'text-muted';
-                            $fallback = "https://ui-avatars.com/api/?name=".urlencode($t['fullname'])."&background=cbd5e1&color=1e293b&bold=true";
+                            
+                            $fallback_avatar = "https://ui-avatars.com/api/?name=".urlencode($t['fullname'])."&background=cbd5e1&color=1e293b&bold=true";
+                            $profile_img_src = !empty($t['profile_picture']) ? "../assets/uploads/" . htmlspecialchars($t['profile_picture']) : $fallback_avatar;
 
                             echo '<a href="talk.php?tenant_id='.$t['id'].'" class="text-decoration-none text-center d-flex flex-column align-items-center" style="width: 70px;">';
                             echo '<div class="story-avatar rounded-circle d-flex align-items-center justify-content-center '.$active_border.'">';
-                            echo '<img src="../assets/uploads/profile.jpg" onerror="this.src=\''.$fallback.'\'" class="rounded-circle w-100 h-100 bg-white" style="object-fit: cover;">';
+                            echo '<img src="'.$profile_img_src.'" onerror="this.src=\''.$fallback_avatar.'\'" class="rounded-circle w-100 h-100 bg-white" style="object-fit: cover;">';
                             echo '</div>';
                             echo '<div class="text-truncate mt-1 w-100 '.$active_text.'" style="font-size: 0.7rem;">'.htmlspecialchars($t['fullname']).'</div>';
                             echo '</a>';
@@ -117,15 +125,18 @@ if ($tenants_query) {
                 <?php if($selected_tenant_id): ?>
                     
                     <div class="p-3 bg-white border-bottom shadow-sm z-1 d-flex align-items-center gap-3">
-                        <?php $header_fallback = "https://ui-avatars.com/api/?name=".urlencode($selected_tenant_name)."&background=3b82f6&color=fff&bold=true"; ?>
-                        <img src="../assets/uploads/profile.jpg" onerror="this.src='<?php echo $header_fallback; ?>'" class="rounded-circle border" style="width: 45px; height: 45px; object-fit: cover;">
+                        <?php 
+                        $header_fallback = "https://ui-avatars.com/api/?name=".urlencode($selected_tenant_name)."&background=3b82f6&color=fff&bold=true"; 
+                        $header_img_src = !empty($active_tenant_pic) ? "../assets/uploads/" . htmlspecialchars($active_tenant_pic) : $header_fallback;
+                        ?>
+                        <img src="<?php echo $header_img_src; ?>" onerror="this.src='<?php echo $header_fallback; ?>'" class="rounded-circle border" style="width: 45px; height: 45px; object-fit: cover;">
                         <div>
                             <h5 class="m-0 fw-bold"><?php echo htmlspecialchars($selected_tenant_name); ?></h5>
                             <small class="text-success fw-bold"><i class="fa fa-circle me-1" style="font-size: 8px;"></i>Online</small>
                         </div>
                     </div>
                     
-                    <div id="chat-box" class="flex-grow-1 p-4 chat-scroll" style="overflow-y: auto;">
+                    <div id="chat-box" class="flex-grow-1 p-4 chat-scroll" style="overflow-y: auto; background-color: #f1f5f9;">
                          </div>
 
                     <div class="p-3 bg-white border-top shadow-lg z-2">
@@ -141,7 +152,7 @@ if ($tenants_query) {
 
                 <?php else: ?>
                     
-                    <div class="d-flex flex-column justify-content-center align-items-center h-100 text-center p-4">
+                    <div class="d-flex flex-column justify-content-center align-items-center h-100 text-center p-4" style="background-color: #f1f5f9;">
                         <div class="bg-white p-5 rounded-4 shadow-sm border" style="max-width: 400px;">
                             <div class="bg-light text-primary-custom rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4 shadow-sm" style="width: 80px; height: 80px;">
                                 <i class="fa fa-comments fa-3x"></i>
@@ -153,7 +164,6 @@ if ($tenants_query) {
 
                 <?php endif; ?>
             </div>
-
         </div> 
     </div>
 
@@ -177,7 +187,7 @@ $(document).ready(function(){
         }
     }
     loadMessages();
-    setInterval(loadMessages, 2000);
+    setInterval(loadMessages, 2000); // Refreshes chat every 2 seconds
 });
 </script>
 <script src="../assets/js/sidebar.js"></script>
