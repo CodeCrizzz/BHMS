@@ -4,21 +4,26 @@ require_once '../includes/auth_check.php';
 checkLogin('admin');
 
 $admin_id = $_SESSION['user_id'];
-$selected_tenant_id = isset($_GET['tenant_id']) ? intval($_GET['tenant_id']) : null;
+
+// 1. Force it to be a number. If it's missing, default to 0.
+$selected_tenant_id = isset($_GET['tenant_id']) ? intval($_GET['tenant_id']) : 0;
 $selected_tenant_name = "Select a Tenant";
 $active_tenant_pic = ""; 
 
-// Change this query to select profile_image
-$res = $conn->query("SELECT fullname, profile_image FROM users WHERE id = $selected_tenant_id");
-if($res->num_rows > 0) {
-    $row = $res->fetch_assoc();
-    $selected_tenant_name = $row['fullname'];
-    // Change the variable here too
-    $active_tenant_pic = !empty($row['profile_image']) ? $row['profile_image'] : 'default.png';
+// 2. SMART CHECK: Only run the database query if the ID is greater than 0!
+if($selected_tenant_id > 0){
+    $res = $conn->query("SELECT fullname, profile_image FROM users WHERE id = $selected_tenant_id");
+    
+    // Make sure the query actually succeeded before fetching
+    if($res && $res->num_rows > 0) {
+        $row = $res->fetch_assoc();
+        $selected_tenant_name = $row['fullname'];
+        $active_tenant_pic = $row['profile_image'];
+    }
 }
 
 // Handle Send Message 
-if(isset($_POST['send_msg']) && $selected_tenant_id){
+if(isset($_POST['send_msg']) && $selected_tenant_id > 0){
     $msg = $_POST['message'];
     
     if(!empty(trim($msg))){
