@@ -113,6 +113,10 @@ if(isset($_GET['delete'])){
                                         ORDER BY requests.date_created DESC";
                                 $result = $conn->query($sql);
 
+                                if (!$result) {
+                                    die('<div class="alert alert-danger m-4"><strong>Database Crash!</strong> ' . $conn->error . '</div>');
+                                }
+
                                 if($result->num_rows > 0){
                                     while($row = $result->fetch_assoc()){
                                         $badge = 'bg-warning text-dark';

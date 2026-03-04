@@ -116,3 +116,5 @@ VALUES ('Admin', 'admin@local', SHA2('admin123', 256), 'admin');
 INSERT INTO announcements (title, message)
 VALUES ('Welcome to BHMS!',
         'Rent is due on the 5th of every month. Please check your billing tab.');
+
+ALTER TABLE users ADD COLUMN room_assigned VARCHAR(50) NULL;

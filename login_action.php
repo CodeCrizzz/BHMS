@@ -16,7 +16,7 @@ if (isset($_POST['login'])) {
         $user = $result->fetch_assoc();
         
         // Verify Password
-        if ($password == $user['password']) {
+        if (hash('sha256', $password) === $user['password']) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['role'] = $user['role'];
             $_SESSION['name'] = $user['fullname'];
