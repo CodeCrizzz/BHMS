@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
 /* =========================================
-   1. CORE VARIABLES (Theme Colors)
+   1. Theme Colors
    ========================================= */
 :root {
     --primary: #3b82f6;       
@@ -284,16 +284,22 @@ body.dark-mode .msg-timestamp {
     color: #94a3b8 !important; 
 }
 
-body.dark-mode #chat-box {
+body.dark-mode #chat-box,
+body.dark-mode [style*="#f1f5f9"] {
     background-color: #0f172a !important; 
 }
 
 body.dark-mode .bg-white,
 body.dark-mode .border-top,
-body.dark-mode .border-bottom {
+body.dark-mode .border-bottom,
+body.dark-mode .border-end {
     background-color: #1e293b !important; 
     color: #ffffff !important;
     border-color: #334155 !important;
+}
+
+body.dark-mode .flex-grow-1 > .d-flex.flex-column.justify-content-center.h-100.text-center {
+    background-color: #181313 !important;
 }
 
 body.dark-mode .alert-info, 
