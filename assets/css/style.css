@@ -119,7 +119,7 @@ html, body {
 
 .bg-dark-custom { 
     background-color: var(--sidebar-bg) !important; 
-    color: white; 
+    color: white;
 }
 
 .bg-dark-custom:hover {
@@ -315,7 +315,7 @@ body.dark-mode .alert-info .text-dark {
 
 body.dark-mode .alert-info .text-secondary,
 body.dark-mode .alert-info .text-muted {
-    color: #cbd5e1 !important; 
+    color: #cbd5e1 !important;
 }
 
 body.dark-mode .btn-outline-dark {
@@ -539,6 +539,39 @@ body.dark-mode .profile-img-container {
 /* =========================================
    11. MOBILE RESPONSIVENESS
    ========================================= */
+
+@media  (max-width: 1200px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .navbar-brand-custom {
+        font-size: 1.1rem !important;
+    }
+
+    .navbar-custom {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+
+    .p-5 { 
+        padding: 2rem !important; 
+    }
+
+    .p-4 { 
+        padding: 1.5rem !important; 
+    }
+
+    h2 { 
+        font-size: 1.75rem; 
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
 @media (max-width: 991px) {
     .sidebar {
         position: fixed;

@@ -33,6 +33,7 @@ if(isset($_POST['send_msg']) && $selected_tenant_id > 0){
     }
 }
 
+
 // Pre-fetch all tenants into an array
 $tenants_data = [];
 $tenants_query = $conn->query("SELECT * FROM users WHERE role='tenant'");
@@ -105,7 +106,6 @@ if ($tenants_query) {
             </div>
 
             <div class="flex-grow-1 d-flex flex-column position-relative" style="overflow: hidden;">
-
                 <div class="mobile-tenant-strip bg-white d-lg-none z-2 chat-scroll p-2 shadow-sm" style="overflow-x: auto; min-height: fit-content;">
                     <div class="d-flex gap-3 px-2 align-items-center" style="min-width: max-content;">
                         <?php
@@ -126,7 +126,6 @@ if ($tenants_query) {
                         ?>
                     </div>
                 </div>
-
                 <?php if($selected_tenant_id): ?>
                     
                     <div class="p-3 bg-white border-bottom shadow-sm z-1 d-flex align-items-center gap-3">
@@ -141,9 +140,7 @@ if ($tenants_query) {
                         </div>
                     </div>
                     
-                    <div id="chat-box" class="flex-grow-1 p-4 chat-scroll" style="overflow-y: auto; background-color: #f1f5f9;">
-                         </div>
-
+                    <div id="chat-box" class="flex-grow-1 p-4 chat-scroll" style="overflow-y: auto; background-color: #f1f5f9;"></div>
                     <div class="p-3 bg-white border-top shadow-lg z-2">
                         <form method="POST" autocomplete="off" class="m-0">
                             <div class="input-group bg-light rounded-pill p-1 border shadow-sm chat-input-wrapper">
@@ -156,7 +153,6 @@ if ($tenants_query) {
                     </div>
 
                 <?php else: ?>
-                    
                     <div class="d-flex flex-column justify-content-center align-items-center h-100 text-center p-4" style="background-color: #f1f5f9;">
                         <div class="bg-white p-5 rounded-4 shadow-sm border" style="max-width: 400px;">
                             <div class="bg-light text-primary-custom rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4 shadow-sm" style="width: 80px; height: 80px;">
@@ -166,12 +162,10 @@ if ($tenants_query) {
                             <p class="text-secondary mb-0">Select a tenant from the list to view their messages and reply.</p>
                         </div>
                     </div>
-
                 <?php endif; ?>
             </div>
         </div> 
     </div>
-
 <script src="../assets/js/darkmode.js"></script>
 <script>
 $(document).ready(function(){
