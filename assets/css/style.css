@@ -126,6 +126,33 @@ html, body {
     color: #cccccc !important; 
 }
 
+body.dark-mode .card-custom.bg-white {
+    background-color: #272626 !important;
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+}
+
+body.dark-mode .card-custom .table,
+body.dark-mode .card-custom .table thead,
+body.dark-mode .card-custom .table thead th,
+body.dark-mode .card-custom .table td,
+body.dark-mode .card-custom .table tbody tr,
+body.dark-mode .card-custom .table .bg-light {
+    background-color: #272626 !important;
+    border-color: #272626 !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .card-custom .table-hover tbody tr:hover td {
+    background-color: #111111 !important;
+}
+
+body.dark-mode [style*="#f8fafc"],
+body.dark-mode [style*="#f1f5f9"],
+body.dark-mode .flex-grow-1 > .d-flex.flex-column.position-relative {
+    background-color: #272626 !important;
+}
+
 /* =========================================
    4. NAVBAR STYLES
    ========================================= */

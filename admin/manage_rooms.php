@@ -77,7 +77,6 @@ if (isset($_POST['update_room'])) {
 </nav>
 
 <div class="d-flex flex-grow-1" style="overflow: hidden;">
-    
     <div class="sidebar p-3 flex-shrink-0 d-flex flex-column gap-2" style="width: 250px; min-height: 100vh; overflow-y: auto;">
         <h4 class="text-center mb-4 mt-2 flex-shrink-0">System Admin</h4>
         <a href="dashboard.php" class="nav-dashboard"><i class="fa fa-home me-2"></i> Dashboard</a>
@@ -90,7 +89,6 @@ if (isset($_POST['update_room'])) {
     </div>
 
     <div class="flex-grow-1 p-4" style="overflow-y: auto;">
-        
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-primary-custom">Manage Rooms</h2>
             <button class="btn bg-primary-custom text-white" data-bs-toggle="modal" data-bs-target="#addRoomModal">
@@ -123,26 +121,21 @@ if (isset($_POST['update_room'])) {
                         
                         if($result->num_rows > 0){
                             while($row = $result->fetch_assoc()){
-                                // 1. Count actual people in this room
                                 $count_query = $conn->query("SELECT COUNT(*) as c FROM users WHERE room_assigned='".$row['room_no']."' AND role='tenant'");
-                                $current_occupants = $count_query->fetch_assoc()['c'];
-
-                                // 2. SMART STATUS LOGIC (Updated)
+                                $current_occupants = $count_query->fetch_assoc()['c']; 
                                 if ($current_occupants >= $row['capacity']) {
-                                    // Condition: Capacity is Full
                                     $display_status = "Full";
-                                    $badge_class = "bg-danger"; // Red
+                                    $badge_class = "bg-danger"; 
                                     
                                 } elseif ($current_occupants > 0) {
-                                    // Condition: Not full, but has occupants (e.g. 1/5)
+                                   
                                     $display_status = "Vacant";
-                                    $badge_class = "bg-success"; // Green
+                                    $badge_class = "bg-success"; 
                                     
                                 } else {
-                                    // Condition: 0 occupants (0/0 or 0/X)
                                     $display_status = "Empty";
-                                    $badge_class = "bg-warning text-dark"; // Yellow/Amber to signify completely empty
-                                }
+                                    $badge_class = "bg-warning text-dark"; 
+                                }                       
                         ?>
                         <tr>
                             <td class="fw-bold ps-3 text-primary-custom"><?php echo $row['room_no']; ?></td>
