@@ -22,7 +22,6 @@ if(isset($_GET['error'])){
 
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card card-custom p-4 shadow-lg" style="width: 450px; background: white;">
-        
         <div class="text-center mb-4">
             <h3 class="fw-bold text-primary-custom">Create Account</h3>
             <p class="text-muted small">Join our boarding house today</p>
@@ -35,7 +34,6 @@ if(isset($_GET['error'])){
         <?php endif; ?>
 
         <form action="signup_action.php" method="POST">
-            
             <div class="mb-3">
                 <label class="form-label text-muted small">Full Name</label>
                 <div class="input-group">

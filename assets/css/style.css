@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
 /* =========================================
-   1. Theme Colors
+   1. VARIABLES & BASE STYLES
    ========================================= */
 :root {
     --primary: #3b82f6;       
@@ -34,18 +34,6 @@ html, body {
 /* =========================================
    2. SIDEBAR STYLES
    ========================================= */
-#page-dashboard .nav-dashboard,
-#page-tenants .nav-tenants,
-#page-rooms .nav-rooms,
-#page-billing .nav-billing,
-#page-requests .nav-requests,
-#page-talk .nav-talk,
-#page-admins .nav-admins {
-    background: linear-gradient(90deg, var(--primary), var(--primary-dark));
-    color: var(--white);
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); 
-}
-
 .sidebar {
     min-height: 100vh;
     background: var(--sidebar-bg); 
@@ -79,6 +67,14 @@ html, body {
     transform: translateX(5px); 
 }
 
+/* Active Sidebar Links */
+#page-dashboard .nav-dashboard,
+#page-tenants .nav-tenants,
+#page-rooms .nav-rooms,
+#page-billing .nav-billing,
+#page-requests .nav-requests,
+#page-talk .nav-talk,
+#page-admins .nav-admins,
 .sidebar a.active {
     background: linear-gradient(90deg, var(--primary), var(--primary-dark));
     color: var(--white);
@@ -87,74 +83,7 @@ html, body {
 }
 
 /* =========================================
-   3. CARD & COMPONENT STYLES
-   ========================================= */
-.card-custom, .card {
-    background-color: #ffffff; 
-    border: none;
-    border-radius: 12px; 
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s;
-    color: #334155;
-}
-
-.card-custom:hover {
-    transform: translateY(-2px);
-}
-
-.bg-primary-custom { 
-    background-color: var(--primary) !important; 
-    color: white; 
-    border: none;
-}
-
-.bg-primary-custom:hover {
-    background-color: var(--primary-dark) !important;
-}
-
-.text-primary-custom { 
-    color: var(--primary) !important; 
-    font-weight: 600;
-}
-
-.bg-dark-custom { 
-    background-color: var(--sidebar-bg) !important; 
-    color: white;
-}
-
-.bg-dark-custom:hover {
-    color: #cccccc !important; 
-}
-
-body.dark-mode .card-custom.bg-white {
-    background-color: #272626 !important;
-    border: 1px solid #000000 !important;
-    box-shadow: none !important;
-}
-
-body.dark-mode .card-custom .table,
-body.dark-mode .card-custom .table thead,
-body.dark-mode .card-custom .table thead th,
-body.dark-mode .card-custom .table td,
-body.dark-mode .card-custom .table tbody tr,
-body.dark-mode .card-custom .table .bg-light {
-    background-color: #272626 !important;
-    border-color: #272626 !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .card-custom .table-hover tbody tr:hover td {
-    background-color: #111111 !important;
-}
-
-body.dark-mode [style*="#f8fafc"],
-body.dark-mode [style*="#f1f5f9"],
-body.dark-mode .flex-grow-1 > .d-flex.flex-column.position-relative {
-    background-color: #272626 !important;
-}
-
-/* =========================================
-   4. NAVBAR STYLES
+   3. NAVBAR STYLES
    ========================================= */
 .navbar-custom {
     background-color: var(--white) !important;
@@ -169,195 +98,21 @@ body.dark-mode .flex-grow-1 > .d-flex.flex-column.position-relative {
 }
 
 /* =========================================
-   5. CHAT BUBBLE STYLES
+   4. UI COMPONENTS (Cards, Buttons, Avatars)
    ========================================= */
-.msg-sent {
-    background-color: #3b82f6; 
-    color: #ffffff;
-    border-radius: 15px;
-    border-top-right-radius: 0; 
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
-}
-
-.msg-received {
-    background-color: #ffffff;
+.card, .card-custom {
+    background-color: var(--white); 
+    border: none;
+    border-radius: 12px; 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s;
     color: #334155;
-    border: 1px solid #e2e8f0;
-    border-radius: 15px;
-    border-top-left-radius: 0; 
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.msg-timestamp {
-    font-size: 0.65rem; 
-    opacity: 0.8;
-    margin-top: 5px;
-    text-align: right;
-    display: block;
+.card-custom:hover {
+    transform: translateY(-2px);
 }
 
-/* =========================================
-   6. DARK MODE
-   ========================================= */
-
-/* Main Backgrounds */
-body.dark-mode {
-    background-color: #121212 !important; 
-    color: #e0e0e0 !important; 
-}
-
-/* Secondary Backgrounds */
-body.dark-mode .bg-light,
-body.dark-mode .card,
-body.dark-mode .card-custom,
-body.dark-mode .sidebar {
-    background-color: #1e1e1e !important; 
-    color: #ffffff !important;
-    border-color: #333333; 
-}
-
-body.dark-mode .navbar-custom {
-    background-color: #252525 !important; 
-    border-bottom: 1px solid #444;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-}
-
-body.dark-mode .navbar-brand-custom {
-    color: #ffffff !important; 
-}
-
-body.dark-mode .navbar-custom .btn-outline-secondary {
-    color: #cccccc;
-    border-color: #666;
-}
-
-body.dark-mode .navbar-custom .btn-outline-secondary:hover {
-    background-color: #444;
-    color: #fff;
-}
-
-/* Inputs & Forms */
-body.dark-mode .form-control, 
-body.dark-mode .form-select {
-    background-color: #2d2d2d;
-    border: 1px solid #444;
-    color: #ffffff; 
-}
-
-body.dark-mode .form-control:focus {
-    background-color: #333;
-    border-color: #888;
-    color: #fff;
-}
-
-body.dark-mode .form-control::placeholder {
-    color: #888;
-}
-
-body.dark-mode .table {
-    color: #e0e0e0;
-}
-
-body.dark-mode .table thead, 
-body.dark-mode .table thead th,
-body.dark-mode .table .bg-light {
-    background-color: #2c2c2c !important;
-    color: #ffffff !important;
-    border-bottom: 2px solid #555;
-    border-color: #444 !important;
-}
-
-body.dark-mode .table td,
-body.dark-mode .table tbody tr {
-    background-color: #1e1e1e !important;
-    border-color: #444;
-    color: #e0e0e0;
-}
-
-body.dark-mode .list-group-item {
-    background-color: #1e1e1e;
-    color: #fff;
-    border-color: #444;
-}
-
-body.dark-mode .list-group-item-action:hover {
-    background-color: #333; 
-}
-
-body.dark-mode .text-muted {
-    color: #a0a0a0 !important; 
-}
-
-body.dark-mode .text-dark {
-    color: #ffffff !important; 
-}
-
-body.dark-mode small {
-    color: #b0b0b0 !important;
-}
-
-body.dark-mode .msg-sent {
-    background-color: #2563eb; 
-    color: #fff;
-}
-
-body.dark-mode .msg-received {
-    background-color: #334155 !important; 
-    color: #e2e8f0 !important;
-    border: 1px solid #475569 !important;
-}
-
-body.dark-mode .msg-timestamp {
-    color: #94a3b8 !important; 
-}
-
-body.dark-mode #chat-box,
-body.dark-mode [style*="#f1f5f9"] {
-    background-color: #0f172a !important; 
-}
-
-body.dark-mode .bg-white,
-body.dark-mode .border-top,
-body.dark-mode .border-bottom,
-body.dark-mode .border-end {
-    background-color: #1e293b !important; 
-    color: #ffffff !important;
-    border-color: #334155 !important;
-}
-
-body.dark-mode .flex-grow-1 > .d-flex.flex-column.justify-content-center.h-100.text-center {
-    background-color: #181313 !important;
-}
-
-body.dark-mode .alert-info, 
-body.dark-mode .bg-light-custom {
-    background-color: #1e293b !important; 
-    border: 1px solid #334155 !important; 
-}
-
-body.dark-mode .alert-info strong,
-body.dark-mode .alert-info .text-dark {
-    color: #ffffff !important;
-}
-
-body.dark-mode .alert-info .text-secondary,
-body.dark-mode .alert-info .text-muted {
-    color: #cbd5e1 !important;
-}
-
-body.dark-mode .btn-outline-dark {
-    background-color: #ffffff !important;
-    color: #212529 !important;
-    border-color: #ffffff !important;
-}
-
-body.dark-mode .btn-outline-dark:hover {
-    background-color: #d1d5db !important;
-    color: #000000 !important;
-    border-color: #d1d5db !important;
-}
-
-/* Scrollbar Styles */
 .tenant-card { 
     transition: all 0.2s ease; 
     border-radius: 8px; 
@@ -380,84 +135,15 @@ body.dark-mode .btn-outline-dark:hover {
     transform: scale(1.05); 
 }
 
-/* =========================================
-   7. CUSTOM SCROLLBARS
-   ========================================= */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent; 
-}
-
-::-webkit-scrollbar-thumb {
-    background: #cbd5e1; 
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8; 
-}
-
-.chat-scroll::-webkit-scrollbar { 
-    width: 6px; height: 6px; 
-}
-
-.chat-scroll::-webkit-scrollbar-thumb { 
-    background: #cbd5e1; border-radius: 10px; 
-}
-
-.chat-scroll::-webkit-scrollbar-thumb:hover { 
-    background: #94a3b8; 
-}
-
-/* Dark Mode Scrollbar */
-body.dark-mode ::-webkit-scrollbar-thumb {
-    background: #444;
-}
-body.dark-mode ::-webkit-scrollbar-thumb:hover {
-    background: #666;
-}
-
-body.dark-mode .tenant-card:hover { 
-    background-color: #2d2d2d !important; 
-}
-
-body.dark-mode .mobile-tenant-strip { 
-    background-color: #1e1e1e !important; 
-    border-bottom: 1px solid #333 !important; 
-}
-
-body.dark-mode .chat-input-wrapper { 
-    background-color: #2d2d2d !important; 
-    border-color: #444 !important; 
-}
-
-body.dark-mode .chat-input-wrapper input { 
-    color: #fff !important; 
-}
+/* Custom Backgrounds & Text Colors */
+.bg-primary-custom { background-color: var(--primary) !important; color: white; border: none; }
+.bg-primary-custom:hover { background-color: var(--primary-dark) !important; }
+.text-primary-custom { color: var(--primary) !important; font-weight: 600; }
+.bg-dark-custom { background-color: var(--sidebar-bg) !important; color: white; }
+.bg-dark-custom:hover { color: #cccccc !important; }
 
 /* =========================================
-   8. BROWSER DEFAULTS
-   ========================================= */
-input[type="password"]::-webkit-text-security-disc { 
-    -webkit-appearance: none; 
-}
-
-input[type="password"]::-webkit-password-reveal-button,
-input[type="password"]::-webkit-clear-button { 
-    display: none !important; 
-    -webkit-appearance: none !important; 
-}
-
-input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { 
-    display: none !important; 
-}
-
-/* =========================================
-   9. PROFILE PAGE
+   5. PROFILE PAGE
    ========================================= */
 .profile-header { 
     color: #3d5a80; 
@@ -488,7 +174,7 @@ input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear {
     margin: 0 auto 30px auto;
     border-radius: 50%; 
     overflow: hidden; 
-    border: 4px solid #fff;
+    border: 4px solid var(--white);
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
@@ -498,105 +184,143 @@ input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear {
     object-fit: cover; 
 }
 
-body.dark-mode .profile-header { 
-    color: #60a5fa !important; 
-    border-bottom-color: #334155;
+/* =========================================
+   6. CHAT BUBBLES
+   ========================================= */
+.msg-sent {
+    background-color: var(--primary); 
+    color: var(--white);
+    border-radius: 15px;
+    border-top-right-radius: 0; 
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
-body.dark-mode .label-text { 
-    color: #94a3b8 !important; 
+.msg-received {
+    background-color: var(--white);
+    color: #334155;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    border-top-left-radius: 0; 
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-body.dark-mode .info-text { 
-    color: #ffffff !important; 
-}
-
-body.dark-mode .profile-img-container {
-    border-color: #1e293b; 
+.msg-timestamp {
+    font-size: 0.65rem; 
+    opacity: 0.8;
+    margin-top: 5px;
+    text-align: right;
+    display: block;
 }
 
 /* =========================================
-   10. PRINT / PDF EXPORT STYLES
+   7. SCROLLBARS & BROWSER DEFAULTS
+   ========================================= */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-body); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
+
+.chat-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.chat-scroll::-webkit-scrollbar-thumb { background: var(--bg-body); border-radius: 10px; }
+.chat-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
+
+input[type="password"]::-webkit-text-security-disc { -webkit-appearance: none; }
+input[type="password"]::-webkit-password-reveal-button,
+input[type="password"]::-webkit-clear-button { display: none !important; -webkit-appearance: none !important; }
+input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { display: none !important; }
+
+/* =========================================
+   8. DARK MODE 
+   ========================================= */
+body.dark-mode { background-color: #121212 !important; color: #e0e0e0 !important; }
+
+/* Navbar & Sidebar */
+body.dark-mode .navbar-custom { background-color: #252525 !important; border-bottom: 1px solid #444; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+body.dark-mode .navbar-brand-custom { color: #ffffff !important; }
+body.dark-mode .navbar-custom .btn-outline-secondary { color: #cccccc; border-color: #666; }
+body.dark-mode .navbar-custom .btn-outline-secondary:hover { background-color: #444; color: #fff; }
+body.dark-mode .sidebar { background-color: #1e1e1e !important; color: #ffffff !important; border-color: #333333; }
+
+/* Standard Cards & Backgrounds */
+body.dark-mode .bg-light,
+body.dark-mode .card,
+body.dark-mode .card-custom { background-color: #1e1e1e !important; color: #ffffff !important; border-color: #333333; }
+
+/* Manage Rooms */
+body.dark-mode .card-custom.bg-white { background-color: #272626 !important; border: 1px solid #000000 !important; box-shadow: none !important; }
+body.dark-mode .table { color: #e0e0e0; }
+body.dark-mode .table td, body.dark-mode .table tbody tr { background-color: #1e1e1e !important; border-color: #444; color: #e0e0e0; }
+body.dark-mode .table thead, body.dark-mode .table thead th, body.dark-mode .table .bg-light { background-color: #2c2c2c !important; color: #ffffff !important; border-bottom: 2px solid #555; border-color: #444 !important; }
+body.dark-mode .card-custom .table, body.dark-mode .card-custom .table thead, body.dark-mode .card-custom .table thead th, body.dark-mode .card-custom .table td, body.dark-mode .card-custom .table tbody tr, body.dark-mode .card-custom .table .bg-light { background-color: #272626 !important; border-color: #272626 !important; color: #e0e0e0 !important; }
+body.dark-mode .card-custom .table-hover tbody tr:hover td { background-color: #111111 !important; }
+
+/* Chat Support UI */
+body.dark-mode [style*="#f8fafc"], body.dark-mode [style*="#f1f5f9"], body.dark-mode .flex-grow-1 > .d-flex.flex-column.position-relative { background-color: #272626 !important; }
+body.dark-mode #chat-box { background-color: #0f172a !important; }
+body.dark-mode .bg-white, body.dark-mode .border-top, body.dark-mode .border-bottom, body.dark-mode .border-end { background-color: #1e293b !important; color: #ffffff !important; border-color: #334155 !important; }
+body.dark-mode .flex-grow-1 > .d-flex.flex-column.justify-content-center.h-100.text-center { background-color: #181313 !important; }
+body.dark-mode .mobile-tenant-strip { background-color: #1e1e1e !important; border-bottom: 1px solid #333 !important; }
+
+/* Chat Bubbles */
+body.dark-mode .msg-sent { background-color: #2563eb; color: #fff; }
+body.dark-mode .msg-received { background-color: #334155 !important; color: #e2e8f0 !important; border: 1px solid #475569 !important; }
+body.dark-mode .msg-timestamp { color: #94a3b8 !important; }
+
+/* Forms & Inputs */
+body.dark-mode .form-control, body.dark-mode .form-select { background-color: #2d2d2d; border: 1px solid #444; color: #ffffff; }
+body.dark-mode .form-control:focus { background-color: #333; border-color: #888; color: #fff; }
+body.dark-mode .form-control::placeholder { color: #888; }
+body.dark-mode .chat-input-wrapper { background-color: #2d2d2d !important; border-color: #444 !important; }
+body.dark-mode .chat-input-wrapper input { color: #fff !important; }
+
+/* Lists & Buttons */
+body.dark-mode .list-group-item { background-color: #1e1e1e; color: #fff; border-color: #444; }
+body.dark-mode .list-group-item-action:hover, body.dark-mode .tenant-card:hover { background-color: #2d2d2d !important; }
+body.dark-mode .btn-outline-dark { background-color: #ffffff !important; color: #212529 !important; border-color: #ffffff !important; }
+body.dark-mode .btn-outline-dark:hover { background-color: #d1d5db !important; color: #000000 !important; border-color: #d1d5db !important; }
+
+/* Alerts */
+body.dark-mode .alert-info, body.dark-mode .bg-light-custom { background-color: #1e293b !important; border: 1px solid #334155 !important; }
+body.dark-mode .alert-info strong, body.dark-mode .alert-info .text-dark { color: #ffffff !important; }
+body.dark-mode .alert-info .text-secondary, body.dark-mode .alert-info .text-muted { color: #cbd5e1 !important; }
+
+/* Profile Page */
+body.dark-mode .profile-header { color: #60a5fa !important; border-bottom-color: #334155; }
+body.dark-mode .label-text { color: #94a3b8 !important; }
+body.dark-mode .info-text { color: #ffffff !important; }
+body.dark-mode .profile-img-container { border-color: #1e293b; }
+
+/* Typography & Scrollbars */
+body.dark-mode .text-muted { color: #a0a0a0 !important; }
+body.dark-mode .text-dark { color: #ffffff !important; }
+body.dark-mode small { color: #b0b0b0 !important; }
+body.dark-mode ::-webkit-scrollbar-thumb { background: #444; }
+body.dark-mode ::-webkit-scrollbar-thumb:hover { background: #666; }
+
+/* =========================================
+   9. PRINT / PDF EXPORT STYLES
    ========================================= */
 @media print {
-    body, body.dark-mode {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    .card, .card-custom, .bg-light, .bg-white {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-        border: 1px solid #ccc !important;
-        box-shadow: none !important;
-    }
-
-    .sidebar, .navbar, .btn, button, #darkModeToggle {
-        display: none !important;
-    }
-
-    .d-flex, .flex-grow-1, .p-4 {
-        display: block !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: visible !important;
-        height: auto !important;
-    }
-
-    .table {
-        width: 100% !important;
-        border-collapse: collapse !important;
-        color: #000000 !important;
-    }
-
-    .table th, .table td {
-        border: 1px solid #000 !important;
-        background-color: #fff !important;
-    }
-
-    .badge {
-        border: 1px solid #000;
-        color: #000 !important;
-    }
+    body, body.dark-mode { background-color: #ffffff !important; color: #000000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .card, .card-custom, .bg-light, .bg-white { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ccc !important; box-shadow: none !important; }
+    .sidebar, .navbar, .btn, button, #darkModeToggle { display: none !important; }
+    .d-flex, .flex-grow-1, .p-4 { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; height: auto !important; }
+    .table { width: 100% !important; border-collapse: collapse !important; color: #000000 !important; }
+    .table th, .table td { border: 1px solid #000 !important; background-color: #fff !important; }
+    .badge { border: 1px solid #000; color: #000 !important; }
 }
 
 /* =========================================
-   11. MOBILE RESPONSIVENESS
+   10. MOBILE RESPONSIVENESS
    ========================================= */
-
-@media  (max-width: 1200px) {
-    .sidebar {
-        width: 220px;
-    }
-
-    .navbar-brand-custom {
-        font-size: 1.1rem !important;
-    }
-
-    .navbar-custom {
-        padding-left: 15px !important;
-        padding-right: 15px !important;
-    }
-
-    .p-5 { 
-        padding: 2rem !important; 
-    }
-
-    .p-4 { 
-        padding: 1.5rem !important; 
-    }
-
-    h2 { 
-        font-size: 1.75rem; 
-    }
-
-    .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
+@media (max-width: 1200px) {
+    .sidebar { width: 220px; }
+    .navbar-brand-custom { font-size: 1.1rem !important; }
+    .navbar-custom { padding-left: 15px !important; padding-right: 15px !important; }
+    .p-5 { padding: 2rem !important; }
+    .p-4 { padding: 1.5rem !important; }
+    h2 { font-size: 1.75rem; }
+    .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 }
 
 @media (max-width: 991px) {
@@ -609,38 +333,16 @@ body.dark-mode .profile-img-container {
         transition: left 0.3s ease-in-out;
         box-shadow: 5px 0 15px rgba(0,0,0,0.3);
     }
-
-    .sidebar.show {
-        left: 0;
-    }
-    
+    .sidebar.show { left: 0; }
     .navbar-brand-custom {
         font-size: 1rem !important;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis; 
     }
-    
-    .navbar-custom {
-        padding-left: 10px !important;
-        padding-right: 10px !important;
-    }
-    
-    .d-flex.flex-grow-1 { 
-        flex-direction: column; 
-    }
-    
-    .p-5 { 
-        padding: 1.5rem !important; 
-    }
-
-    .p-4 { 
-        padding: 1rem !important; 
-    }
-
+    .navbar-custom { padding-left: 10px !important; padding-right: 10px !important; }
+    .d-flex.flex-grow-1 { flex-direction: column; }
+    .p-5 { padding: 1.5rem !important; }
+    .p-4 { padding: 1rem !important; }
     h2 { font-size: 1.5rem; } 
-    .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
 }

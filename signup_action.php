@@ -24,16 +24,19 @@ if (isset($_POST['signup'])) {
         exit();
     }
 
-    // Insert New User
-    // Note: not assigning a room yet. That is the Admin's job.
+    // --- SECURE ENCRYPTION ---
+    // Encrypt the password using SHA-256 to match login system
+    $hashed_password = hash('sha256', $password);
+
     $role = 'tenant';
     
     $sql = "INSERT INTO users (fullname, email, password, role) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssss", $fullname, $email, $password, $role);
+    
+    // Bind the $hashed_password instead of the plain text one
+    $stmt->bind_param("ssss", $fullname, $email, $hashed_password, $role);
 
     if ($stmt->execute()) {
-        // Success! Redirect to login page with success message
         header("Location: index.php?success=registered");
     } else {
         header("Location: signup.php?error=db_error");
