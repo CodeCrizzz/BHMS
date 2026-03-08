@@ -4,12 +4,16 @@ require_once '../includes/auth_check.php';
 checkLogin('tenant');
 
 $my_id = $_SESSION['user_id'];
-$admin_id = 1;
 
-if(isset($_POST['send_msg'])){
+// Find the actual Admin ID dynamically 
+$admin_query = $conn->query("SELECT id FROM users WHERE role = 'admin' LIMIT 1");
+$admin_data = $admin_query->fetch_assoc();
+$admin_id = $admin_data ? $admin_data['id'] : 0;
+
+if(isset($_POST['send_msg']) && $admin_id > 0){
     $msg = $_POST['message'];
     
-    // Validate: Only send if message is not empty
+    //Only send if message is not empty
     if(!empty(trim($msg))){
         $stmt = $conn->prepare("INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)");
         $stmt->bind_param("iis", $my_id, $admin_id, $msg);
@@ -31,7 +35,6 @@ if(isset($_POST['send_msg'])){
 </head>
 <body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
     <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap" style="z-index: 1000;">
-    
         <div class="d-flex align-items-center gap-2" style="min-width: 0;"> <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
                 <i class="fa fa-bars"></i>
             </button>
@@ -53,7 +56,6 @@ if(isset($_POST['send_msg'])){
     </nav>
 
     <div class="d-flex flex-grow-1" style="overflow: hidden;">
-        
         <div class="sidebar p-3" style="width: 250px; overflow-y: auto;">
             <h4 class="text-center mb-4 mt-2">My Portal</h4>
             <a href="dashboard.php"><i class="fa fa-home me-2"></i> Dashboard</a>
@@ -63,13 +65,11 @@ if(isset($_POST['send_msg'])){
         </div>
 
         <div class="d-flex flex-column flex-grow-1" style="overflow: hidden;">
-            
             <div class="p-3 bg-white border-bottom shadow-sm flex-shrink-0">
                 <h5 class="m-0 text-primary-custom">Chat with Admin</h5>
             </div>
 
-            <div id="chat-box" class="flex-grow-1 p-4" style="overflow-y: auto;">
-            </div>
+            <div id="chat-box" class="flex-grow-1 p-4" style="overflow-y: auto;"></div>
 
             <div class="p-3 bg-white border-top flex-shrink-0">
                 <form method="POST" autocomplete="off">
@@ -79,7 +79,6 @@ if(isset($_POST['send_msg'])){
                     </div>
                 </form>
             </div>
-
         </div> 
     </div>
 
@@ -87,7 +86,7 @@ if(isset($_POST['send_msg'])){
 <script>
 $(document).ready(function(){
     var myId = <?php echo $my_id; ?>;
-    var adminId = 1;
+    var adminId = <?php echo $admin_id; ?>;
     var chatBox = $("#chat-box");
     var autoScroll = true;
 

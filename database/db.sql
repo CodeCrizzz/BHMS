@@ -105,6 +105,20 @@ CREATE TABLE requests (
 );
 
 -- =========================
+-- 7. Messages Table
+-- =========================
+CREATE TABLE IF NOT EXISTS `messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sender_id` int(11) NOT NULL,
+  `receiver_id` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `timestamp` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+-- =========================
 -- Default Admin Account
 -- =========================
 INSERT INTO users (fullname, email, password, role)
