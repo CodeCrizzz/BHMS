@@ -46,6 +46,15 @@ $stmt_r = $conn->prepare($sql_req);
 $stmt_r->bind_param("i", $user_id);
 $stmt_r->execute();
 $my_requests = $stmt_r->get_result();
+
+// --- NEW: GET UNREAD MESSAGE COUNT ---
+$unread_query = $conn->query("SELECT COUNT(id) AS unread FROM messages WHERE receiver_id = $user_id AND is_read = 0");
+$unread_count = 0;
+if ($unread_query) {
+    $unread_data = $unread_query->fetch_assoc();
+    $unread_count = $unread_data['unread'];
+}
+// -------------------------------------
 ?>
 
 <!DOCTYPE html>
@@ -89,8 +98,14 @@ $my_requests = $stmt_r->get_result();
             <a href="dashboard.php" class="active"><i class="fa fa-home me-2"></i> Dashboard</a>
             <a href="profile.php"><i class="fa fa-user me-2"></i> My Profile</a>
             <a href="payments.php"><i class="fa fa-credit-card me-2"></i> Billing</a>
-            <a href="talk.php"><i class="fa fa-comments me-2"></i> Chat Admin</a>
-        </div>
+            
+            <a href="talk.php" class="d-flex justify-content-between align-items-center">
+                <span><i class="fa fa-comments me-2"></i> Chat Admin</span>
+                <?php if($unread_count > 0): ?>
+                    <span class="badge bg-danger rounded-pill shadow-sm" style="font-size: 0.75rem; padding: 0.35em 0.65em;"><?php echo $unread_count; ?></span>
+                <?php endif; ?>
+            </a>
+            </div>
 
         <div class="flex-grow-1 p-4 bg-light" style="overflow-y: auto;">
             

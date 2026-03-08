@@ -106,7 +106,6 @@ $balance = $balance ? $balance : 0;
 </head>
 <body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
     <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap" style="z-index: 1000;">
-    
         <div class="d-flex align-items-center gap-2" style="min-width: 0;"> <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
                 <i class="fa fa-bars"></i>
             </button>
@@ -134,7 +133,14 @@ $balance = $balance ? $balance : 0;
             <a href="dashboard.php"><i class="fa fa-home me-2"></i> Dashboard</a>
             <a href="profile.php" class="active"><i class="fa fa-user me-2"></i> My Profile</a>
             <a href="payments.php"><i class="fa fa-credit-card me-2"></i> Billing</a>
-            <a href="talk.php"><i class="fa fa-comments me-2"></i> Chat Admin</a>
+            <a href="talk.php" class="position-relative">
+                <i class="fa fa-comments me-2"></i> Chat Admin
+                <?php if(isset($unread_count) && $unread_count > 0): ?>
+                    <span class="position-absolute badge rounded-pill bg-danger" style="top: 8px; right: 10px; font-size: 0.7rem; padding: 4px 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                        <?php echo $unread_count; ?>
+                    </span>
+                <?php endif; ?>
+            </a>
         </div>
 
         <div class="flex-grow-1 p-5 bg-light" style="overflow-y: auto;">

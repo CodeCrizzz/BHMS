@@ -116,7 +116,8 @@ CREATE TABLE IF NOT EXISTS `messages` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
+-- Add is_read column to messages table
+ALTER TABLE messages ADD COLUMN is_read TINYINT(1) DEFAULT 0;
 
 -- =========================
 -- Default Admin Account
