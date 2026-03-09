@@ -61,10 +61,11 @@ if(isset($_POST['send_msg']) && $admin_id > 0){
             <a href="dashboard.php"><i class="fa fa-home me-2"></i> Dashboard</a>
             <a href="profile.php"><i class="fa fa-user me-2"></i> My Profile</a>
             <a href="payments.php"><i class="fa fa-credit-card me-2"></i> Billing</a>
-            <a href="talk.php" class="position-relative">
-                <i class="active fa fa-comments me-2 " ></i> Chat Admin
+            
+            <a href="talk.php" class="position-relative active">
+                <i class="fa fa-comments me-2"></i> Chat Admin
                 <?php if(isset($unread_count) && $unread_count > 0): ?>
-                    <span class="position-absolute badge rounded-pill bg-danger" style="top: 8px; right: 10px; font-size: 0.7rem; padding: 4px 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                    <span class="position-absolute badge rounded-pill bg-danger shadow-sm" style="top: 8px; right: 10px; font-size: 0.7rem; padding: 4px 6px;">
                         <?php echo $unread_count; ?>
                     </span>
                 <?php endif; ?>

@@ -5,6 +5,14 @@ checkLogin('tenant');
 
 $my_id = $_SESSION['user_id'];
 
+// --- GET UNREAD MESSAGE COUNT ---
+$unread_query = $conn->query("SELECT COUNT(id) AS unread FROM messages WHERE receiver_id = " . $_SESSION['user_id'] . " AND is_read = 0");
+$unread_count = 0;
+if ($unread_query) {
+    $unread_data = $unread_query->fetch_assoc();
+    $unread_count = $unread_data['unread'];
+}
+
 $stmt_pending = $conn->prepare("SELECT SUM(amount) as total FROM payments WHERE tenant_id = ? AND status = 'pending'");
 $stmt_pending->bind_param("i", $my_id);
 $stmt_pending->execute();
@@ -58,12 +66,10 @@ $paid_total = $paid_total ? $paid_total : 0.00;
             <a href="dashboard.php"><i class="fa fa-home me-2"></i> Dashboard</a>
             <a href="profile.php"><i class="fa fa-user me-2"></i> My Profile</a>
             <a href="payments.php" class="active"><i class="fa fa-credit-card me-2"></i> Billing</a>
-            <a href="talk.php" class="position-relative">
-                <i class="fa fa-comments me-2"></i> Chat Admin
-                <?php if(isset($unread_count) && $unread_count > 0): ?>
-                    <span class="position-absolute badge rounded-pill bg-danger" style="top: 8px; right: 10px; font-size: 0.7rem; padding: 4px 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                        <?php echo $unread_count; ?>
-                    </span>
+            <a href="talk.php" class="d-flex justify-content-between align-items-center">
+                <span><i class="fa fa-comments me-2"></i> Chat Admin</span>
+                <?php if($unread_count > 0): ?>
+                    <span class="badge bg-danger rounded-pill shadow-sm" style="font-size: 0.75rem; padding: 0.35em 0.65em;"><?php echo $unread_count; ?></span>
                 <?php endif; ?>
             </a>
         </div>

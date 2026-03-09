@@ -66,6 +66,15 @@ $stmt_b->bind_param("i", $user_id);
 $stmt_b->execute();
 $balance = $stmt_b->get_result()->fetch_assoc()['debt'];
 $balance = $balance ? $balance : 0;
+
+// --- GET UNREAD MESSAGE COUNT ---
+$unread_query = $conn->query("SELECT COUNT(id) AS unread FROM messages WHERE receiver_id = " . $_SESSION['user_id'] . " AND is_read = 0");
+$unread_count = 0;
+if ($unread_query) {
+    $unread_data = $unread_query->fetch_assoc();
+    $unread_count = $unread_data['unread'];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -77,32 +86,6 @@ $balance = $balance ? $balance : 0;
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
-    <style>
-        .profile-header { color: #3d5a80; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; font-size: 1.1rem; }
-        .label-text { font-size: 0.85rem; color: #6c757d; font-weight: 600; margin-bottom: 2px; }
-        .info-text { font-size: 1rem; color: #212529; margin-bottom: 20px; font-weight: 500; }
-        
-        .profile-img-container {
-            width: 150px; height: 150px; margin: 0 auto 30px auto;
-            border-radius: 50%; overflow: hidden; border: 4px solid #fff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .profile-img-container img { width: 100%; height: 100%; object-fit: cover; }
-
-        body.dark-mode .profile-header { 
-            color: #60a5fa !important; 
-            border-bottom-color: #334155;
-        }
-        body.dark-mode .label-text { 
-            color: #94a3b8 !important;
-        }
-        body.dark-mode .info-text { 
-            color: #ffffff !important;
-        }
-        body.dark-mode .profile-img-container {
-            border-color: #1e293b;
-        }
-    </style>
 </head>
 <body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
     <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap" style="z-index: 1000;">
@@ -133,12 +116,10 @@ $balance = $balance ? $balance : 0;
             <a href="dashboard.php"><i class="fa fa-home me-2"></i> Dashboard</a>
             <a href="profile.php" class="active"><i class="fa fa-user me-2"></i> My Profile</a>
             <a href="payments.php"><i class="fa fa-credit-card me-2"></i> Billing</a>
-            <a href="talk.php" class="position-relative">
-                <i class="fa fa-comments me-2"></i> Chat Admin
-                <?php if(isset($unread_count) && $unread_count > 0): ?>
-                    <span class="position-absolute badge rounded-pill bg-danger" style="top: 8px; right: 10px; font-size: 0.7rem; padding: 4px 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                        <?php echo $unread_count; ?>
-                    </span>
+            <a href="talk.php" class="d-flex justify-content-between align-items-center">
+                <span><i class="fa fa-comments me-2"></i> Chat Admin</span>
+                <?php if($unread_count > 0): ?>
+                    <span class="badge bg-danger rounded-pill shadow-sm" style="font-size: 0.75rem; padding: 0.35em 0.65em;"><?php echo $unread_count; ?></span>
                 <?php endif; ?>
             </a>
         </div>

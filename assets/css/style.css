@@ -56,7 +56,7 @@ html, body {
     padding: 14px 20px;
     display: block;
     border-radius: 8px;
-    margin-bottom: 0 !important;
+    margin-bottom: 8px !important;
     font-weight: 500;
     transition: all 0.3s ease;
 }

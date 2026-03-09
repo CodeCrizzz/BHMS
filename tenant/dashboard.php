@@ -98,14 +98,13 @@ if ($unread_query) {
             <a href="dashboard.php" class="active"><i class="fa fa-home me-2"></i> Dashboard</a>
             <a href="profile.php"><i class="fa fa-user me-2"></i> My Profile</a>
             <a href="payments.php"><i class="fa fa-credit-card me-2"></i> Billing</a>
-            
             <a href="talk.php" class="d-flex justify-content-between align-items-center">
                 <span><i class="fa fa-comments me-2"></i> Chat Admin</span>
                 <?php if($unread_count > 0): ?>
                     <span class="badge bg-danger rounded-pill shadow-sm" style="font-size: 0.75rem; padding: 0.35em 0.65em;"><?php echo $unread_count; ?></span>
                 <?php endif; ?>
             </a>
-            </div>
+        </div>
 
         <div class="flex-grow-1 p-4 bg-light" style="overflow-y: auto;">
             
