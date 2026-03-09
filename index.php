@@ -59,19 +59,19 @@ if (isset($_POST['login'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="bg-light-gray min-vh-100 d-flex align-items-center justify-content-center p-3 p-md-5">
+<body class="min-vh-100 d-flex align-items-center justify-content-center p-3 p-md-5">
+    <div class="login-bg-container">
+        <img src="assets/img/bg.png" alt="Background">
+        <div class="login-bg-overlay"></div>
+    </div>
 
     <div class="card login-card shadow-lg border-0 overflow-hidden" style="max-width: 900px; width: 100%;">
         <div class="row g-0 align-items-stretch">
-            
-            <div class="col-lg-6 d-none d-lg-block border-end" style="background: #ffffff url('assets/img/logo.jpg') center center / contain no-repeat; min-height: 500px;">
-            </div>
-            
+            <div class="col-lg-6 d-none d-lg-block border-end" style="background: #ffffff url('assets/img/logo.jpg') center center / contain no-repeat; min-height: 500px;"></div>
             <div class="col-lg-6 col-md-12 p-4 p-md-5 d-flex align-items-center bg-white">
                 <div class="w-100">
-                    
                     <div class="text-start mb-4">
-                        <h1 class="h2 fw-bold text-dark mb-2">Login</h1>
+                        <h1 class="h2 fw-bold text-dark mb-2">Welcome!!</h1>
                         <p class="text-secondary mb-4">Please login to your account.</p>
                     </div>
 
@@ -91,9 +91,7 @@ if (isset($_POST['login'])) {
                     <?php endif; ?>
 
                     <form method="POST" autocomplete="off">
-                        
                         <input type="hidden" name="role" id="role_input" value="tenant">
-
                         <ul class="nav nav-pills nav-fill mb-4 role-toggle" id="roleTab" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="tenant-tab" data-bs-toggle="pill" type="button" role="tab" onclick="switchRole('tenant')">Tenant</button>
@@ -131,7 +129,7 @@ if (isset($_POST['login'])) {
 
                         <div id="signupSection" class="text-center">
                             <p class="text-secondary mb-0">Don't have an account? 
-                                <a href="signup.php" class="text-primary-custom fw-bold text-decoration-none ms-1">Sign up here</a>
+                                <a href="signup.php" class="text-primary-custom fw-bold text-decoration-none ms-1 transition-link">Sign up here</a>
                             </p>
                         </div>
                     </form>
