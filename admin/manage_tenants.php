@@ -111,7 +111,7 @@ if(isset($_POST['update_tenant'])){
 if(isset($_GET['delete'])){
     $id = intval($_GET['delete']); // intval() adds security
     
-    // STEP 1: Find out what room this tenant is in BEFORE deleting them
+    // Find out which room this tenant was assigned to BEFORE we delete them
     $room_assigned = null;
     $get_room = $conn->query("SELECT room_assigned FROM users WHERE id=$id");
     if($get_room->num_rows > 0) {
@@ -119,16 +119,16 @@ if(isset($_GET['delete'])){
         $room_assigned = $row['room_assigned'];
     }
 
-    // STEP 2: Delete the tenant from the database
+    // Delete the tenant from the database
     $conn->query("DELETE FROM users WHERE id=$id");
     
-    // STEP 3: If they were assigned to a room, check if the room is now empty
+    // If the tenant had a room assigned, we need to check if that room should now be marked as 'available'
     if(!empty($room_assigned)) {
-        // Count how many tenants are STILL in this specific room
+        // Check how many tenants are still assigned to that room
         $check_room = $conn->query("SELECT COUNT(*) as total_occupants FROM users WHERE room_assigned='$room_assigned' AND role='tenant'");
         $room_data = $check_room->fetch_assoc();
         
-        // STEP 4: If 0 people are left, set the room to 'available'
+        // If there are no more occupants, mark the room as available
         if($room_data['total_occupants'] == 0) {
             $conn->query("UPDATE rooms SET status='available' WHERE room_no='$room_assigned'");
         }
@@ -143,6 +143,15 @@ if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'){
     $msg = "Tenant removed from the system.";
     $msg_type = "success";
 }
+
+// UNREAD MESSAGE COUNT
+$unread_query = $conn->query("SELECT COUNT(id) AS unread FROM messages WHERE receiver_id = " . $_SESSION['user_id'] . " AND is_read = 0");
+$unread_count = 0;
+if ($unread_query) {
+    $unread_data = $unread_query->fetch_assoc();
+    $unread_count = $unread_data['unread'];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -184,7 +193,14 @@ if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'){
             <a href="manage_rooms.php" class="nav-rooms"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
             <a href="billing.php" class="nav-billing"><i class="fa fa-file-invoice-dollar me-2"></i> Billing</a>
             <a href="manage_requests.php" class="nav-requests"><i class="fa fa-wrench me-2"></i> Manage Requests</a>
-            <a href="talk.php" class="nav-talk"><i class="fa fa-comments me-2"></i> Chat Support</a>
+            <a href="talk.php" class="nav-talk position-relative">
+                <i class="fa fa-comments me-2"></i> Chat Support
+                <?php if(isset($unread_count) && $unread_count > 0): ?>
+                    <span class="position-absolute badge rounded-pill bg-danger shadow-sm" style="top: 8px; right: 10px; font-size: 0.7rem; padding: 4px 6px;">
+                        <?php echo $unread_count; ?>
+                    </span>
+                <?php endif; ?>
+            </a>
             <a href="manage_admins.php" class="nav-admins"><i class="fa fa-user-shield me-2"></i> Manage Admins</a>
         </div>
 

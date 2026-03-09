@@ -51,6 +51,15 @@ if (isset($_POST['update_room'])) {
         $msg_type = "danger";
     }
 }
+
+// UNREAD MESSAGE COUNT
+$unread_query = $conn->query("SELECT COUNT(id) AS unread FROM messages WHERE receiver_id = " . $_SESSION['user_id'] . " AND is_read = 0");
+$unread_count = 0;
+if ($unread_query) {
+    $unread_data = $unread_query->fetch_assoc();
+    $unread_count = $unread_data['unread'];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -84,7 +93,14 @@ if (isset($_POST['update_room'])) {
         <a href="manage_rooms.php" class="nav-rooms active"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
         <a href="billing.php" class="nav-billing"><i class="fa fa-file-invoice-dollar me-2"></i> Billing</a>
         <a href="manage_requests.php" class="nav-requests"><i class="fa fa-wrench me-2"></i> Manage Requests</a>
-        <a href="talk.php" class="nav-talk"><i class="fa fa-comments me-2"></i> Chat Support</a>
+        <a href="talk.php" class="nav-talk position-relative">
+            <i class="fa fa-comments me-2"></i> Chat Support
+            <?php if(isset($unread_count) && $unread_count > 0): ?>
+                <span class="position-absolute badge rounded-pill bg-danger shadow-sm" style="top: 8px; right: 10px; font-size: 0.7rem; padding: 4px 6px;">
+                    <?php echo $unread_count; ?>
+                </span>
+            <?php endif; ?>
+        </a>
         <a href="manage_admins.php" class="nav-admins"><i class="fa fa-user-shield me-2"></i> Manage Admins</a>
     </div>
 
