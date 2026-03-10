@@ -121,18 +121,16 @@ if(isset($_GET['error'])){
 
         document.querySelectorAll('a[href="signup.php"], a[href="index.php"]').forEach(link => {
             link.addEventListener('click', function(e) {
-                // Only apply if it's the "Sign up here" or "Login here" links
                 if(this.classList.contains('text-primary-custom')) {
                     e.preventDefault();
                     const target = this.getAttribute('href');
                     const card = document.querySelector('.login-card');
                     
-                    // Slide the card out
+                    // Slide transition
                     card.style.transition = 'all 0.4s ease-in';
                     card.style.opacity = '0';
                     card.style.transform = 'translateY(-30px)';
                     
-                    // Navigate after the animation
                     setTimeout(() => {
                         window.location.href = target;
                     }, 400);

@@ -39,6 +39,14 @@ if ($unread_query) {
     $unread_count = $unread_data['unread'];
 }
 
+// tenantRequest count
+$tenant_request_count = 0;
+$tenant_request_query = $conn->query("SELECT COUNT(id) AS total FROM requests");
+if ($tenant_request_query) {
+    $tenant_request_data = $tenant_request_query->fetch_assoc();
+    $tenant_request_count = $tenant_request_data['total'];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -83,7 +91,14 @@ if ($unread_query) {
             <a href="manage_tenants.php" class="nav-tenants"><i class="fa fa-users me-2"></i> Manage Tenants</a>
             <a href="manage_rooms.php" class="nav-rooms"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
             <a href="billing.php" class="nav-billing"><i class="fa fa-file-invoice-dollar me-2"></i> Billing</a>
-            <a href="manage_requests.php" class="nav-requests active"><i class="fa fa-wrench me-2"></i> Manage Requests</a>
+            <a href="manage_requests.php" class="nav-requests">
+                <i class="fa fa-wrench me-2"></i> Manage Requests
+                <?php if(isset($tenant_request_count) && $tenant_request_count > 0): ?>
+                    <span class="badge bg-primary rounded-pill" style="position: absolute; top: 8px; right: 10px;">
+                        <?php echo $tenant_request_count; ?>
+                    </span>
+                <?php endif; ?>
+            </a>
             <a href="talk.php" class="nav-talk position-relative">
                 <i class="fa fa-comments me-2"></i> Chat Support
                 <?php if(isset($unread_count) && $unread_count > 0): ?>
