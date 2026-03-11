@@ -259,20 +259,33 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
 
 /* Icon grouping in inputs */
 .input-group-custom .input-group-text {
-    background-color: var(--bg-white);
-    border-color: var(--border-color);
-    color: var(--primary-custom);
-    padding-left: 18px;
-    padding-right: 18px;
+    background-color: var(--white) !important;
+    border-color: var(--border-color) !important;
+    width: 60px !important; 
+    display: flex !important;
+    justify-content: center !important;
+    border-right: none !important;
+    border-radius: 8px 0 0 8px !important;
 }
 
 .input-group-custom .form-control {
-    border-left: none;
-    padding-left: 10px;
+    border-left: none !important;
+    padding-left: 10px !important;
+    height: 50px !important;
 }
 
 .input-group-custom:focus-within .input-group-text {
     border-color: var(--primary-custom);
+}
+
+.shake-error {
+    animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
 }
 
 @keyframes cardEntrance {

@@ -3,11 +3,7 @@ include 'includes/db.php';
 
 // Redirect to dashboard if already logged in
 if (isset($_SESSION['user_id'])) {
-    if ($_SESSION['role'] === 'admin') {
-        header("Location: admin/dashboard.php");
-    } else {
-        header("Location: tenant/dashboard.php");
-    }
+    header("Location: " . ($_SESSION['role'] === 'admin' ? "admin/dashboard.php" : "tenant/dashboard.php"));
     exit();
 }
 
@@ -17,34 +13,49 @@ $msg_type = "";
 if (isset($_POST['login'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $role = $_POST['role']; // Grab the role from the hidden toggle switch
+    $role = $_POST['role'];
 
-    // SHA-256 for basic encryption
-    $hashed_password = hash('sha256', $password);
+    // 1. Check if the email exists in the database
+    $sql_check = "SELECT * FROM users WHERE email = ?";
+    $stmt_check = $conn->prepare($sql_check);
+    $stmt_check->bind_param("s", $email);
+    $stmt_check->execute();
+    $result = $stmt_check->get_result();
 
-    // Added the role check to the database query for extra security
-    $sql = "SELECT * FROM users WHERE email = ? AND password = ? AND role = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $email, $hashed_password, $role);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['email'] = $user['email'];
-        $_SESSION['fullname'] = $user['fullname'];
-        $_SESSION['role'] = $user['role'];
-
-        if ($user['role'] === 'admin') {
-            header("Location: admin/dashboard.php");
-        } else {
-            header("Location: tenant/dashboard.php");
-        }
-        exit();
-    } else {
-        $msg = "Incorrect Email, Password, or Role.";
+    if ($result->num_rows === 0) {
+        // Error: Email not found
+        $msg = "Incorrect email address.";
         $msg_type = "danger";
+    } else {
+        $user = $result->fetch_assoc();
+
+        // 2. Email exists, now check if the role matches the selection
+        if ($user['role'] !== $role) {
+            if ($role === 'admin') {
+                $msg = "Not an admin account.";
+            } else {
+                $msg = "This is an admin account. Please switch to the Admin tab.";
+            }
+            $msg_type = "danger";
+        } else {
+            // 3. Email and Role are correct, finally check the password
+            $hashed_password = hash('sha256', $password);
+
+            if ($user['password'] === $hashed_password) {
+                // Login Success
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['fullname'] = $user['fullname'];
+                $_SESSION['role'] = $user['role'];
+
+                header("Location: " . ($user['role'] === 'admin' ? "admin/dashboard.php" : "tenant/dashboard.php"));
+                exit();
+            } else {
+                // Error: Incorrect password
+                $msg = "Incorrect password.";
+                $msg_type = "danger";
+            }
+        }
     }
 }
 ?>
@@ -65,8 +76,7 @@ if (isset($_POST['login'])) {
         <div class="login-bg-overlay"></div>
     </div>
 
-    <div class="card login-card shadow-lg border-0 overflow-hidden" style="max-width: 900px; width: 100%;">
-        <div class="row g-0 align-items-stretch">
+        <div class="card login-card shadow-lg border-0 overflow-hidden <?php echo $msg ? 'shake-error' : ''; ?>" style="max-width: 900px; width: 100%;">        <div class="row g-0 align-items-stretch">
             <div class="col-lg-6 d-none d-lg-block border-end" style="background: #ffffff url('assets/img/logo.jpg') center center / contain no-repeat; min-height: 500px;"></div>
             <div class="col-lg-6 col-md-12 p-4 p-md-5 d-flex align-items-center bg-white">
                 <div class="w-100">
