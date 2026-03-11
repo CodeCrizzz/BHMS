@@ -9,13 +9,15 @@ if (isset($_SESSION['user_id'])) {
 
 $msg = "";
 $msg_type = "";
+// Capture role to maintain state after post
+$role = isset($_POST['role']) ? $_POST['role'] : 'tenant'; 
 
 if (isset($_POST['login'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
     $role = $_POST['role'];
 
-    // 1. Check if the email exists in the database
+    // 1. Check if the email exists
     $sql_check = "SELECT * FROM users WHERE email = ?";
     $stmt_check = $conn->prepare($sql_check);
     $stmt_check->bind_param("s", $email);
@@ -23,26 +25,20 @@ if (isset($_POST['login'])) {
     $result = $stmt_check->get_result();
 
     if ($result->num_rows === 0) {
-        // Error: Email not found
-        $msg = "Incorrect email address.";
+        $msg = "Incorrect email address."; // Specific email error
         $msg_type = "danger";
     } else {
         $user = $result->fetch_assoc();
 
-        // 2. Email exists, now check if the role matches the selection
+        // 2. Check if the role matches the selection
         if ($user['role'] !== $role) {
-            if ($role === 'admin') {
-                $msg = "Not an admin account.";
-            } else {
-                $msg = "This is an admin account. Please switch to the Admin tab.";
-            }
+            $msg = ($role === 'admin') ? "Not an admin account." : "This is an admin account. Please switch tabs.";
             $msg_type = "danger";
         } else {
-            // 3. Email and Role are correct, finally check the password
+            // 3. Check password
             $hashed_password = hash('sha256', $password);
 
             if ($user['password'] === $hashed_password) {
-                // Login Success
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['fullname'] = $user['fullname'];
@@ -51,8 +47,7 @@ if (isset($_POST['login'])) {
                 header("Location: " . ($user['role'] === 'admin' ? "admin/dashboard.php" : "tenant/dashboard.php"));
                 exit();
             } else {
-                // Error: Incorrect password
-                $msg = "Incorrect password.";
+                $msg = "Incorrect password."; // Specific password error
                 $msg_type = "danger";
             }
         }
@@ -76,7 +71,8 @@ if (isset($_POST['login'])) {
         <div class="login-bg-overlay"></div>
     </div>
 
-        <div class="card login-card shadow-lg border-0 overflow-hidden <?php echo $msg ? 'shake-error' : ''; ?>" style="max-width: 900px; width: 100%;">        <div class="row g-0 align-items-stretch">
+    <div class="card login-card shadow-lg border-0 overflow-hidden <?php echo $msg ? 'shake-error' : ''; ?>" style="max-width: 900px; width: 100%;">
+        <div class="row g-0 align-items-stretch">
             <div class="col-lg-6 d-none d-lg-block border-end" style="background: #ffffff url('assets/img/logo.jpg') center center / contain no-repeat; min-height: 500px;"></div>
             <div class="col-lg-6 col-md-12 p-4 p-md-5 d-flex align-items-center bg-white">
                 <div class="w-100">
@@ -91,23 +87,16 @@ if (isset($_POST['login'])) {
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     <?php endif; ?>
-                    
-                    <?php if(isset($_GET['error']) && $_GET['error'] == 'email_exists'): ?>
-                        <div class="alert alert-danger">Email already registered! Try another one.</div>
-                    <?php endif; ?>
-
-                    <?php if(isset($_GET['success']) && $_GET['success'] == 'registered'): ?>
-                        <div class="alert alert-success">Registered Successfully! Please login now.</div>
-                    <?php endif; ?>
 
                     <form method="POST" autocomplete="off">
-                        <input type="hidden" name="role" id="role_input" value="tenant">
+                        <input type="hidden" name="role" id="role_input" value="<?php echo htmlspecialchars($role); ?>">
+                        
                         <ul class="nav nav-pills nav-fill mb-4 role-toggle" id="roleTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="tenant-tab" data-bs-toggle="pill" type="button" role="tab" onclick="switchRole('tenant')">Tenant</button>
+                                <button class="nav-link <?php echo ($role === 'tenant') ? 'active' : ''; ?>" id="tenant-tab" data-bs-toggle="pill" type="button" role="tab" onclick="switchRole('tenant')">Tenant</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="admin-tab" data-bs-toggle="pill" type="button" role="tab" onclick="switchRole('admin')">Admin</button>
+                                <button class="nav-link <?php echo ($role === 'admin') ? 'active' : ''; ?>" id="admin-tab" data-bs-toggle="pill" type="button" role="tab" onclick="switchRole('admin')">Admin</button>
                             </li>
                         </ul>
 
@@ -115,15 +104,18 @@ if (isset($_POST['login'])) {
                             <label class="form-label text-secondary fw-500">Email address</label>
                             <div class="input-group input-group-custom">
                                 <span class="input-group-text"><i id="emailIcon" class="fa fa-user text-primary-custom"></i></span>
-                                <input type="email" name="email" class="form-control" placeholder="Email" required>
+                                <input type="email" name="email" class="form-control" placeholder="Email" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" required>
                             </div>
                         </div>
 
-                        <div class="mb-2">
+                        <div class="mb-3">
                             <label class="form-label text-secondary fw-500">Password</label>
                             <div class="input-group input-group-custom">
                                 <span class="input-group-text"><i class="fa fa-lock text-primary-custom"></i></span>
-                                <input type="password" name="password" class="form-control" placeholder="Password" required>
+                                <input type="password" name="password" id="loginPass" class="form-control" placeholder="Password" required>
+                                <button class="btn btn-outline-secondary border-start-0" type="button" onclick="togglePassword('loginPass', this)" style="border-color: var(--border-color); background: white;">
+                                    <i class="fa fa-eye text-secondary"></i>
+                                </button>
                             </div>
                         </div>
 
@@ -150,29 +142,41 @@ if (isset($_POST['login'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Javascript to handle the dynamic changes when swapping roles
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector("i");
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
         function switchRole(role) {
             const roleInput = document.getElementById('role_input');
             const emailIcon = document.getElementById('emailIcon');
             const signupSection = document.getElementById('signupSection');
 
             if (role === 'admin') {
-                // Set to Admin
                 roleInput.value = 'admin';
                 emailIcon.className = 'fa fa-user-shield text-primary-custom'; 
-                
-                // Hide the text completely but KEEP the empty space so the card stays the same size!
                 signupSection.style.visibility = 'hidden'; 
-                
             } else {
-                // Set to Tenant
                 roleInput.value = 'tenant';
                 emailIcon.className = 'fa fa-user text-primary-custom'; 
-                
-                // Bring the text back!
                 signupSection.style.visibility = 'visible'; 
             }
         }
+
+        // Apply saved role logic on page load
+        window.onload = function() {
+            const currentRole = "<?php echo $role; ?>";
+            switchRole(currentRole);
+        };
     </script>
 </body>
 </html>

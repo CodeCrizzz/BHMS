@@ -19,9 +19,23 @@ if (isset($_POST['signup'])) {
     $check_email->execute();
     $result = $check_email->get_result();
 
-    if ($result->num_rows > 0) {
-        header("Location: signup.php?error=email_exists");
-        exit();
+    // index.php - Step-by-Step Validation
+    if ($result->num_rows === 0) {
+        $msg = "Incorrect email address."; 
+        $msg_type = "danger";
+    } else {
+        $user = $result->fetch_assoc();
+        if ($user['role'] !== $role) {
+            $msg = ($role === 'admin') ? "Not an admin account." : "This is an admin account. Please switch tabs.";
+            $msg_type = "danger";
+        } else {
+            $hashed_password = hash('sha256', $password);
+            if ($user['password'] === $hashed_password) {
+            } else {
+                $msg = "Incorrect password."; 
+                $msg_type = "danger";
+            }
+        }
     }
 
     // --- SECURE ENCRYPTION ---

@@ -95,6 +95,22 @@ input[type="password"]::-webkit-text-security-disc { -webkit-appearance: none; }
 input[type="password"]::-webkit-password-reveal-button,
 input[type="password"]::-webkit-clear-button { display: none !important; }
 
+.input-group-custom .form-control:not(:placeholder-shown) {
+    background-color: #eef2ff !important; 
+    color: var(--text-main) !important;
+    font-weight: 500;
+}
+
+.input-group-custom .input-group-text {
+    background-color: var(--white) !important;
+    border-right: none !important;
+}
+
+.input-group-custom .form-control {
+    border-left: none !important;
+    transition: background-color 0.3s ease;
+}
+
 /* =========================================
    4. NAVIGATION (SIDEBAR & NAVBAR)
    ========================================= */
@@ -274,8 +290,24 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
     height: 50px !important;
 }
 
-.input-group-custom:focus-within .input-group-text {
-    border-color: var(--primary-custom);
+.input-group-custom .input-group-text {
+    background-color: var(--white) !important;
+    width: 60px !important; 
+    display: flex !important;
+    justify-content: center !important;
+    border-right: none !important;
+    border-radius: 8px 0 0 8px !important;
+}
+
+.input-group-custom .btn-outline-secondary {
+    border-left: none !important;
+    border-radius: 0 8px 8px 0 !important; 
+    padding-right: 15px;
+    z-index: 4;
+}
+
+.input-group-custom .btn-outline-secondary:focus {
+    box-shadow: none;
 }
 
 .shake-error {
