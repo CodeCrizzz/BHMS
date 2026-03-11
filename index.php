@@ -142,6 +142,8 @@ if (isset($_POST['login'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        
+        // Password visibility toggle
         function togglePassword(inputId, btn) {
             const input = document.getElementById(inputId);
             const icon = btn.querySelector("i");
@@ -156,6 +158,7 @@ if (isset($_POST['login'])) {
             }
         }
 
+        // Role switching logic
         function switchRole(role) {
             const roleInput = document.getElementById('role_input');
             const emailIcon = document.getElementById('emailIcon');
