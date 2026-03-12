@@ -1,7 +1,3 @@
--- Create Database (optional)
-CREATE DATABASE IF NOT EXISTS bhms;
-USE bhms;
-
 -- =========================
 -- 1. Rooms Table
 -- =========================

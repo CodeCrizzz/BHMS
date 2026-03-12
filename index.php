@@ -74,7 +74,7 @@ if (isset($_POST['login'])) {
     <div class="card login-card shadow-lg border-0 overflow-hidden <?php echo $msg ? 'shake-error' : ''; ?>" style="max-width: 900px; width: 100%;">
         <div class="row g-0 align-items-stretch">
             <div class="col-lg-6 d-none d-lg-block border-end" style="background: #ffffff url('assets/img/logo.jpg') center center / contain no-repeat; min-height: 500px;"></div>
-            <div class="col-lg-6 col-md-12 p-4 p-md-5 d-flex align-items-center bg-white">
+            <div class="col-12 col-lg-6 p-4 p-md-5 d-flex align-items-center bg-white">
                 <div class="w-100">
                     <div class="text-start mb-4">
                         <h1 class="h2 fw-bold text-dark mb-2">Welcome!!</h1>

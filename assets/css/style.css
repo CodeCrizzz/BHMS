@@ -29,8 +29,9 @@
 }
 
 html, body {
-    height: 100%;
-    overflow: hidden; 
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 body {
@@ -209,6 +210,20 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
     max-width: 900px;
     width: 100%;
     border-radius: 12px;
+    position: relative;
+    z-index: 10;
+    animation: cardEntrance 0.6s ease-out forwards;
+}
+
+@keyframes cardEntrance {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .login-image-side {
@@ -229,9 +244,13 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
 }
 
 .login-bg-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover; 
+    z-index: 1;
 }
 
 .login-bg-overlay {
@@ -241,6 +260,7 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
     width: 100%;
     height: 100%;
     background: rgba(30, 41, 59, 0.7); 
+    z-index: 2;
 }
 
 .login-form-side {
@@ -320,15 +340,7 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
     75% { transform: translateX(8px); }
 }
 
-.login-card {
-    animation: cardEntrance 0.6s ease-out forwards;
-}
 
-.login-bg-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
 
 .role-toggle .nav-link {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -446,8 +458,51 @@ body.dark-mode .form-control { background-color: #2d2d2d; border: 1px solid #444
     .sidebar {
         position: fixed;
         left: -260px; 
+        width: 260px;
+        height: 100vh;
+        overflow-y: auto;
         z-index: 9999;
         transition: left 0.3s ease-in-out;
+        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
     }
     .sidebar.show { left: 0; }
+}
+
+@media (max-width: 768px) {
+    .login-card {
+        margin: 15px 0;
+    }
+    .profile-img-container {
+        width: 120px;
+        height: 120px;
+    }
+    .card, .card-custom {
+        margin-bottom: 15px;
+    }
+    h1.h2 {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .input-group-custom .form-control {
+        height: 45px !important;
+        font-size: 0.95rem;
+    }
+    .input-group-custom .input-group-text {
+        width: 50px !important;
+    }
+    .btn {
+        padding: 8px 16px;
+        font-size: 0.95rem;
+    }
+    .h5 {
+        font-size: 1rem;
+    }
+    .profile-header {
+        font-size: 1.05rem;
+    }
+    .login-card .col-md-12 {
+        padding: 2rem !important;
+    }
 }
