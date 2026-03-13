@@ -10,7 +10,7 @@ if (isset($_SESSION['user_id'])) {
 $msg = "";
 $msg_type = "";
 // Capture role to maintain state after post
-$role = isset($_POST['role']) ? $_POST['role'] : 'tenant'; 
+$role = isset($_POST['role']) ? $_POST['role'] : 'tenant';
 
 if (isset($_POST['login'])) {
     $email = $_POST['email'];
@@ -30,12 +30,12 @@ if (isset($_POST['login'])) {
     } else {
         $user = $result->fetch_assoc();
 
-        // 2. Check if the role matches the selection
+        // Check if the role matches the selection
         if ($user['role'] !== $role) {
             $msg = ($role === 'admin') ? "Not an admin account." : "This is an admin account. Please switch tabs.";
             $msg_type = "danger";
         } else {
-            // 3. Check password
+            // Check password
             $hashed_password = hash('sha256', $password);
 
             if ($user['password'] === $hashed_password) {
@@ -47,7 +47,7 @@ if (isset($_POST['login'])) {
                 header("Location: " . ($user['role'] === 'admin' ? "admin/dashboard.php" : "tenant/dashboard.php"));
                 exit();
             } else {
-                $msg = "Incorrect password."; // Specific password error
+                $msg = "Incorrect password.";
                 $msg_type = "danger";
             }
         }
@@ -57,6 +57,7 @@ if (isset($_POST['login'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
@@ -65,6 +66,7 @@ if (isset($_POST['login'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body class="min-vh-100 d-flex align-items-center justify-content-center p-3 p-md-5">
     <div class="login-bg-container">
         <img src="assets/img/bg.png" alt="Background">
@@ -81,7 +83,7 @@ if (isset($_POST['login'])) {
                         <p class="text-secondary mb-4">Please login to your account.</p>
                     </div>
 
-                    <?php if($msg): ?>
+                    <?php if ($msg): ?>
                         <div class="alert alert-<?php echo $msg_type; ?> alert-dismissible fade show" role="alert">
                             <i class="fa fa-exclamation-circle me-2"></i><?php echo $msg; ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -90,7 +92,7 @@ if (isset($_POST['login'])) {
 
                     <form method="POST" autocomplete="off">
                         <input type="hidden" name="role" id="role_input" value="<?php echo htmlspecialchars($role); ?>">
-                        
+
                         <ul class="nav nav-pills nav-fill mb-4 role-toggle" id="roleTab" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link <?php echo ($role === 'tenant') ? 'active' : ''; ?>" id="tenant-tab" data-bs-toggle="pill" type="button" role="tab" onclick="switchRole('tenant')">Tenant</button>
@@ -130,7 +132,7 @@ if (isset($_POST['login'])) {
                         </div>
 
                         <div id="signupSection" class="text-center">
-                            <p class="text-secondary mb-0">Don't have an account? 
+                            <p class="text-secondary mb-0">Don't have an account?
                                 <a href="signup.php" class="text-primary-custom fw-bold text-decoration-none ms-1 transition-link">Sign up here</a>
                             </p>
                         </div>
@@ -142,7 +144,6 @@ if (isset($_POST['login'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        
         // Password visibility toggle
         function togglePassword(inputId, btn) {
             const input = document.getElementById(inputId);
@@ -166,12 +167,12 @@ if (isset($_POST['login'])) {
 
             if (role === 'admin') {
                 roleInput.value = 'admin';
-                emailIcon.className = 'fa fa-user-shield text-primary-custom'; 
-                signupSection.style.visibility = 'hidden'; 
+                emailIcon.className = 'fa fa-user-shield text-primary-custom';
+                signupSection.style.visibility = 'hidden';
             } else {
                 roleInput.value = 'tenant';
-                emailIcon.className = 'fa fa-user text-primary-custom'; 
-                signupSection.style.visibility = 'visible'; 
+                emailIcon.className = 'fa fa-user text-primary-custom';
+                signupSection.style.visibility = 'visible';
             }
         }
 
@@ -182,4 +183,5 @@ if (isset($_POST['login'])) {
         };
     </script>
 </body>
+
 </html>

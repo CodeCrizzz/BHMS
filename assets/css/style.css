@@ -5,19 +5,19 @@
    ========================================= */
 :root {
     /* Brand Colors */
-    --primary: #3b82f6;       
-    --primary-dark: #2563eb;  
-    --secondary: #64748b;     
+    --primary: #3b82f6;
+    --primary-dark: #2563eb;
+    --secondary: #64748b;
     --white: #ffffff;
 
     /* Sidebar & Navigation */
-    --sidebar-bg: #1e293b;    
-    --sidebar-hover: #334155; 
+    --sidebar-bg: #1e293b;
+    --sidebar-hover: #334155;
 
     /* Typography & Backgrounds */
-    --bg-body: #cbd5e1;       
-    --text-main: #1e293b;    
-    --text-light: #94a3b8;    
+    --bg-body: #cbd5e1;
+    --text-main: #1e293b;
+    --text-light: #94a3b8;
     --border-color: #e2e8f0;
     --radius: 8px;
 }
@@ -28,7 +28,8 @@
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     min-height: 100vh;
     overflow-x: hidden;
     overflow-y: auto;
@@ -36,7 +37,7 @@ html, body {
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: var(--bg-body); 
+    background-color: var(--bg-body);
     color: var(--text-main);
     background-size: cover !important;
     background-position: center !important;
@@ -46,17 +47,45 @@ body {
 /* =========================================
    2. REUSABLE UTILITY CLASSES
    ========================================= */
-.text-primary-custom { color: var(--primary) !important; font-weight: 600; }
-.bg-primary-custom { background-color: var(--primary) !important; color: var(--white); border: none; }
-.bg-primary-custom:hover { background-color: var(--primary-dark) !important; }
-.bg-dark-custom { background-color: var(--sidebar-bg) !important; color: var(--white); }
-.bg-dark-custom:hover { color: #cccccc !important; }
+.text-primary-custom {
+    color: var(--primary) !important;
+    font-weight: 600;
+}
 
-.bg-light { background-color: var(--bg-body) !important; }
-.bg-light-gray { background-color: #f1f5f9; }
+.bg-primary-custom {
+    background-color: var(--primary) !important;
+    color: var(--white);
+    border: none;
+}
 
-.fw-500 { font-weight: 500; }
-.h5 { font-size: 1.1rem; }
+.bg-primary-custom:hover {
+    background-color: var(--primary-dark) !important;
+}
+
+.bg-dark-custom {
+    background-color: var(--sidebar-bg) !important;
+    color: var(--white);
+}
+
+.bg-dark-custom:hover {
+    color: #cccccc !important;
+}
+
+.bg-light {
+    background-color: var(--bg-body) !important;
+}
+
+.bg-light-gray {
+    background-color: #f1f5f9;
+}
+
+.fw-500 {
+    font-weight: 500;
+}
+
+.h5 {
+    font-size: 1.1rem;
+}
 
 /* =========================================
    3. BUTTONS & FORM INPUTS
@@ -92,12 +121,17 @@ body {
 }
 
 /* Specific logic for password field icons */
-input[type="password"]::-webkit-text-security-disc { -webkit-appearance: none; }
+input[type="password"]::-webkit-text-security-disc {
+    -webkit-appearance: none;
+}
+
 input[type="password"]::-webkit-password-reveal-button,
-input[type="password"]::-webkit-clear-button { display: none !important; }
+input[type="password"]::-webkit-clear-button {
+    display: none !important;
+}
 
 .input-group-custom .form-control:not(:placeholder-shown) {
-    background-color: #eef2ff !important; 
+    background-color: #eef2ff !important;
     color: var(--text-main) !important;
     font-weight: 500;
 }
@@ -118,9 +152,9 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
 /* Sidebar Container */
 .sidebar {
     min-height: 100vh;
-    background: var(--sidebar-bg); 
+    background: var(--sidebar-bg);
     color: var(--text-light);
-    box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .sidebar h4 {
@@ -147,7 +181,7 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
 .sidebar a:hover {
     background-color: var(--sidebar-hover);
     color: var(--white);
-    transform: translateX(5px); 
+    transform: translateX(5px);
 }
 
 /* Page-specific active states */
@@ -161,7 +195,7 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
 .sidebar a.active {
     background: linear-gradient(90deg, var(--primary), var(--primary-dark));
     color: var(--white);
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); 
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
     transform: translateX(5px);
 }
 
@@ -173,7 +207,7 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
 }
 
 .navbar-brand-custom {
-    color: var(--sidebar-bg) !important; 
+    color: var(--sidebar-bg) !important;
     font-weight: 800;
     letter-spacing: -0.5px;
 }
@@ -181,10 +215,11 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
 /* =========================================
    5. CARDS & UI COMPONENTS
    ========================================= */
-.card, .card-custom {
-    background-color: var(--white); 
+.card,
+.card-custom {
+    background-color: var(--white);
     border: none;
-    border-radius: 12px; 
+    border-radius: 12px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transition: transform 0.2s;
     color: #334155;
@@ -200,8 +235,15 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
     padding: 15px 20px;
 }
 
-.alert-success { background-color: #d1fae5; color: #065f46; }
-.alert-danger { background-color: #fee2e2; color: #991b1b; }
+.alert-success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.alert-danger {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
 
 /* =========================================
    6. LOGIN PAGE SPECIFIC
@@ -220,6 +262,7 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
         opacity: 0;
         transform: translateY(20px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -239,7 +282,7 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1; 
+    z-index: -1;
     overflow: hidden;
 }
 
@@ -249,7 +292,7 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; 
+    object-fit: cover;
     z-index: 1;
 }
 
@@ -259,7 +302,7 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(30, 41, 59, 0.7); 
+    background: rgba(30, 41, 59, 0.7);
     z-index: 2;
 }
 
@@ -297,7 +340,7 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
 .input-group-custom .input-group-text {
     background-color: var(--white) !important;
     border-color: var(--border-color) !important;
-    width: 60px !important; 
+    width: 60px !important;
     display: flex !important;
     justify-content: center !important;
     border-right: none !important;
@@ -312,7 +355,7 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
 
 .input-group-custom .input-group-text {
     background-color: var(--white) !important;
-    width: 60px !important; 
+    width: 60px !important;
     display: flex !important;
     justify-content: center !important;
     border-right: none !important;
@@ -321,7 +364,7 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
 
 .input-group-custom .btn-outline-secondary {
     border-left: none !important;
-    border-radius: 0 8px 8px 0 !important; 
+    border-radius: 0 8px 8px 0 !important;
     padding-right: 15px;
     z-index: 4;
 }
@@ -335,9 +378,19 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
 }
 
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-8px); }
-    75% { transform: translateX(8px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-8px);
+    }
+
+    75% {
+        transform: translateX(8px);
+    }
 }
 
 
@@ -350,14 +403,15 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
    7. CHAT & MESSAGING INTERFACE
    ========================================= */
 #chat-box {
-    background-color: #f1f5f9; /* Original fallback */
+    background-color: #f1f5f9;
+    /* Original fallback */
 }
 
 .msg-sent {
-    background-color: var(--primary); 
+    background-color: var(--primary);
     color: var(--white);
     border-radius: 15px;
-    border-top-right-radius: 0; 
+    border-top-right-radius: 0;
     box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
@@ -366,34 +420,34 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
     color: #334155;
     border: 1px solid #e2e8f0;
     border-radius: 15px;
-    border-top-left-radius: 0; 
+    border-top-left-radius: 0;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .msg-timestamp {
-    font-size: 0.65rem; 
+    font-size: 0.65rem;
     opacity: 0.8;
     margin-top: 5px;
     text-align: right;
     display: block;
 }
 
-.tenant-card { 
-    transition: all 0.2s ease; 
-    border-radius: 8px; 
-    margin: 4px 8px; 
+.tenant-card {
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    margin: 4px 8px;
 }
 
-.tenant-card:hover { 
-    background-color: #f1f5f9 !important; 
-    transform: translateX(4px); 
+.tenant-card:hover {
+    background-color: #f1f5f9 !important;
+    transform: translateX(4px);
 }
 
-.story-avatar { 
-    width: 60px; 
-    height: 60px; 
-    padding: 3px; 
-    transition: transform 0.2s ease; 
+.story-avatar {
+    width: 60px;
+    height: 60px;
+    padding: 3px;
+    transition: transform 0.2s ease;
 }
 
 .chat-input-wrapper {
@@ -403,53 +457,107 @@ input[type="password"]::-webkit-clear-button { display: none !important; }
 /* =========================================
    8. PROFILE PAGE
    ========================================= */
-.profile-header { 
-    color: #3d5a80; 
-    font-weight: 700; 
-    margin-bottom: 20px; 
-    border-bottom: 1px solid #dee2e6; 
-    padding-bottom: 10px; 
-    font-size: 1.1rem; 
+.profile-header {
+    color: #3d5a80;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+    font-size: 1.1rem;
 }
 
-.label-text { font-size: 0.85rem; color: #6c757d; font-weight: 600; }
-.info-text { font-size: 1rem; color: #212529; font-weight: 500; }
+.label-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.info-text {
+    font-size: 1rem;
+    color: #212529;
+    font-weight: 500;
+}
 
 .profile-img-container {
-    width: 150px; 
-    height: 150px; 
+    width: 150px;
+    height: 150px;
     margin: 0 auto 30px auto;
-    border-radius: 50%; 
-    overflow: hidden; 
+    border-radius: 50%;
+    overflow: hidden;
     border: 4px solid var(--white);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.profile-img-container img { width: 100%; height: 100%; object-fit: cover; }
+.profile-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
 /* =========================================
    9. SCROLLBARS
    ========================================= */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-thumb { background: var(--bg-body); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
 
-.chat-scroll::-webkit-scrollbar { width: 6px; }
-.chat-scroll::-webkit-scrollbar-thumb { background: var(--bg-body); border-radius: 10px; }
+::-webkit-scrollbar-thumb {
+    background: var(--bg-body);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-light);
+}
+
+.chat-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-scroll::-webkit-scrollbar-thumb {
+    background: var(--bg-body);
+    border-radius: 10px;
+}
 
 /* =========================================
    10. DARK MODE OVERRIDES
    ========================================= */
-body.dark-mode { background-color: #121212 !important; color: #e0e0e0 !important; }
+body.dark-mode {
+    background-color: #121212 !important;
+    color: #e0e0e0 !important;
+}
 
-body.dark-mode .navbar-custom { background-color: #252525 !important; border-bottom: 1px solid #444; }
-body.dark-mode .sidebar { background-color: #1e1e1e !important; }
-body.dark-mode .card, body.dark-mode .card-custom { background-color: #1e1e1e !important; border-color: #333333; }
+body.dark-mode .navbar-custom {
+    background-color: #252525 !important;
+    border-bottom: 1px solid #444;
+}
 
-body.dark-mode #chat-box { background-color: #0f172a !important; }
-body.dark-mode .msg-received { background-color: #334155 !important; color: #e2e8f0 !important; border: 1px solid #475569 !important; }
+body.dark-mode .sidebar {
+    background-color: #1e1e1e !important;
+}
 
-body.dark-mode .form-control { background-color: #2d2d2d; border: 1px solid #444; color: #fff; }
+body.dark-mode .card,
+body.dark-mode .card-custom {
+    background-color: #1e1e1e !important;
+    border-color: #333333;
+}
+
+body.dark-mode #chat-box {
+    background-color: #0f172a !important;
+}
+
+body.dark-mode .msg-received {
+    background-color: #334155 !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #475569 !important;
+}
+
+body.dark-mode .form-control {
+    background-color: #2d2d2d;
+    border: 1px solid #444;
+    color: #fff;
+}
 
 /* =========================================
    11. RESPONSIVENESS
@@ -457,28 +565,35 @@ body.dark-mode .form-control { background-color: #2d2d2d; border: 1px solid #444
 @media (max-width: 991px) {
     .sidebar {
         position: fixed;
-        left: -260px; 
+        left: -260px;
         width: 260px;
         height: 100vh;
         overflow-y: auto;
         z-index: 9999;
         transition: left 0.3s ease-in-out;
-        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
     }
-    .sidebar.show { left: 0; }
+
+    .sidebar.show {
+        left: 0;
+    }
 }
 
 @media (max-width: 768px) {
     .login-card {
         margin: 15px 0;
     }
+
     .profile-img-container {
         width: 120px;
         height: 120px;
     }
-    .card, .card-custom {
+
+    .card,
+    .card-custom {
         margin-bottom: 15px;
     }
+
     h1.h2 {
         font-size: 1.75rem;
     }
@@ -489,19 +604,24 @@ body.dark-mode .form-control { background-color: #2d2d2d; border: 1px solid #444
         height: 45px !important;
         font-size: 0.95rem;
     }
+
     .input-group-custom .input-group-text {
         width: 50px !important;
     }
+
     .btn {
         padding: 8px 16px;
         font-size: 0.95rem;
     }
+
     .h5 {
         font-size: 1rem;
     }
+
     .profile-header {
         font-size: 1.05rem;
     }
+
     .login-card .col-md-12 {
         padding: 2rem !important;
     }
