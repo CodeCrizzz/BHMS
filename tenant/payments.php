@@ -13,12 +13,14 @@ if ($unread_query) {
     $unread_count = $unread_data['unread'];
 }
 
+// --- GET UNPAID BILLS COUNT ---
 $stmt_pending = $conn->prepare("SELECT SUM(amount) as total FROM payments WHERE tenant_id = ? AND status = 'pending'");
 $stmt_pending->bind_param("i", $my_id);
 $stmt_pending->execute();
 $pending_total = $stmt_pending->get_result()->fetch_assoc()['total'];
 $pending_total = $pending_total ? $pending_total : 0.00;
 
+//--- GET TOTAL PAID AMOUNTS ---
 $stmt_paid = $conn->prepare("SELECT SUM(amount) as total FROM payments WHERE tenant_id = ? AND status = 'paid'");
 $stmt_paid->bind_param("i", $my_id);
 $stmt_paid->execute();
@@ -28,6 +30,7 @@ $paid_total = $paid_total ? $paid_total : 0.00;
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
@@ -36,9 +39,10 @@ $paid_total = $paid_total ? $paid_total : 0.00;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
+
 <body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
     <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap" style="z-index: 1000;">
-    
+
         <div class="d-flex align-items-center gap-2" style="min-width: 0;"> <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
                 <i class="fa fa-bars"></i>
             </button>
@@ -60,22 +64,27 @@ $paid_total = $paid_total ? $paid_total : 0.00;
     </nav>
 
     <div class="d-flex flex-grow-1" style="overflow: hidden;">
-        
+
         <div class="sidebar p-3" style="width: 250px; overflow-y: auto;">
             <h4 class="text-center mb-4 mt-2">My Portal</h4>
             <a href="dashboard.php"><i class="fa fa-home me-2"></i> Dashboard</a>
             <a href="profile.php"><i class="fa fa-user me-2"></i> My Profile</a>
-            <a href="payments.php" class="active"><i class="fa fa-credit-card me-2"></i> Billing</a>
+            <a href="payments.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'payments.php') ? 'active' : ''; ?>">
+                <span><i class="fa fa-credit-card me-2"></i> Billing</span>
+                <?php if ($pending_total > 0): ?>
+                    <i class="fa fa-bell text-warning shadow-sm" style="animation: pulse-red 2s infinite;" title="You have unpaid bills"></i>
+                <?php endif; ?>
+            </a>
             <a href="talk.php" class="d-flex justify-content-between align-items-center">
                 <span><i class="fa fa-comments me-2"></i> Chat Admin</span>
-                <?php if($unread_count > 0): ?>
+                <?php if ($unread_count > 0): ?>
                     <span class="badge bg-danger rounded-pill shadow-sm" style="font-size: 0.75rem; padding: 0.35em 0.65em;"><?php echo $unread_count; ?></span>
                 <?php endif; ?>
             </a>
         </div>
 
         <div class="flex-grow-1 p-4 bg-light" style="overflow-y: auto;">
-            
+
             <h2 class="mb-4 text-primary-custom">Billing & Payment History</h2>
 
             <div class="row mb-4">
@@ -90,7 +99,7 @@ $paid_total = $paid_total ? $paid_total : 0.00;
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-md-6 mb-3">
                     <div class="card card-custom p-4 bg-success text-white border-0">
                         <div class="d-flex justify-content-between align-items-center">
@@ -125,25 +134,25 @@ $paid_total = $paid_total ? $paid_total : 0.00;
                             $stmt->execute();
                             $result = $stmt->get_result();
 
-                            if($result->num_rows > 0){
-                                while($row = $result->fetch_assoc()){
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
                                     $is_paid = ($row['status'] == 'paid');
                                     $badge = $is_paid ? 'bg-success' : 'bg-warning text-dark';
                                     $icon  = $is_paid ? 'fa-check' : 'fa-clock';
                             ?>
-                            <tr>
-                                <td class="text-secondary">#INV-<?php echo str_pad($row['id'], 4, '0', STR_PAD_LEFT); ?></td>
-                                <td><?php echo $row['date_created']; ?></td>
-                                <td class="fw-bold"><?php echo $row['description']; ?></td>
-                                <td>Php. <?php echo number_format($row['amount'], 2); ?></td>
-                                <td>
-                                    <span class="badge <?php echo $badge; ?>">
-                                        <i class="fa <?php echo $icon; ?> me-1"></i>
-                                        <?php echo ucfirst($row['status']); ?>
-                                    </span>
-                                </td>
-                            </tr>
-                            <?php 
+                                    <tr>
+                                        <td class="text-secondary">#INV-<?php echo str_pad($row['id'], 4, '0', STR_PAD_LEFT); ?></td>
+                                        <td><?php echo $row['date_created']; ?></td>
+                                        <td class="fw-bold"><?php echo $row['description']; ?></td>
+                                        <td>Php. <?php echo number_format($row['amount'], 2); ?></td>
+                                        <td>
+                                            <span class="badge <?php echo $badge; ?>">
+                                                <i class="fa <?php echo $icon; ?> me-1"></i>
+                                                <?php echo ucfirst($row['status']); ?>
+                                            </span>
+                                        </td>
+                                    </tr>
+                            <?php
                                 }
                             } else {
                                 echo "<tr><td colspan='5' class='text-center text-muted py-4'>No payment records found.</td></tr>";
@@ -154,10 +163,11 @@ $paid_total = $paid_total ? $paid_total : 0.00;
                 </div>
             </div>
 
-        </div> 
-    </div> 
-<script src="../assets/js/sidebar.js"></script>
-<script src="../assets/js/darkmode.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        </div>
+    </div>
+    <script src="../assets/js/sidebar.js"></script>
+    <script src="../assets/js/darkmode.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

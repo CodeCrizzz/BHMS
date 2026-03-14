@@ -10,11 +10,10 @@ $admin_query = $conn->query("SELECT id FROM users WHERE role = 'admin' LIMIT 1")
 $admin_data = $admin_query->fetch_assoc();
 $admin_id = $admin_data ? $admin_data['id'] : 0;
 
-// --- INSTANTLY MARK ALL MESSAGES FROM ADMIN AS READ ---
-if($admin_id > 0) {
+// --- MARK ALL MESSAGES FROM ADMIN AS READ ---
+if ($admin_id > 0) {
     $conn->query("UPDATE messages SET is_read = 1 WHERE sender_id = $admin_id AND receiver_id = $my_id AND is_read = 0");
 }
-// ------------------------------------------------------
 
 // GET UNREAD MESSAGE COUNT ---
 $unread_query = $conn->query("SELECT COUNT(id) AS unread FROM messages WHERE receiver_id = " . $_SESSION['user_id'] . " AND is_read = 0");
@@ -23,13 +22,19 @@ if ($unread_query) {
     $unread_data = $unread_query->fetch_assoc();
     $unread_count = $unread_data['unread'];
 }
-// -------------------------------------
 
-if(isset($_POST['send_msg']) && $admin_id > 0){
+// --- GET UNPAID BILLS COUNT ---
+$stmt_pending = $conn->prepare("SELECT SUM(amount) as total FROM payments WHERE tenant_id = ? AND status = 'pending'");
+$stmt_pending->bind_param("i", $my_id);
+$stmt_pending->execute();
+$pending_total = $stmt_pending->get_result()->fetch_assoc()['total'];
+$pending_total = $pending_total ? $pending_total : 0.00;
+
+if (isset($_POST['send_msg']) && $admin_id > 0) {
     $msg = $_POST['message'];
-    
+
     //Only send if message is not empty
-    if(!empty(trim($msg))){
+    if (!empty(trim($msg))) {
         $stmt = $conn->prepare("INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)");
         $stmt->bind_param("iis", $my_id, $admin_id, $msg);
         $stmt->execute();
@@ -39,6 +44,7 @@ if(isset($_POST['send_msg']) && $admin_id > 0){
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
@@ -48,6 +54,7 @@ if(isset($_POST['send_msg']) && $admin_id > 0){
     <link rel="stylesheet" href="../assets/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
     <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap" style="z-index: 1000;">
         <div class="d-flex align-items-center gap-2" style="min-width: 0;"> <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
@@ -75,7 +82,12 @@ if(isset($_POST['send_msg']) && $admin_id > 0){
             <h4 class="text-center mb-4 mt-2">My Portal</h4>
             <a href="dashboard.php"><i class="fa fa-home me-2"></i> Dashboard</a>
             <a href="profile.php"><i class="fa fa-user me-2"></i> My Profile</a>
-            <a href="payments.php"><i class="fa fa-credit-card me-2"></i> Billing</a>
+            <a href="payments.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'payments.php') ? 'active' : ''; ?>">
+                <span><i class="fa fa-credit-card me-2"></i> Billing</span>
+                <?php if ($pending_total > 0): ?>
+                    <i class="fa fa-bell text-warning shadow-sm" style="animation: pulse-red 2s infinite;" title="You have unpaid bills"></i>
+                <?php endif; ?>
+            </a>
             <a href="talk.php" class="position-relative active">
                 <i class="fa fa-comments me-2"></i> Chat Admin
             </a>
@@ -96,30 +108,34 @@ if(isset($_POST['send_msg']) && $admin_id > 0){
                     </div>
                 </form>
             </div>
-        </div> 
+        </div>
     </div>
 
-<script src="../assets/js/darkmode.js"></script>
-<script>
-$(document).ready(function(){
-    var myId = <?php echo $my_id; ?>;
-    var adminId = <?php echo $admin_id; ?>;
-    var chatBox = $("#chat-box");
-    var autoScroll = true;
+    <script src="../assets/js/darkmode.js"></script>
+    <script>
+        $(document).ready(function() {
+            var myId = <?php echo $my_id; ?>;
+            var adminId = <?php echo $admin_id; ?>;
+            var chatBox = $("#chat-box");
+            var autoScroll = true;
 
-    function loadMessages(){
-        $.post('../includes/ajax_get_messages.php', {my_id: myId, other_id: adminId}, function(data){
-            chatBox.html(data);
-            if(autoScroll){
-                chatBox.scrollTop(chatBox[0].scrollHeight);
-                autoScroll = false;
+            function loadMessages() {
+                $.post('../includes/ajax_get_messages.php', {
+                    my_id: myId,
+                    other_id: adminId
+                }, function(data) {
+                    chatBox.html(data);
+                    if (autoScroll) {
+                        chatBox.scrollTop(chatBox[0].scrollHeight);
+                        autoScroll = false;
+                    }
+                });
             }
+            loadMessages();
+            setInterval(loadMessages, 2000);
         });
-    }
-    loadMessages();
-    setInterval(loadMessages, 2000);
-});
-</script>
-<script src="../assets/js/sidebar.js"></script>
+    </script>
+    <script src="../assets/js/sidebar.js"></script>
 </body>
+
 </html>

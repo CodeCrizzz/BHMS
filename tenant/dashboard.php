@@ -7,14 +7,14 @@ $user_id = $_SESSION['user_id'];
 $msg = "";
 $msg_type = "";
 
-if(isset($_POST['submit_request'])){
+if (isset($_POST['submit_request'])) {
     $type = $_POST['request_type'];
     $desc = $_POST['description'];
-    
+
     $stmt = $conn->prepare("INSERT INTO requests (tenant_id, request_type, description) VALUES (?, ?, ?)");
     $stmt->bind_param("iss", $user_id, $type, $desc);
-    
-    if($stmt->execute()){
+
+    if ($stmt->execute()) {
         $msg = "Request submitted successfully!";
         $msg_type = "success";
     } else {
@@ -30,7 +30,7 @@ $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 
 $img_path = "../assets/uploads/" . ($user['profile_image'] ? $user['profile_image'] : 'default.png');
-if(!file_exists($img_path)) $img_path = "https://via.placeholder.com/150?text=No+Image";
+if (!file_exists($img_path)) $img_path = "https://via.placeholder.com/150?text=No+Image";
 
 $sql_debt = "SELECT SUM(amount) as debt FROM payments WHERE tenant_id = ? AND status = 'pending'";
 $stmt_d = $conn->prepare($sql_debt);
@@ -47,6 +47,13 @@ $stmt_r->bind_param("i", $user_id);
 $stmt_r->execute();
 $my_requests = $stmt_r->get_result();
 
+// --- GET UNPAID BILLS COUNT ---
+$stmt_pending = $conn->prepare("SELECT SUM(amount) as total FROM payments WHERE tenant_id = ? AND status = 'pending'");
+$stmt_pending->bind_param("i", $my_id);
+$stmt_pending->execute();
+$pending_total = $stmt_pending->get_result()->fetch_assoc()['total'];
+$pending_total = $pending_total ? $pending_total : 0.00;
+
 // --- NEW: GET UNREAD MESSAGE COUNT ---
 $unread_query = $conn->query("SELECT COUNT(id) AS unread FROM messages WHERE receiver_id = $user_id AND is_read = 0");
 $unread_count = 0;
@@ -59,6 +66,7 @@ if ($unread_query) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
@@ -67,10 +75,9 @@ if ($unread_query) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
 
+<body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
     <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap" style="z-index: 1000;">
-    
         <div class="d-flex align-items-center gap-2" style="min-width: 0;"> <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
                 <i class="fa fa-bars"></i>
             </button>
@@ -92,23 +99,27 @@ if ($unread_query) {
     </nav>
 
     <div class="d-flex flex-grow-1" style="overflow: hidden;">
-
         <div class="sidebar p-3" style="width: 250px; overflow-y: auto;">
             <h4 class="text-center mb-4 mt-2">My Portal</h4>
             <a href="dashboard.php" class="active"><i class="fa fa-home me-2"></i> Dashboard</a>
             <a href="profile.php"><i class="fa fa-user me-2"></i> My Profile</a>
-            <a href="payments.php"><i class="fa fa-credit-card me-2"></i> Billing</a>
+            <a href="payments.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'payments.php') ? 'active' : ''; ?>">
+                <span><i class="fa fa-credit-card me-2"></i> Billing</span>
+                <?php if ($pending_total > 0): ?>
+                    <i class="fa fa-bell text-warning shadow-sm" style="animation: pulse-red 2s infinite;" title="You have unpaid bills"></i>
+                <?php endif; ?>
+            </a>
             <a href="talk.php" class="d-flex justify-content-between align-items-center">
                 <span><i class="fa fa-comments me-2"></i> Chat Admin</span>
-                <?php if($unread_count > 0): ?>
+                <?php if ($unread_count > 0): ?>
                     <span class="badge bg-danger rounded-pill shadow-sm" style="font-size: 0.75rem; padding: 0.35em 0.65em;"><?php echo $unread_count; ?></span>
                 <?php endif; ?>
             </a>
         </div>
 
         <div class="flex-grow-1 p-4 bg-light" style="overflow-y: auto;">
-            
-            <?php if($msg): ?>
+
+            <?php if ($msg): ?>
                 <div class="alert alert-<?php echo $msg_type; ?> alert-dismissible fade show">
                     <?php echo $msg; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -176,10 +187,10 @@ if ($unread_query) {
                         </div>
                         <div class="card-body">
 
-                            <?php 
-                                $reg_date = strtotime($user['created_at']);
-                                $joined_date = date('M d, Y', $reg_date); 
-                                $due_day = date('jS', $reg_date);       
+                            <?php
+                            $reg_date = strtotime($user['created_at']);
+                            $joined_date = date('M d, Y', $reg_date);
+                            $due_day = date('jS', $reg_date);
                             ?>
 
                             <div class="alert alert-info border-0 bg-light-custom mb-3">
@@ -192,10 +203,10 @@ if ($unread_query) {
                                 </p>
                             </div>
 
-                            <?php if($announcements->num_rows > 0): ?>
-                                <?php while($anno = $announcements->fetch_assoc()): ?>
+                            <?php if ($announcements->num_rows > 0): ?>
+                                <?php while ($anno = $announcements->fetch_assoc()): ?>
 
-                                    <?php if(stripos($anno['title'], 'Welcome') !== false) continue; ?>
+                                    <?php if (stripos($anno['title'], 'Welcome') !== false) continue; ?>
 
                                     <div class="alert alert-info border-0 bg-light-custom mb-3">
                                         <div class="d-flex justify-content-between">
@@ -230,20 +241,22 @@ if ($unread_query) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php if($my_requests->num_rows > 0): ?>
-                                            <?php while($req = $my_requests->fetch_assoc()): 
+                                        <?php if ($my_requests->num_rows > 0): ?>
+                                            <?php while ($req = $my_requests->fetch_assoc()):
                                                 $badge = 'bg-warning text-dark';
-                                                if($req['status'] == 'Resolved') $badge = 'bg-success';
-                                                if($req['status'] == 'In Progress') $badge = 'bg-info';
+                                                if ($req['status'] == 'Resolved') $badge = 'bg-success';
+                                                if ($req['status'] == 'In Progress') $badge = 'bg-info';
                                             ?>
-                                            <tr>
-                                                <td class="ps-3 fw-bold small"><?php echo $req['request_type']; ?></td>
-                                                <td class="small"><?php echo date('M d', strtotime($req['date_created'])); ?></td>
-                                                <td><span class="badge <?php echo $badge; ?>"><?php echo $req['status']; ?></span></td>
-                                            </tr>
+                                                <tr>
+                                                    <td class="ps-3 fw-bold small"><?php echo $req['request_type']; ?></td>
+                                                    <td class="small"><?php echo date('M d', strtotime($req['date_created'])); ?></td>
+                                                    <td><span class="badge <?php echo $badge; ?>"><?php echo $req['status']; ?></span></td>
+                                                </tr>
                                             <?php endwhile; ?>
                                         <?php else: ?>
-                                            <tr><td colspan="3" class="text-center text-muted py-4 small">No requests found.</td></tr>
+                                            <tr>
+                                                <td colspan="3" class="text-center text-muted py-4 small">No requests found.</td>
+                                            </tr>
                                         <?php endif; ?>
                                     </tbody>
                                 </table>
@@ -286,8 +299,9 @@ if ($unread_query) {
             </div>
         </div>
     </div>
-<script src="../assets/js/sidebar.js"></script>
-<script src="../assets/js/darkmode.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body> 
+    <script src="../assets/js/sidebar.js"></script>
+    <script src="../assets/js/darkmode.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>

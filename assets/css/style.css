@@ -373,27 +373,23 @@ input[type="password"]::-webkit-clear-button {
     box-shadow: none;
 }
 
-.shake-error {
-    animation: shake 0.4s ease-in-out;
-}
+/* Sidebar Bell Notification Pulse */
+@keyframes pulse-red {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
 
-@keyframes shake {
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
 
-    0%,
     100% {
-        transform: translateX(0);
-    }
-
-    25% {
-        transform: translateX(-8px);
-    }
-
-    75% {
-        transform: translateX(8px);
+        transform: scale(0.95);
+        opacity: 0.7;
     }
 }
-
-
 
 .role-toggle .nav-link {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
