@@ -212,6 +212,41 @@ input[type="password"]::-webkit-clear-button {
     letter-spacing: -0.5px;
 }
 
+/* BELL RINGING ANIMATION --- */
+@keyframes bell-ring {
+
+    0%,
+    80%,
+    100% {
+        transform: rotate(0);
+    }
+
+    85% {
+        transform: rotate(15deg);
+    }
+
+    90% {
+        transform: rotate(-15deg);
+    }
+
+    93% {
+        transform: rotate(10deg);
+    }
+
+    96% {
+        transform: rotate(-10deg);
+    }
+}
+
+.bell-ring-active {
+    display: inline-block;
+    color: #ef4444 !important;
+    /* Bright Red */
+    text-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+    animation: bell-ring 5s ease-in-out infinite;
+    transform-origin: top center;
+}
+
 /* =========================================
    5. CARDS & UI COMPONENTS
    ========================================= */
@@ -373,21 +408,21 @@ input[type="password"]::-webkit-clear-button {
     box-shadow: none;
 }
 
-/* Sidebar Bell Notification Pulse */
+/* Red Alert Bell Pulse */
 @keyframes pulse-red {
     0% {
-        transform: scale(0.95);
-        opacity: 0.7;
+        transform: scale(0.9);
+        opacity: 0.8;
     }
 
     50% {
-        transform: scale(1.1);
+        transform: scale(1.2);
         opacity: 1;
     }
 
     100% {
-        transform: scale(0.95);
-        opacity: 0.7;
+        transform: scale(0.9);
+        opacity: 0.8;
     }
 }
 

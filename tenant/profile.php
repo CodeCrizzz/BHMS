@@ -74,8 +74,9 @@ $balance = $stmt_b->get_result()->fetch_assoc()['debt'];
 $balance = $balance ? $balance : 0;
 
 // --- GET UNPAID BILLS COUNT ---
+$id_to_query = isset($user_id) ? $user_id : $my_id;
 $stmt_pending = $conn->prepare("SELECT SUM(amount) as total FROM payments WHERE tenant_id = ? AND status = 'pending'");
-$stmt_pending->bind_param("i", $my_id);
+$stmt_pending->bind_param("i", $id_to_query);
 $stmt_pending->execute();
 $pending_total = $stmt_pending->get_result()->fetch_assoc()['total'];
 $pending_total = $pending_total ? $pending_total : 0.00;
@@ -133,7 +134,7 @@ if ($unread_query) {
             <a href="payments.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'payments.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-credit-card me-2"></i> Billing</span>
                 <?php if ($pending_total > 0): ?>
-                    <i class="fa fa-bell text-warning shadow-sm" style="animation: pulse-red 2s infinite;" title="You have unpaid bills"></i>
+                    <i class="fa fa-bell bell-ring-active" title="You have unpaid bills"></i>
                 <?php endif; ?>
             </a>
             <a href="talk.php" class="d-flex justify-content-between align-items-center">

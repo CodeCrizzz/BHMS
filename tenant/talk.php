@@ -85,7 +85,7 @@ if (isset($_POST['send_msg']) && $admin_id > 0) {
             <a href="payments.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'payments.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-credit-card me-2"></i> Billing</span>
                 <?php if ($pending_total > 0): ?>
-                    <i class="fa fa-bell text-warning shadow-sm" style="animation: pulse-red 2s infinite;" title="You have unpaid bills"></i>
+                    <i class="fa fa-bell bell-ring-active" title="You have unpaid bills"></i>
                 <?php endif; ?>
             </a>
             <a href="talk.php" class="position-relative active">
