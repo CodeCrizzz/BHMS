@@ -87,12 +87,6 @@ $stmt_msg = $conn->prepare("SELECT COUNT(id) as unread FROM messages WHERE recei
 $stmt_msg->bind_param("i", $user_id);
 $stmt_msg->execute();
 $unread = $stmt_msg->get_result()->fetch_assoc()['unread'] ?? 0;
-
-echo json_encode([
-    'pending' => $pending_total,
-    'urgent' => true,
-    'unread' => $unread
-]);
 ?>
 
 <!DOCTYPE html>
