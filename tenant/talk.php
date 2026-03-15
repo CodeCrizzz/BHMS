@@ -80,16 +80,21 @@ if (isset($_POST['send_msg']) && $admin_id > 0) {
     <div class="d-flex flex-grow-1" style="overflow: hidden;">
         <div class="sidebar p-3" style="width: 250px; overflow-y: auto;">
             <h4 class="text-center mb-4 mt-2">My Portal</h4>
-            <a href="dashboard.php"><i class="fa fa-home me-2"></i> Dashboard</a>
-            <a href="profile.php"><i class="fa fa-user me-2"></i> My Profile</a>
+            <a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>">
+                <i class="fa fa-home me-2"></i> Dashboard
+            </a>
+            <a href="profile.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'profile.php') ? 'active' : ''; ?>">
+                <i class="fa fa-user me-2"></i> My Profile
+            </a>
+
             <a href="payments.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'payments.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-credit-card me-2"></i> Billing</span>
-                <?php if ($pending_total > 0): ?>
-                    <i class="fa fa-bell bell-ring-active" title="You have unpaid bills"></i>
-                <?php endif; ?>
+                <span id="sidebar-bell-container"></span>
             </a>
-            <a href="talk.php" class="position-relative active">
-                <i class="fa fa-comments me-2"></i> Chat Admin
+
+            <a href="talk.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'talk.php') ? 'active' : ''; ?>">
+                <span><i class="fa fa-comments me-2"></i> Chat Admin</span>
+                <span id="sidebar-chat-container"></span>
             </a>
         </div>
 
@@ -135,7 +140,11 @@ if (isset($_POST['send_msg']) && $admin_id > 0) {
             setInterval(loadMessages, 2000);
         });
     </script>
+
+    <script src="../assets/js/darkmode.js"></script>
+    <script src="../assets/js/script.js"></script>
     <script src="../assets/js/sidebar.js"></script>
+    <script src="../assets/js/get_notification.js"></script>
 </body>
 
 </html>

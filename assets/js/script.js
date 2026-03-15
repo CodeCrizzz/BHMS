@@ -1,5 +1,3 @@
-// assets/js/script.js
-
 // Function to print a specific area (Simulating PDF Export)
 function printDashboard() {
     // Get the content of the dashboard
@@ -17,10 +15,10 @@ function printDashboard() {
 }
 
 // Auto-hide alerts after 3 seconds
-document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
+document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(function () {
         let alerts = document.querySelectorAll('.alert');
-        alerts.forEach(function(alert) {
+        alerts.forEach(function (alert) {
             var bsAlert = new bootstrap.Alert(alert);
             bsAlert.close();
         });

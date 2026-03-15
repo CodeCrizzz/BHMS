@@ -120,7 +120,6 @@ body {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Specific logic for password field icons */
 input[type="password"]::-webkit-text-security-disc {
     -webkit-appearance: none;
 }
@@ -149,6 +148,18 @@ input[type="password"]::-webkit-clear-button {
 /* =========================================
    4. NAVIGATION (SIDEBAR & NAVBAR)
    ========================================= */
+.navbar-custom {
+    background-color: var(--white) !important;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand-custom {
+    color: var(--sidebar-bg) !important;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
 /* Sidebar Container */
 .sidebar {
     min-height: 100vh;
@@ -184,7 +195,6 @@ input[type="password"]::-webkit-clear-button {
     transform: translateX(5px);
 }
 
-/* Page-specific active states */
 #page-dashboard .nav-dashboard,
 #page-tenants .nav-tenants,
 #page-rooms .nav-rooms,
@@ -199,20 +209,7 @@ input[type="password"]::-webkit-clear-button {
     transform: translateX(5px);
 }
 
-/* Navbar Customization */
-.navbar-custom {
-    background-color: var(--white) !important;
-    border-bottom: 1px solid #e2e8f0;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-}
-
-.navbar-brand-custom {
-    color: var(--sidebar-bg) !important;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-}
-
-/* BELL RINGING ANIMATION --- */
+/* --- RINGING BELL --- */
 @keyframes bell-ring {
 
     0%,
@@ -221,28 +218,47 @@ input[type="password"]::-webkit-clear-button {
         transform: rotate(0);
     }
 
-    85% {
+    82% {
+        transform: rotate(20deg);
+    }
+
+    84% {
+        transform: rotate(-20deg);
+    }
+
+    86% {
         transform: rotate(15deg);
     }
 
-    90% {
+    88% {
         transform: rotate(-15deg);
     }
 
-    93% {
+    90% {
         transform: rotate(10deg);
     }
 
-    96% {
+    92% {
         transform: rotate(-10deg);
     }
 }
 
+/* --- DYNAMIC BELL COLORS --- */
+.bell-yellow {
+    color: #ffca28 !important;
+    /* Warning Yellow */
+    text-shadow: 0 0 8px rgba(255, 202, 40, 0.4);
+}
+
+.bell-red {
+    color: #ff3e3e !important;
+    /* Urgent Red */
+    text-shadow: 0 0 10px rgba(255, 62, 62, 0.6);
+}
+
+/* Ensure the animation remains "awesome" */
 .bell-ring-active {
-    display: inline-block;
-    color: #ef4444 !important;
-    /* Bright Red */
-    text-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+    display: inline-block !important;
     animation: bell-ring 5s ease-in-out infinite;
     transform-origin: top center;
 }
@@ -290,18 +306,6 @@ input[type="password"]::-webkit-clear-button {
     position: relative;
     z-index: 10;
     animation: cardEntrance 0.6s ease-out forwards;
-}
-
-@keyframes cardEntrance {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .login-image-side {
@@ -406,24 +410,6 @@ input[type="password"]::-webkit-clear-button {
 
 .input-group-custom .btn-outline-secondary:focus {
     box-shadow: none;
-}
-
-/* Red Alert Bell Pulse */
-@keyframes pulse-red {
-    0% {
-        transform: scale(0.9);
-        opacity: 0.8;
-    }
-
-    50% {
-        transform: scale(1.2);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(0.9);
-        opacity: 0.8;
-    }
 }
 
 .role-toggle .nav-link {

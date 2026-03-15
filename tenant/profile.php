@@ -129,19 +129,21 @@ if ($unread_query) {
 
         <div class="sidebar p-3" style="width: 250px; overflow-y: auto;">
             <h4 class="text-center mb-4 mt-2">My Portal</h4>
-            <a href="dashboard.php"><i class="fa fa-home me-2"></i> Dashboard</a>
-            <a href="profile.php" class="active"><i class="fa fa-user me-2"></i> My Profile</a>
+            <a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>">
+                <i class="fa fa-home me-2"></i> Dashboard
+            </a>
+            <a href="profile.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'profile.php') ? 'active' : ''; ?>">
+                <i class="fa fa-user me-2"></i> My Profile
+            </a>
+
             <a href="payments.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'payments.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-credit-card me-2"></i> Billing</span>
-                <?php if ($pending_total > 0): ?>
-                    <i class="fa fa-bell bell-ring-active" title="You have unpaid bills"></i>
-                <?php endif; ?>
+                <span id="sidebar-bell-container"></span>
             </a>
-            <a href="talk.php" class="d-flex justify-content-between align-items-center">
+
+            <a href="talk.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'talk.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-comments me-2"></i> Chat Admin</span>
-                <?php if ($unread_count > 0): ?>
-                    <span class="badge bg-danger rounded-pill shadow-sm" style="font-size: 0.75rem; padding: 0.35em 0.65em;"><?php echo $unread_count; ?></span>
-                <?php endif; ?>
+                <span id="sidebar-chat-container"></span>
             </a>
         </div>
 
@@ -289,6 +291,7 @@ if ($unread_query) {
             </div>
         </div>
     </div>
+    <script src="../assets/js/get_notification.js"></script>
     <script src="../assets/js/sidebar.js"></script>
     <script src="../assets/js/darkmode.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

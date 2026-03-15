@@ -23,15 +23,18 @@ if (isset($_POST['submit_request'])) {
     }
 }
 
+// --- GET USER DATA ---
 $sql = "SELECT users.*, rooms.price as rent_amount FROM users LEFT JOIN rooms ON users.room_assigned = rooms.room_no WHERE users.id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 
+// --- GET USER IMAGE ---
 $img_path = "../assets/uploads/" . ($user['profile_image'] ? $user['profile_image'] : 'default.png');
 if (!file_exists($img_path)) $img_path = "https://via.placeholder.com/150?text=No+Image";
 
+// --- GET DEBT ---
 $sql_debt = "SELECT SUM(amount) as debt FROM payments WHERE tenant_id = ? AND status = 'pending'";
 $stmt_d = $conn->prepare($sql_debt);
 $stmt_d->bind_param("i", $user_id);
@@ -39,8 +42,10 @@ $stmt_d->execute();
 $debt = $stmt_d->get_result()->fetch_assoc()['debt'];
 $debt = $debt ? $debt : 0;
 
+// --- GET ANNOUNCEMENTS ---
 $announcements = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC LIMIT 3");
 
+// --- GET MY REQUESTS ---
 $sql_req = "SELECT * FROM requests WHERE tenant_id = ? ORDER BY date_created DESC LIMIT 5";
 $stmt_r = $conn->prepare($sql_req);
 $stmt_r->bind_param("i", $user_id);
@@ -55,14 +60,39 @@ $stmt_pending->execute();
 $pending_total = $stmt_pending->get_result()->fetch_assoc()['total'];
 $pending_total = $pending_total ? $pending_total : 0.00;
 
-// --- GET UNREAD MESSAGE COUNT ---
-$unread_query = $conn->query("SELECT COUNT(id) AS unread FROM messages WHERE receiver_id = $user_id AND is_read = 0");
-$unread_count = 0;
-if ($unread_query) {
-    $unread_data = $unread_query->fetch_assoc();
-    $unread_count = $unread_data['unread'];
+// Check for pending bills and calculate the days remaining
+$stmt = $conn->prepare("
+    SELECT amount, date_created,
+    DATEDIFF(DATE_ADD(date_created, INTERVAL 30 DAY), CURDATE()) as days_left 
+    FROM payments 
+    WHERE tenant_id = ? AND status = 'pending'
+");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$pending_total = 0;
+$is_urgent = false;
+
+while ($row = $result->fetch_assoc()) {
+    $pending_total += $row['amount'];
+    // If any bill is due in 3 days or less, set urgent status
+    if ($row['days_left'] <= 3) {
+        $is_urgent = true;
+    }
 }
-// -------------------------------------
+
+// Get Unread Messages count
+$stmt_msg = $conn->prepare("SELECT COUNT(id) as unread FROM messages WHERE receiver_id = ? AND is_read = 0");
+$stmt_msg->bind_param("i", $user_id);
+$stmt_msg->execute();
+$unread = $stmt_msg->get_result()->fetch_assoc()['unread'] ?? 0;
+
+echo json_encode([
+    'pending' => $pending_total,
+    'urgent' => true,
+    'unread' => $unread
+]);
 ?>
 
 <!DOCTYPE html>
@@ -102,19 +132,21 @@ if ($unread_query) {
     <div class="d-flex flex-grow-1" style="overflow: hidden;">
         <div class="sidebar p-3" style="width: 250px; overflow-y: auto;">
             <h4 class="text-center mb-4 mt-2">My Portal</h4>
-            <a href="dashboard.php" class="active"><i class="fa fa-home me-2"></i> Dashboard</a>
-            <a href="profile.php"><i class="fa fa-user me-2"></i> My Profile</a>
+            <a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>">
+                <i class="fa fa-home me-2"></i> Dashboard
+            </a>
+            <a href="profile.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'profile.php') ? 'active' : ''; ?>">
+                <i class="fa fa-user me-2"></i> My Profile
+            </a>
+
             <a href="payments.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'payments.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-credit-card me-2"></i> Billing</span>
-                <?php if ($pending_total > 0): ?>
-                    <i class="fa fa-bell bell-ring-active" title="You have unpaid bills"></i>
-                <?php endif; ?>
+                <span id="sidebar-bell-container"></span>
             </a>
-            <a href="talk.php" class="d-flex justify-content-between align-items-center">
+
+            <a href="talk.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'talk.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-comments me-2"></i> Chat Admin</span>
-                <?php if ($unread_count > 0): ?>
-                    <span class="badge bg-danger rounded-pill shadow-sm" style="font-size: 0.75rem; padding: 0.35em 0.65em;"><?php echo $unread_count; ?></span>
-                <?php endif; ?>
+                <span id="sidebar-chat-container"></span>
             </a>
         </div>
 
@@ -300,6 +332,7 @@ if ($unread_query) {
             </div>
         </div>
     </div>
+    <script src="../assets/js/get_notification.js"></script>
     <script src="../assets/js/sidebar.js"></script>
     <script src="../assets/js/darkmode.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
