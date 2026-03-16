@@ -212,12 +212,14 @@ input[type="password"]::-webkit-clear-button {
 /* --- RINGING BELL --- */
 @keyframes bell-ring {
 
+    /* 0% to 80% (4 seconds): No movement */
     0%,
     80%,
     100% {
         transform: rotate(0);
     }
 
+    /* 81% to 99% (1 second): The ringing/shaking action */
     82% {
         transform: rotate(20deg);
     }
@@ -241,19 +243,36 @@ input[type="password"]::-webkit-clear-button {
     92% {
         transform: rotate(-10deg);
     }
+
+    94% {
+        transform: rotate(5deg);
+    }
+
+    96% {
+        transform: rotate(-5deg);
+    }
 }
 
-/* --- DYNAMIC BELL COLORS --- */
+.bell-ring-active {
+    display: inline-block !important;
+    /* Required for transform to work */
+    animation: bell-ring 5s ease-in-out infinite;
+    /* Total cycle is 5 seconds */
+    transform-origin: top center;
+    /* Swings from the top */
+}
+
+/* Color states */
 .bell-yellow {
-    color: #ffca28 !important;
+    color: #ffc107 !important;
     /* Warning Yellow */
-    text-shadow: 0 0 8px rgba(255, 202, 40, 0.4);
+    filter: drop-shadow(0 0 5px rgba(255, 193, 7, 0.4));
 }
 
 .bell-red {
     color: #ff3e3e !important;
     /* Urgent Red */
-    text-shadow: 0 0 10px rgba(255, 62, 62, 0.6);
+    filter: drop-shadow(0 0 8px rgba(255, 62, 62, 0.6));
 }
 
 /* Ensure the animation remains "awesome" */
