@@ -219,7 +219,6 @@ input[type="password"]::-webkit-clear-button {
         transform: rotate(0);
     }
 
-    /* 81% to 99% (1 second): The ringing/shaking action */
     82% {
         transform: rotate(20deg);
     }

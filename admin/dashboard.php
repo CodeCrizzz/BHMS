@@ -83,7 +83,7 @@ if ($unread_query) {
     <div class="flex-grow-1 p-4" id="printableArea">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Dashboard Overview</h2>
-            <button onclick="printDashboard()" class="btn btn-outline-dark"><i class="fa fa-file-pdf"></i> Export PDF</button>
+            <button onclick="printDashboard()" class="btn btn-outline-dark d-print-none"><i class="fa fa-file-pdf"></i> Export PDF</button>
         </div>
         <div class="row g-3">
             <div class="col-12 col-md-4">

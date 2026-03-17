@@ -6,12 +6,11 @@ function printDashboard() {
 
     // Swap the body content with just the printable area
     document.body.innerHTML = printContents;
-
     window.print();
 
     // Restore original content so the buttons work again
     document.body.innerHTML = originalContents;
-    location.reload(); // Reload to re-bind event listeners
+    location.reload();
 }
 
 // Auto-hide alerts after 3 seconds

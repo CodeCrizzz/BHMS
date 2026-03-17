@@ -22,5 +22,5 @@ function refreshNotifications() {
         .catch(err => console.error('Notification error:', err));
 }
 
-refreshNotifications();
-setInterval(refreshNotifications, 10000);
+refreshNotifications()
+setInterval(refreshNotifications, 10000); 
