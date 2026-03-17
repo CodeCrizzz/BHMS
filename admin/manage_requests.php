@@ -31,6 +31,13 @@ if (isset($_GET['delete'])) {
     exit();
 }
 
+// --- GET TENANT REQUEST COUNT ---
+$request_count_query = $conn->query("SELECT COUNT(id) AS total FROM requests WHERE status != 'Resolved'");
+$pending_request_count = 0;
+if ($request_count_query) {
+    $pending_request_count = $request_count_query->fetch_assoc()['total'];
+}
+
 // UNREAD MESSAGE COUNT
 $unread_query = $conn->query("SELECT COUNT(id) AS unread FROM messages WHERE receiver_id = " . $_SESSION['user_id'] . " AND is_read = 0");
 $unread_count = 0;
@@ -85,11 +92,23 @@ if ($unread_query) {
             <a href="manage_tenants.php" class="nav-tenants"><i class="fa fa-users me-2"></i> Manage Tenants</a>
             <a href="manage_rooms.php" class="nav-rooms"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
             <a href="billing.php" class="nav-billing"><i class="fa fa-file-invoice-dollar me-2"></i> Billing</a>
-            <a href="manage_requests.php" class="nav-requests active"><i class="fa fa-wrench me-2"></i> Manage Requests</a>
-            <a href="talk.php" class="nav-talk position-relative">
-                <i class="fa fa-comments me-2"></i> Chat Support
-                <?php if (isset($unread_count) && $unread_count > 0): ?>
-                    <span class="position-absolute badge rounded-pill bg-danger shadow-sm" style="top: 8px; right: 10px; font-size: 0.7rem; padding: 4px 6px;">
+            <a href="manage_requests.php" class="nav-requests d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'manage_requests.php') ? 'active' : ''; ?>">
+                <span><i class="fa fa-wrench me-2"></i> Manage Requests</span>
+
+                <?php
+                // Only show the badge if we are NOT on the manage_requests page AND there are active requests
+                if (basename($_SERVER['PHP_SELF']) !== 'manage_requests.php' && $pending_request_count > 0):
+                ?>
+                    <span class="badge rounded-pill bg-warning text-dark shadow-sm" style="font-size: 0.7rem; padding: 4px 8px;">
+                        <?php echo $pending_request_count; ?>
+                    </span>
+                <?php endif; ?>
+            </a>
+            <a href="talk.php" class="nav-talk d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'talk.php') ? 'active' : ''; ?>">
+                <span><i class="fa fa-comments me-2"></i> Chat Support</span>
+
+                <?php if (basename($_SERVER['PHP_SELF']) !== 'talk.php' && isset($unread_count) && $unread_count > 0): ?>
+                    <span class="badge rounded-pill bg-danger shadow-sm" style="font-size: 0.7rem; padding: 4px 8px;">
                         <?php echo $unread_count; ?>
                     </span>
                 <?php endif; ?>

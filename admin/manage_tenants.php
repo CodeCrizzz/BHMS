@@ -7,28 +7,28 @@ $msg = "";
 $msg_type = "";
 
 // --- 1. ADD TENANT ---
-if(isset($_POST['add_tenant'])){
+if (isset($_POST['add_tenant'])) {
     $fullname = $_POST['fullname'];
     $email = $_POST['email'];
-    $password = $_POST['password']; 
+    $password = $_POST['password'];
     $room_assigned = empty($_POST['room_assigned']) ? NULL : $_POST['room_assigned'];
 
     $check = $conn->query("SELECT id FROM users WHERE email='$email'");
-    if($check->num_rows > 0){
+    if ($check->num_rows > 0) {
         $msg = "Email already exists!";
         $msg_type = "danger";
     } else {
-        
+
         // --- SMART LOGIC: GENERATE UNIQUE 5-DIGIT ID ---
         $is_unique = false;
         $new_tenant_id = 0;
-        
+
         while (!$is_unique) {
             $new_tenant_id = rand(10000, 99999); // Generates a random number from 10000 to 99999
-            
+
             // Ask the database if this 5-digit ID already exists
             $check_id = $conn->query("SELECT id FROM users WHERE id='$new_tenant_id'");
-            if($check_id->num_rows == 0){
+            if ($check_id->num_rows == 0) {
                 $is_unique = true; // If 0 results come back, the ID is unique and safe to use!
             }
         }
@@ -36,16 +36,16 @@ if(isset($_POST['add_tenant'])){
 
         // Insert the new tenant using the generated $new_tenant_id
         $stmt = $conn->prepare("INSERT INTO users (id, fullname, email, password, role, room_assigned) VALUES (?, ?, ?, ?, 'tenant', ?)");
-        
+
         // Note: "issss" means Integer, String, String, String, String
         $stmt->bind_param("issss", $new_tenant_id, $fullname, $email, $password, $room_assigned);
-        
-        if($stmt->execute()){
+
+        if ($stmt->execute()) {
             // Automatically mark room as occupied if one was assigned
-            if(!empty($room_assigned)) {
+            if (!empty($room_assigned)) {
                 $conn->query("UPDATE rooms SET status='occupied' WHERE room_no='$room_assigned'");
             }
-            
+
             // Display the new 5-digit ID in the success message
             $msg = "New tenant added successfully! ID: #" . $new_tenant_id;
             $msg_type = "success";
@@ -57,7 +57,7 @@ if(isset($_POST['add_tenant'])){
 }
 
 // --- 2. UPDATE TENANT ---
-if(isset($_POST['update_tenant'])){
+if (isset($_POST['update_tenant'])) {
     $id = intval($_POST['tenant_id']);
     $fullname = $_POST['fullname'];
     $email = $_POST['email'];
@@ -67,11 +67,11 @@ if(isset($_POST['update_tenant'])){
     // SMART LOGIC PRE-CHECK: Get the tenant's OLD room before we change it
     $old_room = null;
     $get_old = $conn->query("SELECT room_assigned FROM users WHERE id=$id");
-    if($get_old->num_rows > 0) {
+    if ($get_old->num_rows > 0) {
         $old_room = $get_old->fetch_assoc()['room_assigned'];
     }
 
-    if(!empty($new_password)){
+    if (!empty($new_password)) {
         $stmt = $conn->prepare("UPDATE users SET fullname=?, email=?, room_assigned=?, password=? WHERE id=?");
         $stmt->bind_param("ssssi", $fullname, $email, $room_assigned, $new_password, $id);
     } else {
@@ -79,22 +79,22 @@ if(isset($_POST['update_tenant'])){
         $stmt->bind_param("sssi", $fullname, $email, $room_assigned, $id);
     }
 
-    if($stmt->execute()){
+    if ($stmt->execute()) {
         // SMART LOGIC POST-CHECK: Did the tenant change rooms?
-        if($old_room !== $room_assigned) {
-            
+        if ($old_room !== $room_assigned) {
+
             // 1. Mark the NEW room as occupied
-            if(!empty($room_assigned)) {
+            if (!empty($room_assigned)) {
                 $conn->query("UPDATE rooms SET status='occupied' WHERE room_no='$room_assigned'");
             }
-            
+
             // 2. Check if the OLD room is now completely empty
-            if(!empty($old_room)) {
+            if (!empty($old_room)) {
                 $check_old = $conn->query("SELECT COUNT(*) as total_occupants FROM users WHERE room_assigned='$old_room' AND role='tenant'");
                 $old_data = $check_old->fetch_assoc();
-                
+
                 // If nobody is left in the old room, make it available
-                if($old_data['total_occupants'] == 0) {
+                if ($old_data['total_occupants'] == 0) {
                     $conn->query("UPDATE rooms SET status='available' WHERE room_no='$old_room'");
                 }
             }
@@ -108,28 +108,28 @@ if(isset($_POST['update_tenant'])){
 }
 
 // --- 3. DELETE TENANT ---
-if(isset($_GET['delete'])){
+if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']); // intval() adds security
-    
+
     // Find out which room this tenant was assigned to BEFORE we delete them
     $room_assigned = null;
     $get_room = $conn->query("SELECT room_assigned FROM users WHERE id=$id");
-    if($get_room->num_rows > 0) {
+    if ($get_room->num_rows > 0) {
         $row = $get_room->fetch_assoc();
         $room_assigned = $row['room_assigned'];
     }
 
     // Delete the tenant from the database
     $conn->query("DELETE FROM users WHERE id=$id");
-    
+
     // If the tenant had a room assigned, we need to check if that room should now be marked as 'available'
-    if(!empty($room_assigned)) {
+    if (!empty($room_assigned)) {
         // Check how many tenants are still assigned to that room
         $check_room = $conn->query("SELECT COUNT(*) as total_occupants FROM users WHERE room_assigned='$room_assigned' AND role='tenant'");
         $room_data = $check_room->fetch_assoc();
-        
+
         // If there are no more occupants, mark the room as available
-        if($room_data['total_occupants'] == 0) {
+        if ($room_data['total_occupants'] == 0) {
             $conn->query("UPDATE rooms SET status='available' WHERE room_no='$room_assigned'");
         }
     }
@@ -139,9 +139,16 @@ if(isset($_GET['delete'])){
     exit();
 }
 
-if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'){
+if (isset($_GET['msg']) && $_GET['msg'] == 'deleted') {
     $msg = "Tenant removed from the system.";
     $msg_type = "success";
+}
+
+// --- GET TENANT REQUEST COUNT ---
+$request_count_query = $conn->query("SELECT COUNT(id) AS total FROM requests WHERE status != 'Resolved'");
+$pending_request_count = 0;
+if ($request_count_query) {
+    $pending_request_count = $request_count_query->fetch_assoc()['total'];
 }
 
 // UNREAD MESSAGE COUNT
@@ -156,6 +163,7 @@ if ($unread_query) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
@@ -164,10 +172,11 @@ if ($unread_query) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
+
 <body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
-    
+
     <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap" style="z-index: 1000;">
-        <div class="d-flex align-items-center gap-2" style="min-width: 0;"> 
+        <div class="d-flex align-items-center gap-2" style="min-width: 0;">
             <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
                 <i class="fa fa-bars"></i>
             </button>
@@ -192,11 +201,23 @@ if ($unread_query) {
             <a href="manage_tenants.php" class="nav-tenants active"><i class="fa fa-users me-2"></i> Manage Tenants</a>
             <a href="manage_rooms.php" class="nav-rooms"><i class="fa fa-bed me-2"></i> Manage Rooms</a>
             <a href="billing.php" class="nav-billing"><i class="fa fa-file-invoice-dollar me-2"></i> Billing</a>
-            <a href="manage_requests.php" class="nav-requests"><i class="fa fa-wrench me-2"></i> Manage Requests</a>
-            <a href="talk.php" class="nav-talk position-relative">
-                <i class="fa fa-comments me-2"></i> Chat Support
-                <?php if(isset($unread_count) && $unread_count > 0): ?>
-                    <span class="position-absolute badge rounded-pill bg-danger shadow-sm" style="top: 8px; right: 10px; font-size: 0.7rem; padding: 4px 6px;">
+            <a href="manage_requests.php" class="nav-requests d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'manage_requests.php') ? 'active' : ''; ?>">
+                <span><i class="fa fa-wrench me-2"></i> Manage Requests</span>
+
+                <?php
+                // Only show the badge if we are NOT on the manage_requests page AND there are active requests
+                if (basename($_SERVER['PHP_SELF']) !== 'manage_requests.php' && $pending_request_count > 0):
+                ?>
+                    <span class="badge rounded-pill bg-warning text-dark shadow-sm" style="font-size: 0.7rem; padding: 4px 8px;">
+                        <?php echo $pending_request_count; ?>
+                    </span>
+                <?php endif; ?>
+            </a>
+            <a href="talk.php" class="nav-talk d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'talk.php') ? 'active' : ''; ?>">
+                <span><i class="fa fa-comments me-2"></i> Chat Support</span>
+
+                <?php if (basename($_SERVER['PHP_SELF']) !== 'talk.php' && isset($unread_count) && $unread_count > 0): ?>
+                    <span class="badge rounded-pill bg-danger shadow-sm" style="font-size: 0.7rem; padding: 4px 8px;">
                         <?php echo $unread_count; ?>
                     </span>
                 <?php endif; ?>
@@ -212,7 +233,7 @@ if ($unread_query) {
                 </button>
             </div>
 
-            <?php if($msg): ?>
+            <?php if ($msg): ?>
                 <div class="alert alert-<?php echo $msg_type; ?> alert-dismissible fade show">
                     <?php echo $msg; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -220,7 +241,7 @@ if ($unread_query) {
             <?php endif; ?>
 
             <div class="card card-custom border-0 shadow-sm overflow-hidden" style="border-radius: 15px;">
-                <div class="card-body p-0"> 
+                <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="bg-light">
@@ -235,39 +256,39 @@ if ($unread_query) {
                             <tbody>
                                 <?php
                                 $tenants = $conn->query("SELECT * FROM users WHERE role='tenant' ORDER BY id DESC");
-                                if($tenants->num_rows > 0) {
-                                    while($row = $tenants->fetch_assoc()){
+                                if ($tenants->num_rows > 0) {
+                                    while ($row = $tenants->fetch_assoc()) {
                                 ?>
-                                <tr>
-                                    <td class="ps-4 text-secondary">#<?php echo $row['id']; ?></td>
-                                    <td class="fw-bold"><?php echo $row['fullname']; ?></td>
-                                    <td class="text-muted"><?php echo $row['email']; ?></td>
-                                    <td>
-                                        <?php if($row['room_assigned']): ?>
-                                            <span class="badge bg-info text-dark">Room <?php echo $row['room_assigned']; ?></span>
-                                        <?php else: ?>
-                                            <span class="badge bg-secondary">Unassigned</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-outline-primary me-1" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#editTenantModal"
-                                            data-id="<?php echo $row['id']; ?>"
-                                            data-name="<?php echo $row['fullname']; ?>"
-                                            data-email="<?php echo $row['email']; ?>"
-                                            data-room="<?php echo $row['room_assigned']; ?>">
-                                            <i class="fa fa-pencil-alt"></i>
-                                        </button>
-                                        <a href="manage_tenants.php?delete=<?php echo $row['id']; ?>" 
-                                           class="btn btn-sm btn-outline-danger"
-                                           onclick="return confirm('Are you sure you want to delete this tenant?');">
-                                            <i class="fa fa-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <?php 
-                                    } 
+                                        <tr>
+                                            <td class="ps-4 text-secondary">#<?php echo $row['id']; ?></td>
+                                            <td class="fw-bold"><?php echo $row['fullname']; ?></td>
+                                            <td class="text-muted"><?php echo $row['email']; ?></td>
+                                            <td>
+                                                <?php if ($row['room_assigned']): ?>
+                                                    <span class="badge bg-info text-dark">Room <?php echo $row['room_assigned']; ?></span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-secondary">Unassigned</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-sm btn-outline-primary me-1"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editTenantModal"
+                                                    data-id="<?php echo $row['id']; ?>"
+                                                    data-name="<?php echo $row['fullname']; ?>"
+                                                    data-email="<?php echo $row['email']; ?>"
+                                                    data-room="<?php echo $row['room_assigned']; ?>">
+                                                    <i class="fa fa-pencil-alt"></i>
+                                                </button>
+                                                <a href="manage_tenants.php?delete=<?php echo $row['id']; ?>"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Are you sure you want to delete this tenant?');">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                <?php
+                                    }
                                 } else {
                                     echo "<tr><td colspan='5' class='text-center py-4 text-muted'>No tenants found.</td></tr>";
                                 }
@@ -304,8 +325,8 @@ if ($unread_query) {
                                 <option value="">-- No Room Assigned --</option>
                                 <?php
                                 $rooms = $conn->query("SELECT room_no FROM rooms WHERE status='available'");
-                                while($r = $rooms->fetch_assoc()){
-                                    echo "<option value='".$r['room_no']."'>Room ".$r['room_no']."</option>";
+                                while ($r = $rooms->fetch_assoc()) {
+                                    echo "<option value='" . $r['room_no'] . "'>Room " . $r['room_no'] . "</option>";
                                 }
                                 ?>
                             </select>
@@ -346,15 +367,15 @@ if ($unread_query) {
                         <div class="mb-3">
                             <label>Assign Room</label>
                             <select name="room_assigned" id="edit_room" class="form-select">
-                            <option value="">-- No Room Assigned --</option>
-                            <?php
-                            $all_rooms = $conn->query("SELECT room_no, capacity, (SELECT COUNT(*) FROM users WHERE room_assigned=rooms.room_no AND role='tenant') as occupants FROM rooms");
-                            while($r = $all_rooms->fetch_assoc()){
-                                $status_label = ($r['occupants'] >= $r['capacity']) ? " (FULL)" : " (".$r['occupants']."/".$r['capacity'].")";
-                                echo "<option value='".$r['room_no']."'>Room ".$r['room_no'].$status_label."</option>";
-                            }
-                            ?>
-                        </select>
+                                <option value="">-- No Room Assigned --</option>
+                                <?php
+                                $all_rooms = $conn->query("SELECT room_no, capacity, (SELECT COUNT(*) FROM users WHERE room_assigned=rooms.room_no AND role='tenant') as occupants FROM rooms");
+                                while ($r = $all_rooms->fetch_assoc()) {
+                                    $status_label = ($r['occupants'] >= $r['capacity']) ? " (FULL)" : " (" . $r['occupants'] . "/" . $r['capacity'] . ")";
+                                    echo "<option value='" . $r['room_no'] . "'>Room " . $r['room_no'] . $status_label . "</option>";
+                                }
+                                ?>
+                            </select>
                         </div>
                         <hr>
                         <div class="mb-3">
@@ -371,20 +392,21 @@ if ($unread_query) {
         </div>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../assets/js/darkmode.js"></script>
-<script src="../assets/js/sidebar.js"></script>
-<script>
-    // Fills the Edit Modal with the specific tenant's data
-    var editModal = document.getElementById('editTenantModal');
-    editModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        
-        document.getElementById('edit_id').value = button.getAttribute('data-id');
-        document.getElementById('edit_name').value = button.getAttribute('data-name');
-        document.getElementById('edit_email').value = button.getAttribute('data-email');
-        document.getElementById('edit_room').value = button.getAttribute('data-room');
-    });
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/darkmode.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
+    <script>
+        // Fills the Edit Modal with the specific tenant's data
+        var editModal = document.getElementById('editTenantModal');
+        editModal.addEventListener('show.bs.modal', function(event) {
+            var button = event.relatedTarget;
+
+            document.getElementById('edit_id').value = button.getAttribute('data-id');
+            document.getElementById('edit_name').value = button.getAttribute('data-name');
+            document.getElementById('edit_email').value = button.getAttribute('data-email');
+            document.getElementById('edit_room').value = button.getAttribute('data-room');
+        });
+    </script>
 </body>
+
 </html>
