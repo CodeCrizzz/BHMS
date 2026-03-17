@@ -19,13 +19,6 @@ $res_revenue = $conn->query($sql_revenue);
 $row_revenue = $res_revenue->fetch_assoc();
 $total_revenue = $row_revenue['total'] ? $row_revenue['total'] : 0.00;
 
-// --- GET TENANT REQUEST COUNT ---
-$request_count_query = $conn->query("SELECT COUNT(id) AS total FROM requests WHERE status != 'Resolved'");
-$pending_request_count = 0;
-if ($request_count_query) {
-    $pending_request_count = $request_count_query->fetch_assoc()['total'];
-}
-
 // UNREAD MESSAGE COUNT
 $unread_query = $conn->query("SELECT COUNT(id) AS unread FROM messages WHERE receiver_id = " . $_SESSION['user_id'] . " AND is_read = 0");
 $unread_count = 0;
@@ -34,6 +27,13 @@ if ($unread_query) {
     $unread_count = $unread_data['unread'];
 }
 
+// --- TENANT REQUEST COUNT ---
+$request_count_query = $conn->query("SELECT COUNT(id) AS total FROM requests WHERE status IN ('Pending', 'In Progress')");
+$pending_request_count = 0;
+if ($request_count_query) {
+    $row = $request_count_query->fetch_assoc();
+    $pending_request_count = (int)$row['total'];
+}
 
 ?>
 
@@ -81,11 +81,12 @@ if ($unread_query) {
             <a href="billing.php" class="nav-billing"><i class="fa fa-file-invoice-dollar me-2"></i> Billing</a>
             <a href="manage_requests.php" class="nav-requests d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'manage_requests.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-wrench me-2"></i> Manage Requests</span>
+
                 <?php
-                // Only show the badge if we are NOT on the manage_requests page AND there are active requests
+                // Only show the badge if there are active requests AND we aren't on the requests page
                 if (basename($_SERVER['PHP_SELF']) !== 'manage_requests.php' && $pending_request_count > 0):
                 ?>
-                    <span class="badge rounded-pill bg-warning text-dark shadow-sm" style="font-size: 0.7rem; padding: 4px 8px;">
+                    <span class="badge rounded-pill bg-warning text-dark shadow-sm" style="font-size: 0.75rem; padding: 4px 8px;">
                         <?php echo $pending_request_count; ?>
                     </span>
                 <?php endif; ?>

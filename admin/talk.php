@@ -42,14 +42,7 @@ if (isset($_POST['send_msg']) && $selected_tenant_id > 0) {
     }
 }
 
-// --- GET TENANT REQUEST COUNT ---
-$request_count_query = $conn->query("SELECT COUNT(id) AS total FROM requests WHERE status != 'Resolved'");
-$pending_request_count = 0;
-if ($request_count_query) {
-    $pending_request_count = $request_count_query->fetch_assoc()['total'];
-}
-
-// --- 3. FETCH TENANTS + INDIVIDUAL UNREAD COUNTS ---
+// --- FETCH TENANTS + INDIVIDUAL UNREAD COUNTS ---
 // This subquery counts unread messages from each specific tenant
 $tenants_data = [];
 $tenants_query = $conn->query("
@@ -65,6 +58,15 @@ if ($tenants_query) {
         $tenants_data[] = $t;
     }
 }
+
+// --- TENANT REQUEST COUNT ---
+$request_count_query = $conn->query("SELECT COUNT(id) AS total FROM requests WHERE status IN ('Pending', 'In Progress')");
+$pending_request_count = 0;
+if ($request_count_query) {
+    $row = $request_count_query->fetch_assoc();
+    $pending_request_count = (int)$row['total'];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -146,10 +148,10 @@ if ($tenants_query) {
                 <span><i class="fa fa-wrench me-2"></i> Manage Requests</span>
 
                 <?php
-                // Only show the badge if we are NOT on the manage_requests page AND there are active requests
+                // Only show the badge if there are active requests AND we aren't on the requests page
                 if (basename($_SERVER['PHP_SELF']) !== 'manage_requests.php' && $pending_request_count > 0):
                 ?>
-                    <span class="badge rounded-pill bg-warning text-dark shadow-sm" style="font-size: 0.7rem; padding: 4px 8px;">
+                    <span class="badge rounded-pill bg-warning text-dark shadow-sm" style="font-size: 0.75rem; padding: 4px 8px;">
                         <?php echo $pending_request_count; ?>
                     </span>
                 <?php endif; ?>
