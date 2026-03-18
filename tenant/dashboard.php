@@ -7,21 +7,7 @@ $user_id = $_SESSION['user_id'];
 $msg = "";
 $msg_type = "";
 
-if (isset($_POST['submit_request'])) {
-    $type = $_POST['request_type'];
-    $desc = $_POST['description'];
-
-    $stmt = $conn->prepare("INSERT INTO requests (tenant_id, request_type, description) VALUES (?, ?, ?)");
-    $stmt->bind_param("iss", $user_id, $type, $desc);
-
-    if ($stmt->execute()) {
-        $msg = "Request submitted successfully!";
-        $msg_type = "success";
-    } else {
-        $msg = "Error submitting request.";
-        $msg_type = "danger";
-    }
-}
+// (Removed the submit_request POST logic from here)
 
 // --- GET USER DATA ---
 $sql = "SELECT users.*, rooms.price as rent_amount FROM users LEFT JOIN rooms ON users.room_assigned = rooms.room_no WHERE users.id = ?";
@@ -45,7 +31,7 @@ $debt = $debt ? $debt : 0;
 // --- GET ANNOUNCEMENTS ---
 $announcements = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC LIMIT 3");
 
-// --- GET MY REQUESTS ---
+// --- GET MY REQUESTS (For Display Only) ---
 $sql_req = "SELECT * FROM requests WHERE tenant_id = ? ORDER BY date_created DESC LIMIT 5";
 $stmt_r = $conn->prepare($sql_req);
 $stmt_r->bind_param("i", $user_id);
@@ -76,7 +62,6 @@ $is_urgent = false;
 
 while ($row = $result->fetch_assoc()) {
     $pending_total += $row['amount'];
-    // If any bill is due in 3 days or less, set urgent status
     if ($row['days_left'] <= 3) {
         $is_urgent = true;
     }
@@ -103,10 +88,10 @@ $unread = $stmt_msg->get_result()->fetch_assoc()['unread'] ?? 0;
 
 <body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
     <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap" style="z-index: 1000;">
-        <div class="d-flex align-items-center gap-2" style="min-width: 0;"> <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
+        <div class="d-flex align-items-center gap-2" style="min-width: 0;">
+            <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
                 <i class="fa fa-bars"></i>
             </button>
-
             <div class="navbar-brand-custom fw-bold text-truncate">
                 <i class="fa fa-building me-2"></i> StudyStay Boarding House
             </div>
@@ -116,7 +101,6 @@ $unread = $stmt_msg->get_result()->fetch_assoc()['unread'] ?? 0;
             <button id="darkModeToggle" class="btn btn-outline-secondary rounded-circle" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center;">
                 <i class="fa fa-moon"></i>
             </button>
-
             <a href="../logout.php" class="btn btn-danger btn-sm d-flex align-items-center" style="height: 36px; white-space: nowrap;">
                 <i class="fa fa-sign-out-alt me-1"></i> <span class="d-none d-sm-inline">Logout</span>
             </a>
@@ -132,10 +116,13 @@ $unread = $stmt_msg->get_result()->fetch_assoc()['unread'] ?? 0;
             <a href="profile.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'profile.php') ? 'active' : ''; ?>">
                 <i class="fa fa-user me-2"></i> My Profile
             </a>
-
             <a href="payments.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'payments.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-credit-card me-2"></i> Billing</span>
                 <span id="sidebar-bell-container"></span>
+            </a>
+
+            <a href="requests.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'requests.php') ? 'active' : ''; ?>">
+                <i class="fa fa-wrench me-2"></i> My Requests
             </a>
 
             <a href="talk.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'talk.php') ? 'active' : ''; ?>">
@@ -253,9 +240,10 @@ $unread = $stmt_msg->get_result()->fetch_assoc()['unread'] ?? 0;
                     <div class="card card-custom border-0 shadow-sm h-100">
                         <div class="card-header bg-white border-bottom-0 pt-3 ps-3 d-flex justify-content-between align-items-center">
                             <h5 class="fw-bold text-primary-custom mb-0"><i class="fa fa-wrench me-2"></i> Requests</h5>
-                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#requestModal">
-                                <i class="fa fa-plus"></i> New
-                            </button>
+
+                            <a href="requests.php" class="btn btn-sm btn-primary">
+                                Go to Requests <i class="fa fa-arrow-right ms-1"></i>
+                            </a>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
@@ -295,37 +283,6 @@ $unread = $stmt_msg->get_result()->fetch_assoc()['unread'] ?? 0;
         </div>
     </div>
 
-    <div class="modal fade" id="requestModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary-custom text-white">
-                    <h5 class="modal-title">Submit Maintenance/Request</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <form method="POST">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label>Request Type</label>
-                            <select name="request_type" class="form-select">
-                                <option value="Maintenance">Maintenance (Repair)</option>
-                                <option value="Complaint">Complaint</option>
-                                <option value="Cleaning">Cleaning Request</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label>Description (Details)</label>
-                            <textarea name="description" class="form-control" rows="4" required placeholder="e.g. The faucet in the bathroom is leaking..."></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" name="submit_request" class="btn bg-primary-custom text-white">Submit Request</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     <script src="../assets/js/get_notification.js"></script>
     <script src="../assets/js/sidebar.js"></script>
     <script src="../assets/js/darkmode.js"></script>

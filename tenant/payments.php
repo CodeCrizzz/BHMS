@@ -78,7 +78,7 @@ $paid_total = $paid_total ? $paid_total : 0.00;
                 <span id="sidebar-bell-container"></span>
             </a>
 
-            <a href="request.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'request.php') ? 'active' : ''; ?>">
+            <a href="requests.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'request.php') ? 'active' : ''; ?>">
                 <i class="fa fa-wrench me-2"></i> My Requests
             </a>
 
