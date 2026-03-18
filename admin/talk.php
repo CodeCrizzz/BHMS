@@ -146,7 +146,6 @@ if ($request_count_query) {
             <a href="billing.php" class="nav-billing"><i class="fa fa-file-invoice-dollar me-2"></i> Billing</a>
             <a href="manage_requests.php" class="nav-requests d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'manage_requests.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-wrench me-2"></i> Manage Requests</span>
-
                 <?php
                 // Only show the badge if there are active requests AND we aren't on the requests page
                 if (basename($_SERVER['PHP_SELF']) !== 'manage_requests.php' && $pending_request_count > 0):
@@ -158,7 +157,6 @@ if ($request_count_query) {
             </a>
             <a href="talk.php" class="nav-talk d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'talk.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-comments me-2"></i> Chat Support</span>
-
                 <?php if (basename($_SERVER['PHP_SELF']) !== 'talk.php' && isset($unread_count) && $unread_count > 0): ?>
                     <span class="badge rounded-pill bg-danger shadow-sm" style="font-size: 0.7rem; padding: 4px 8px;">
                         <?php echo $unread_count; ?>
@@ -169,7 +167,6 @@ if ($request_count_query) {
         </div>
 
         <div class="d-flex flex-grow-1" style="overflow: hidden;">
-
             <div class="tenant-list-container d-none d-lg-flex flex-column shadow-sm z-2 flex-shrink-0">
                 <div class="p-3 border-bottom sticky-top bg-light">
                     <h5 class="m-0 fw-bold text-primary-custom"><i class="fa fa-inbox me-2"></i> Tenants</h5>
@@ -208,11 +205,8 @@ if ($request_count_query) {
                     ?>
                 </div>
             </div>
-
             <div class="chat-area flex-grow-1 d-flex flex-column position-relative" style="overflow: hidden;">
-
                 <?php if ($selected_tenant_id): ?>
-
                     <div class="p-3 bg-white border-bottom shadow-sm z-1 d-flex align-items-center gap-3">
                         <?php
                         $header_fallback = "https://ui-avatars.com/api/?name=" . urlencode($selected_tenant_name) . "&background=3b82f6&color=fff&bold=true";
@@ -224,9 +218,7 @@ if ($request_count_query) {
                             <small class="text-success fw-bold"><i class="fa fa-circle me-1" style="font-size: 8px;"></i>Online</small>
                         </div>
                     </div>
-
                     <div id="chat-box" class="flex-grow-1 p-4 chat-scroll" style="overflow-y: auto;"></div>
-
                     <div class="p-3 bg-white border-top shadow-lg z-2">
                         <form method="POST" autocomplete="off" class="m-0">
                             <div class="input-group bg-light rounded-pill p-1 border shadow-sm chat-input-wrapper">

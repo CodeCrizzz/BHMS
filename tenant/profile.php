@@ -141,6 +141,10 @@ if ($unread_query) {
                 <span id="sidebar-bell-container"></span>
             </a>
 
+            <a href="request.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'request.php') ? 'active' : ''; ?>">
+                <i class="fa fa-wrench me-2"></i> My Requests
+            </a>
+
             <a href="talk.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'talk.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-comments me-2"></i> Chat Admin</span>
                 <span id="sidebar-chat-container"></span>
