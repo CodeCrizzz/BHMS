@@ -78,8 +78,25 @@ $paid_total = $paid_total ? $paid_total : 0.00;
                 <span id="sidebar-bell-container"></span>
             </a>
 
-            <a href="requests.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'request.php') ? 'active' : ''; ?>">
-                <i class="fa fa-wrench me-2"></i> My Requests
+            <a href="requests.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'requests.php') ? 'active' : ''; ?>">
+                <span><i class="fa fa-wrench me-2"></i> My Requests</span>
+
+                <?php
+                // Query to count requests that are 'In Progress' or 'Resolved'
+                $sidebar_req_query = $conn->query("SELECT COUNT(id) AS total FROM requests WHERE tenant_id = $my_id AND status IN ('In Progress', 'Resolved')");
+                $sidebar_req_count = 0;
+
+                if ($sidebar_req_query) {
+                    $sidebar_req_count = $sidebar_req_query->fetch_assoc()['total'];
+                }
+
+                // Only show the badge if the count is greater than 0
+                if ($sidebar_req_count > 0):
+                ?>
+                    <span class="badge bg-warning text-dark rounded-pill shadow-sm" style="font-size: 0.7rem; padding: 4px 8px;">
+                        <?php echo $sidebar_req_count; ?>
+                    </span>
+                <?php endif; ?>
             </a>
 
             <a href="talk.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'talk.php') ? 'active' : ''; ?>">

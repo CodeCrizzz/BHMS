@@ -24,12 +24,32 @@ if (isset($_POST['submit_request'])) {
     }
 }
 
-// --- 2. FETCH EXISTING REQUESTS FOR THIS TENANT ---
+// --- 2. FETCH EXISTING REQUESTS & CALCULATE COUNTS ---
 $requests_sql = "SELECT * FROM requests WHERE tenant_id = ? ORDER BY date_created DESC";
 $stmt_req = $conn->prepare($requests_sql);
 $stmt_req->bind_param("i", $user_id);
 $stmt_req->execute();
 $requests_result = $stmt_req->get_result();
+
+$requests_data = [];
+$count_pending = 0;
+$count_inprogress = 0;
+$count_resolved = 0;
+$total_requests = 0;
+
+// Loop through the database results to build our array and count the statuses
+while ($row = $requests_result->fetch_assoc()) {
+    $requests_data[] = $row;
+    $total_requests++;
+
+    if ($row['status'] == 'Pending') {
+        $count_pending++;
+    } elseif ($row['status'] == 'In Progress') {
+        $count_inprogress++;
+    } elseif ($row['status'] == 'Resolved') {
+        $count_resolved++;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -42,6 +62,28 @@ $requests_result = $stmt_req->get_result();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .stat-card {
+            border-left: 4px solid;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .border-warning-custom {
+            border-left-color: #ffc107 !important;
+        }
+
+        .border-info-custom {
+            border-left-color: #0dcaf0 !important;
+        }
+
+        .border-success-custom {
+            border-left-color: #198754 !important;
+        }
+    </style>
 </head>
 
 <body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
@@ -105,9 +147,8 @@ $requests_result = $stmt_req->get_result();
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <?php endif; ?>
-
             <div class="row g-4">
-
+                <!-- LEFT COLUMN: FORM -->
                 <div class="col-lg-4">
                     <div class="card card-custom border-0 shadow-sm h-100">
                         <div class="card-header bg-white border-bottom-0 pt-4 px-4">
@@ -137,11 +178,35 @@ $requests_result = $stmt_req->get_result();
                     </div>
                 </div>
 
+                <!-- RIGHT COLUMN: STATS & TABLE -->
                 <div class="col-lg-8">
-                    <div class="card card-custom border-0 shadow-sm h-100 overflow-hidden">
+                    <!-- Counters Row -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="card bg-white border-0 shadow-sm p-3 rounded-3 stat-card border-warning-custom">
+                                <p class="text-muted small fw-bold mb-1"><i class="fa fa-clock text-warning me-1"></i> PENDING</p>
+                                <h3 class="fw-bold text-dark m-0"><?php echo $count_pending; ?></h3>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-white border-0 shadow-sm p-3 rounded-3 stat-card border-info-custom">
+                                <p class="text-muted small fw-bold mb-1"><i class="fa fa-spinner text-info me-1"></i> IN PROGRESS</p>
+                                <h3 class="fw-bold text-dark m-0"><?php echo $count_inprogress; ?></h3>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-white border-0 shadow-sm p-3 rounded-3 stat-card border-success-custom">
+                                <p class="text-muted small fw-bold mb-1"><i class="fa fa-check text-success me-1"></i> RESOLVED</p>
+                                <h3 class="fw-bold text-dark m-0"><?php echo $count_resolved; ?></h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- History Table -->
+                    <div class="card card-custom border-0 shadow-sm overflow-hidden">
                         <div class="card-header bg-white pt-4 px-4 pb-3 d-flex justify-content-between align-items-center border-bottom">
                             <h5 class="fw-bold m-0 text-dark">My Request History</h5>
-                            <span class="badge bg-light text-secondary border">Total: <?php echo $requests_result->num_rows; ?></span>
+                            <span class="badge bg-light text-secondary border">Total: <?php echo $total_requests; ?></span>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
@@ -154,8 +219,8 @@ $requests_result = $stmt_req->get_result();
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php if ($requests_result->num_rows > 0): ?>
-                                            <?php while ($row = $requests_result->fetch_assoc()): ?>
+                                        <?php if ($total_requests > 0): ?>
+                                            <?php foreach ($requests_data as $row): ?>
                                                 <tr>
                                                     <td class="ps-4 text-nowrap">
                                                         <div class="fw-bold text-dark"><?php echo date('M d', strtotime($row['date_created'])); ?></div>
@@ -180,7 +245,7 @@ $requests_result = $stmt_req->get_result();
                                                         ?>
                                                     </td>
                                                 </tr>
-                                            <?php endwhile; ?>
+                                            <?php endforeach; ?>
                                         <?php else: ?>
                                             <tr>
                                                 <td colspan="3" class="text-center py-5">
