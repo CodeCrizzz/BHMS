@@ -72,23 +72,6 @@ $stmt_b->bind_param("i", $user_id);
 $stmt_b->execute();
 $balance = $stmt_b->get_result()->fetch_assoc()['debt'];
 $balance = $balance ? $balance : 0;
-
-// --- GET UNPAID BILLS COUNT ---
-$id_to_query = isset($user_id) ? $user_id : $my_id;
-$stmt_pending = $conn->prepare("SELECT SUM(amount) as total FROM payments WHERE tenant_id = ? AND status = 'pending'");
-$stmt_pending->bind_param("i", $id_to_query);
-$stmt_pending->execute();
-$pending_total = $stmt_pending->get_result()->fetch_assoc()['total'];
-$pending_total = $pending_total ? $pending_total : 0.00;
-
-// --- GET UNREAD MESSAGE COUNT ---
-$unread_query = $conn->query("SELECT COUNT(id) AS unread FROM messages WHERE receiver_id = " . $_SESSION['user_id'] . " AND is_read = 0");
-$unread_count = 0;
-if ($unread_query) {
-    $unread_data = $unread_query->fetch_assoc();
-    $unread_count = $unread_data['unread'];
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -97,18 +80,18 @@ if ($unread_query) {
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title>My Profile</title>
+    <title>My Profile | Tenant</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
-<body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
-    <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap" style="z-index: 1000;">
-        <div class="d-flex align-items-center gap-2" style="min-width: 0;"> <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
+<body class="bg-light d-flex flex-column" style="height: 100vh; width: 100vw; overflow: hidden; margin: 0;">
+    <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap flex-shrink-0" style="z-index: 1000;">
+        <div class="d-flex align-items-center gap-2" style="min-width: 0;">
+            <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
                 <i class="fa fa-bars"></i>
             </button>
-
             <div class="navbar-brand-custom fw-bold text-truncate">
                 <i class="fa fa-building me-2"></i> StudyStay Boarding House
             </div>
@@ -118,7 +101,6 @@ if ($unread_query) {
             <button id="darkModeToggle" class="btn btn-outline-secondary rounded-circle" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center;">
                 <i class="fa fa-moon"></i>
             </button>
-
             <a href="../logout.php" class="btn btn-danger btn-sm d-flex align-items-center" style="height: 36px; white-space: nowrap;">
                 <i class="fa fa-sign-out-alt me-1"></i> <span class="d-none d-sm-inline">Logout</span>
             </a>
@@ -127,7 +109,7 @@ if ($unread_query) {
 
     <div class="d-flex flex-grow-1" style="overflow: hidden;">
 
-        <div class="sidebar p-3" style="width: 250px; overflow-y: auto;">
+        <div class="sidebar p-3 flex-shrink-0" style="width: 250px; overflow-y: auto;">
             <h4 class="text-center mb-4 mt-2">My Portal</h4>
             <a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>">
                 <i class="fa fa-home me-2"></i> Dashboard
@@ -135,7 +117,6 @@ if ($unread_query) {
             <a href="profile.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'profile.php') ? 'active' : ''; ?>">
                 <i class="fa fa-user me-2"></i> My Profile
             </a>
-
             <a href="payments.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'payments.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-credit-card me-2"></i> Billing</span>
                 <span id="sidebar-bell-container"></span>
@@ -143,17 +124,10 @@ if ($unread_query) {
 
             <a href="requests.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'requests.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-wrench me-2"></i> My Requests</span>
-
                 <?php
-                // Query to count requests that are 'In Progress' or 'Resolved'
-                $sidebar_req_query = $conn->query("SELECT COUNT(id) AS total FROM requests WHERE tenant_id = $user_id AND status IN ('In Progress', 'Resolved')");
-                $sidebar_req_count = 0;
-
-                if ($sidebar_req_query) {
-                    $sidebar_req_count = $sidebar_req_query->fetch_assoc()['total'];
-                }
-
-                // Only show the badge if the count is greater than 0
+                $safe_tenant_id = $_SESSION['user_id'] ?? 0;
+                $sidebar_req_query = $conn->query("SELECT COUNT(id) AS total FROM requests WHERE tenant_id = $safe_tenant_id AND status IN ('In Progress', 'Resolved')");
+                $sidebar_req_count = $sidebar_req_query ? $sidebar_req_query->fetch_assoc()['total'] : 0;
                 if ($sidebar_req_count > 0):
                 ?>
                     <span class="badge bg-warning text-dark rounded-pill shadow-sm" style="font-size: 0.7rem; padding: 4px 8px;">
@@ -168,20 +142,20 @@ if ($unread_query) {
             </a>
         </div>
 
-        <div class="flex-grow-1 p-5 bg-light" style="overflow-y: auto;">
+        <div class="flex-grow-1 p-4 bg-light d-flex flex-column" style="overflow: hidden;">
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="fw-bold text-dark">My Profile</h2>
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-shrink-0">
+                <h2 class="fw-bold text-dark m-0">My Profile</h2>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
                     <i class="fa fa-pencil-alt me-1"></i> Edit Profile
                 </button>
             </div>
 
             <?php if ($msg): ?>
-                <div class="alert alert-<?php echo $msg_type; ?>"><?php echo $msg; ?></div>
+                <div class="alert alert-<?php echo $msg_type; ?> flex-shrink-0"><?php echo $msg; ?></div>
             <?php endif; ?>
 
-            <div class="card card-custom p-5 shadow-sm border-0">
+            <div class="card card-custom p-4 shadow-sm border-0 flex-grow-1" style="overflow-y: auto;">
                 <div class="profile-img-container">
                     <img src="<?php echo $img_path; ?>" alt="Profile Picture">
                 </div>
@@ -190,23 +164,23 @@ if ($unread_query) {
                     <div class="col-md-4 border-end">
                         <h5 class="profile-header">Basic Information</h5>
                         <div class="label-text">Full Name</div>
-                        <div class="info-text"><?php echo htmlspecialchars($user['fullname']); ?></div>
+                        <div class="info-text mb-3"><?php echo htmlspecialchars($user['fullname']); ?></div>
                         <div class="label-text">Date of Birth</div>
-                        <div class="info-text"><?php echo $user['dob'] ? date('M d, Y', strtotime($user['dob'])) : '-'; ?></div>
+                        <div class="info-text mb-3"><?php echo $user['dob'] ? date('M d, Y', strtotime($user['dob'])) : '-'; ?></div>
                         <div class="label-text">Gender</div>
-                        <div class="info-text"><?php echo $user['gender'] ? $user['gender'] : '-'; ?></div>
+                        <div class="info-text mb-3"><?php echo $user['gender'] ? $user['gender'] : '-'; ?></div>
                         <div class="label-text">Contact Number</div>
-                        <div class="info-text"><?php echo $user['contact_number'] ? $user['contact_number'] : '-'; ?></div>
+                        <div class="info-text mb-3"><?php echo $user['contact_number'] ? $user['contact_number'] : '-'; ?></div>
                         <div class="label-text">Email Address</div>
-                        <div class="info-text"><?php echo htmlspecialchars($user['email']); ?></div>
+                        <div class="info-text mb-3"><?php echo htmlspecialchars($user['email']); ?></div>
                     </div>
 
                     <div class="col-md-4 border-end">
                         <h5 class="profile-header">Address Information</h5>
                         <div class="label-text">Current Address</div>
-                        <div class="info-text"><?php echo $user['current_address'] ? $user['current_address'] : '-'; ?></div>
+                        <div class="info-text mb-3"><?php echo $user['current_address'] ? $user['current_address'] : '-'; ?></div>
                         <div class="label-text">Permanent Address</div>
-                        <div class="info-text"><?php echo $user['permanent_address'] ? $user['permanent_address'] : '-'; ?></div>
+                        <div class="info-text mb-3"><?php echo $user['permanent_address'] ? $user['permanent_address'] : '-'; ?></div>
 
                         <div class="mt-4 border-top pt-3">
                             <div class="label-text text-uppercase mb-2 text-primary">Emergency Contact</div>
@@ -219,9 +193,9 @@ if ($unread_query) {
                     <div class="col-md-4">
                         <h5 class="profile-header">Tenancy Details</h5>
                         <div class="label-text">Room</div>
-                        <div class="info-text text-primary fw-bold"><?php echo $user['room_assigned'] ?? 'Unassigned'; ?></div>
+                        <div class="info-text text-primary fw-bold mb-3"><?php echo $user['room_assigned'] ?? 'Unassigned'; ?></div>
                         <div class="label-text">Rent</div>
-                        <div class="info-text">Php. <?php echo number_format($user['rent_amount'] ?? 0, 2); ?></div>
+                        <div class="info-text mb-3">Php. <?php echo number_format($user['rent_amount'] ?? 0, 2); ?></div>
                         <div class="label-text">Balance</div>
                         <div class="info-text fw-bold <?php echo ($balance > 0) ? 'text-danger' : 'text-success'; ?>">
                             Php. <?php echo number_format($balance, 2); ?>
@@ -232,6 +206,7 @@ if ($unread_query) {
         </div>
     </div>
 
+    <!-- Edit Profile Modal -->
     <div class="modal fade" id="editProfileModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -242,7 +217,6 @@ if ($unread_query) {
                 <form method="POST" enctype="multipart/form-data">
                     <div class="modal-body">
                         <input type="hidden" name="old_image" value="<?php echo $user['profile_image']; ?>">
-
                         <h6 class="text-primary-custom border-bottom pb-2 mb-3">1. Profile Picture & Basic Info</h6>
                         <div class="row">
                             <div class="col-md-12 mb-3">
@@ -274,7 +248,6 @@ if ($unread_query) {
                                 <input type="email" name="email" class="form-control" value="<?php echo $user['email']; ?>" required>
                             </div>
                         </div>
-
                         <h6 class="text-primary-custom border-bottom pb-2 mb-3 mt-3">2. Address Information</h6>
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -286,7 +259,6 @@ if ($unread_query) {
                                 <textarea name="permanent_address" class="form-control" rows="2"><?php echo $user['permanent_address']; ?></textarea>
                             </div>
                         </div>
-
                         <h6 class="text-primary-custom border-bottom pb-2 mb-3 mt-3">3. Emergency Contact</h6>
                         <div class="row">
                             <div class="col-md-4 mb-3">
@@ -302,7 +274,6 @@ if ($unread_query) {
                                 <input type="text" name="emergency_phone" class="form-control" value="<?php echo $user['emergency_phone']; ?>">
                             </div>
                         </div>
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

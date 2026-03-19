@@ -5,14 +5,6 @@ checkLogin('tenant');
 
 $my_id = $_SESSION['user_id'];
 
-// --- GET UNREAD MESSAGE COUNT ---
-$unread_query = $conn->query("SELECT COUNT(id) AS unread FROM messages WHERE receiver_id = " . $_SESSION['user_id'] . " AND is_read = 0");
-$unread_count = 0;
-if ($unread_query) {
-    $unread_data = $unread_query->fetch_assoc();
-    $unread_count = $unread_data['unread'];
-}
-
 // --- GET UNPAID BILLS COUNT ---
 $stmt_pending = $conn->prepare("SELECT SUM(amount) as total FROM payments WHERE tenant_id = ? AND status = 'pending'");
 $stmt_pending->bind_param("i", $my_id);
@@ -40,13 +32,12 @@ $paid_total = $paid_total ? $paid_total : 0.00;
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
-<body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
-    <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap" style="z-index: 1000;">
-
-        <div class="d-flex align-items-center gap-2" style="min-width: 0;"> <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
+<body class="bg-light d-flex flex-column" style="height: 100vh; width: 100vw; overflow: hidden; margin: 0;">
+    <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap flex-shrink-0" style="z-index: 1000;">
+        <div class="d-flex align-items-center gap-2" style="min-width: 0;">
+            <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
                 <i class="fa fa-bars"></i>
             </button>
-
             <div class="navbar-brand-custom fw-bold text-truncate">
                 <i class="fa fa-building me-2"></i> StudyStay Boarding House
             </div>
@@ -56,7 +47,6 @@ $paid_total = $paid_total ? $paid_total : 0.00;
             <button id="darkModeToggle" class="btn btn-outline-secondary rounded-circle" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center;">
                 <i class="fa fa-moon"></i>
             </button>
-
             <a href="../logout.php" class="btn btn-danger btn-sm d-flex align-items-center" style="height: 36px; white-space: nowrap;">
                 <i class="fa fa-sign-out-alt me-1"></i> <span class="d-none d-sm-inline">Logout</span>
             </a>
@@ -64,7 +54,7 @@ $paid_total = $paid_total ? $paid_total : 0.00;
     </nav>
 
     <div class="d-flex flex-grow-1" style="overflow: hidden;">
-        <div class="sidebar p-3" style="width: 250px; overflow-y: auto;">
+        <div class="sidebar p-3 flex-shrink-0" style="width: 250px; overflow-y: auto;">
             <h4 class="text-center mb-4 mt-2">My Portal</h4>
             <a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>">
                 <i class="fa fa-home me-2"></i> Dashboard
@@ -80,17 +70,10 @@ $paid_total = $paid_total ? $paid_total : 0.00;
 
             <a href="requests.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'requests.php') ? 'active' : ''; ?>">
                 <span><i class="fa fa-wrench me-2"></i> My Requests</span>
-
                 <?php
-                // Query to count requests that are 'In Progress' or 'Resolved'
-                $sidebar_req_query = $conn->query("SELECT COUNT(id) AS total FROM requests WHERE tenant_id = $my_id AND status IN ('In Progress', 'Resolved')");
-                $sidebar_req_count = 0;
-
-                if ($sidebar_req_query) {
-                    $sidebar_req_count = $sidebar_req_query->fetch_assoc()['total'];
-                }
-
-                // Only show the badge if the count is greater than 0
+                $safe_tenant_id = $_SESSION['user_id'] ?? 0;
+                $sidebar_req_query = $conn->query("SELECT COUNT(id) AS total FROM requests WHERE tenant_id = $safe_tenant_id AND status IN ('In Progress', 'Resolved')");
+                $sidebar_req_count = $sidebar_req_query ? $sidebar_req_query->fetch_assoc()['total'] : 0;
                 if ($sidebar_req_count > 0):
                 ?>
                     <span class="badge bg-warning text-dark rounded-pill shadow-sm" style="font-size: 0.7rem; padding: 4px 8px;">
@@ -105,29 +88,29 @@ $paid_total = $paid_total ? $paid_total : 0.00;
             </a>
         </div>
 
-        <div class="flex-grow-1 p-4 bg-light" style="overflow-y: auto;">
+        <div class="flex-grow-1 p-4 bg-light d-flex flex-column" style="overflow: hidden;">
 
-            <h2 class="mb-4 text-primary-custom">Billing & Payment History</h2>
+            <h2 class="mb-4 text-primary-custom flex-shrink-0">Billing & Payment History</h2>
 
-            <div class="row mb-4">
-                <div class="col-md-6 mb-3">
-                    <div class="card card-custom p-4 text-white border-0" style="background-color: #ee6c4d;">
+            <div class="row mb-4 flex-shrink-0">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="card card-custom p-4 text-white border-0 h-100" style="background-color: #ee6c4d;">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h5>Total Due (Unpaid)</h5>
-                                <h2 class="fw-bold">Php. <?php echo number_format($pending_total, 2); ?></h2>
+                                <h2 class="fw-bold m-0">Php. <?php echo number_format($pending_total, 2); ?></h2>
                             </div>
                             <i class="fa fa-exclamation-circle fa-3x opacity-50"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <div class="card card-custom p-4 bg-success text-white border-0">
+                <div class="col-md-6">
+                    <div class="card card-custom p-4 bg-success text-white border-0 h-100">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h5>Total Paid Lifetime</h5>
-                                <h2 class="fw-bold">Php. <?php echo number_format($paid_total, 2); ?></h2>
+                                <h2 class="fw-bold m-0">Php. <?php echo number_format($paid_total, 2); ?></h2>
                             </div>
                             <i class="fa fa-check-circle fa-3x opacity-50"></i>
                         </div>
@@ -135,17 +118,18 @@ $paid_total = $paid_total ? $paid_total : 0.00;
                 </div>
             </div>
 
-            <div class="card card-custom p-3 border-0 shadow-sm">
-                <h5 class="mb-3">Transaction History</h5>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
+            <!-- This card fills the remaining space, only the table inside scrolls -->
+            <div class="card card-custom p-3 border-0 shadow-sm flex-grow-1 d-flex flex-column" style="overflow: hidden;">
+                <h5 class="mb-3 flex-shrink-0">Transaction History</h5>
+                <div class="table-responsive flex-grow-1" style="overflow-y: auto;">
+                    <table class="table table-hover align-middle mb-0" style="table-layout: fixed;">
+                        <thead class="bg-light sticky-top">
                             <tr>
-                                <th>Invoice ID</th>
-                                <th>Date</th>
-                                <th>Description</th>
-                                <th>Amount</th>
-                                <th>Status</th>
+                                <th style="width: 15%;">Invoice ID</th>
+                                <th style="width: 20%;">Date</th>
+                                <th style="width: 40%;">Description</th>
+                                <th style="width: 15%;">Amount</th>
+                                <th style="width: 10%;">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -163,10 +147,10 @@ $paid_total = $paid_total ? $paid_total : 0.00;
                                     $icon  = $is_paid ? 'fa-check' : 'fa-clock';
                             ?>
                                     <tr>
-                                        <td class="text-secondary">#INV-<?php echo str_pad($row['id'], 4, '0', STR_PAD_LEFT); ?></td>
-                                        <td><?php echo $row['date_created']; ?></td>
-                                        <td class="fw-bold"><?php echo $row['description']; ?></td>
-                                        <td>Php. <?php echo number_format($row['amount'], 2); ?></td>
+                                        <td class="text-secondary text-truncate">#INV-<?php echo str_pad($row['id'], 4, '0', STR_PAD_LEFT); ?></td>
+                                        <td class="text-truncate"><?php echo $row['date_created']; ?></td>
+                                        <td class="fw-bold text-truncate" title="<?php echo htmlspecialchars($row['description']); ?>"><?php echo htmlspecialchars($row['description']); ?></td>
+                                        <td class="text-truncate">Php. <?php echo number_format($row['amount'], 2); ?></td>
                                         <td>
                                             <span class="badge <?php echo $badge; ?>">
                                                 <i class="fa <?php echo $icon; ?> me-1"></i>

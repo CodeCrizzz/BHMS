@@ -3,7 +3,8 @@ include '../includes/db.php';
 require_once '../includes/auth_check.php';
 checkLogin('tenant');
 
-$user_id = $_SESSION['user_id'];
+// Safely get user ID
+$user_id = $_SESSION['user_id'] ?? 0;
 $msg = "";
 $msg_type = "";
 
@@ -16,10 +17,10 @@ if (isset($_POST['submit_request'])) {
     $stmt->bind_param("iss", $user_id, $type, $desc);
 
     if ($stmt->execute()) {
-        $msg = "Request submitted successfully! The admin will review it shortly.";
+        $msg = "Request submitted successfully!";
         $msg_type = "success";
     } else {
-        $msg = "Error submitting request. Please try again.";
+        $msg = "Error submitting request.";
         $msg_type = "danger";
     }
 }
@@ -37,7 +38,6 @@ $count_inprogress = 0;
 $count_resolved = 0;
 $total_requests = 0;
 
-// Loop through the database results to build our array and count the statuses
 while ($row = $requests_result->fetch_assoc()) {
     $requests_data[] = $row;
     $total_requests++;
@@ -65,11 +65,6 @@ while ($row = $requests_result->fetch_assoc()) {
     <style>
         .stat-card {
             border-left: 4px solid;
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
         }
 
         .border-warning-custom {
@@ -83,12 +78,27 @@ while ($row = $requests_result->fetch_assoc()) {
         .border-success-custom {
             border-left-color: #198754 !important;
         }
+
+        /* Table layout fix for no-scroll */
+        .table-fixed {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        .table-fixed td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 
-<body class="bg-light d-flex flex-column h-100" style="overflow: hidden;">
+<!-- STRICT 100VH NO-SCROLL BODY -->
 
-    <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap" style="z-index: 1000;">
+<body class="bg-light d-flex flex-column" style="height: 100vh; width: 100vw; overflow: hidden; margin: 0;">
+
+    <!-- NAVBAR (Fixed Height) -->
+    <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3 shadow-sm d-flex justify-content-between flex-nowrap flex-shrink-0" style="z-index: 1000;">
         <div class="d-flex align-items-center gap-2" style="min-width: 0;">
             <button class="btn btn-outline-secondary d-lg-none flex-shrink-0" id="sidebarToggle">
                 <i class="fa fa-bars"></i>
@@ -108,9 +118,11 @@ while ($row = $requests_result->fetch_assoc()) {
         </div>
     </nav>
 
+    <!-- MAIN WRAPPER (Takes remaining height exactly, no overflow) -->
     <div class="d-flex flex-grow-1" style="overflow: hidden;">
 
-        <div class="sidebar p-3" style="width: 250px; overflow-y: auto;">
+        <!-- SIDEBAR (No Scroll) -->
+        <div class="sidebar p-3 flex-shrink-0" style="width: 250px; overflow: hidden;">
             <h4 class="text-center mb-4 mt-2">My Portal</h4>
             <a href="dashboard.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : ''; ?>">
                 <i class="fa fa-home me-2"></i> Dashboard
@@ -123,8 +135,18 @@ while ($row = $requests_result->fetch_assoc()) {
                 <span id="sidebar-bell-container"></span>
             </a>
 
-            <a href="requests.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'requests.php') ? 'active' : ''; ?>">
-                <i class="fa fa-wrench me-2"></i> My Requests
+            <!-- Updated Sidebar Request Link with Counter -->
+            <a href="requests.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'requests.php') ? 'active' : ''; ?>">
+                <span><i class="fa fa-wrench me-2"></i> My Requests</span>
+                <?php
+                $sidebar_req_query = $conn->query("SELECT COUNT(id) AS total FROM requests WHERE tenant_id = $user_id AND status IN ('In Progress', 'Resolved')");
+                $sidebar_req_count = $sidebar_req_query ? $sidebar_req_query->fetch_assoc()['total'] : 0;
+                if ($sidebar_req_count > 0):
+                ?>
+                    <span class="badge bg-warning text-dark rounded-pill shadow-sm" style="font-size: 0.7rem; padding: 4px 8px;">
+                        <?php echo $sidebar_req_count; ?>
+                    </span>
+                <?php endif; ?>
             </a>
 
             <a href="talk.php" class="d-flex justify-content-between align-items-center <?php echo (basename($_SERVER['PHP_SELF']) == 'talk.php') ? 'active' : ''; ?>">
@@ -133,45 +155,47 @@ while ($row = $requests_result->fetch_assoc()) {
             </a>
         </div>
 
-        <div class="flex-grow-1 p-4 bg-light" style="overflow-y: auto;">
+        <!-- CONTENT AREA (Flex Column, No Scroll) -->
+        <div class="flex-grow-1 p-4 bg-light d-flex flex-column" style="overflow: hidden;">
 
-            <div class="mb-4 border-bottom pb-3">
+            <div class="mb-3 flex-shrink-0">
                 <h3 class="fw-bold text-primary-custom m-0"><i class="fa fa-tools me-2"></i>Service Requests</h3>
-                <p class="text-secondary small mt-1 mb-0">Submit maintenance issues, cleaning requests, or general complaints.</p>
             </div>
 
             <?php if ($msg): ?>
-                <div class="alert alert-<?php echo $msg_type; ?> alert-dismissible fade show shadow-sm border-0">
+                <div class="alert alert-<?php echo $msg_type; ?> alert-dismissible fade show shadow-sm border-0 flex-shrink-0 py-2 mb-3">
                     <i class="fa <?php echo ($msg_type == 'success') ? 'fa-check-circle' : 'fa-exclamation-triangle'; ?> me-2"></i>
                     <?php echo $msg; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" style="padding: 0.8rem 1rem;"></button>
                 </div>
             <?php endif; ?>
-            <div class="row g-4">
+
+            <!-- ROW WRAPPER (Takes remaining height exactly) -->
+            <div class="row g-4 flex-grow-1" style="overflow: hidden;">
+
                 <!-- LEFT COLUMN: FORM -->
-                <div class="col-lg-4">
-                    <div class="card card-custom border-0 shadow-sm h-100">
-                        <div class="card-header bg-white border-bottom-0 pt-4 px-4">
-                            <h5 class="fw-bold m-0 text-dark">Create New Request</h5>
+                <div class="col-lg-4 h-100">
+                    <div class="card card-custom border-0 shadow-sm h-100 d-flex flex-column" style="overflow: hidden;">
+                        <div class="card-header bg-white border-bottom-0 pt-3 px-4 flex-shrink-0">
+                            <h5 class="fw-bold m-0 text-dark">New Request</h5>
                         </div>
-                        <div class="card-body p-4 pt-3">
-                            <form method="POST">
-                                <div class="mb-3">
+                        <div class="card-body p-4 pt-2 flex-grow-1" style="overflow: hidden;">
+                            <form method="POST" class="h-100 d-flex flex-column">
+                                <div class="mb-3 flex-shrink-0">
                                     <label class="form-label text-muted small fw-bold mb-1">CATEGORY</label>
-                                    <select name="request_type" class="form-select bg-light" required style="border: 1px solid #e2e8f0;">
+                                    <select name="request_type" class="form-select bg-light" required>
                                         <option value="Maintenance">Maintenance / Repair</option>
                                         <option value="Cleaning">Cleaning Services</option>
                                         <option value="Complaint">Noise / Complaint</option>
-                                        <option value="Security">Security Issue</option>
                                         <option value="Other">Other</option>
                                     </select>
                                 </div>
-                                <div class="mb-4">
+                                <div class="mb-3 flex-grow-1 d-flex flex-column">
                                     <label class="form-label text-muted small fw-bold mb-1">DESCRIPTION</label>
-                                    <textarea name="description" class="form-control bg-light" rows="6" placeholder="Provide specific details about the issue..." required style="border: 1px solid #e2e8f0; resize: none;"></textarea>
+                                    <textarea name="description" class="form-control bg-light flex-grow-1" placeholder="Details..." required style="resize: none;"></textarea>
                                 </div>
-                                <button type="submit" name="submit_request" class="btn bg-primary-custom text-white w-100 py-2 fw-bold">
-                                    <i class="fa fa-paper-plane me-2"></i> Submit Request
+                                <button type="submit" name="submit_request" class="btn bg-primary-custom text-white w-100 py-2 fw-bold flex-shrink-0">
+                                    <i class="fa fa-paper-plane me-2"></i> Submit
                                 </button>
                             </form>
                         </div>
@@ -179,86 +203,81 @@ while ($row = $requests_result->fetch_assoc()) {
                 </div>
 
                 <!-- RIGHT COLUMN: STATS & TABLE -->
-                <div class="col-lg-8">
-                    <!-- Counters Row -->
-                    <div class="row g-3 mb-4">
+                <div class="col-lg-8 h-100 d-flex flex-column" style="overflow: hidden;">
+
+                    <!-- Counters Row (Fixed Height) -->
+                    <div class="row g-3 mb-3 flex-shrink-0">
                         <div class="col-md-4">
-                            <div class="card bg-white border-0 shadow-sm p-3 rounded-3 stat-card border-warning-custom">
-                                <p class="text-muted small fw-bold mb-1"><i class="fa fa-clock text-warning me-1"></i> PENDING</p>
-                                <h3 class="fw-bold text-dark m-0"><?php echo $count_pending; ?></h3>
+                            <div class="card bg-white border-0 shadow-sm p-2 rounded-3 stat-card border-warning-custom">
+                                <p class="text-muted small fw-bold mb-0"><i class="fa fa-clock text-warning me-1"></i> PENDING</p>
+                                <h4 class="fw-bold text-dark m-0"><?php echo $count_pending; ?></h4>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card bg-white border-0 shadow-sm p-3 rounded-3 stat-card border-info-custom">
-                                <p class="text-muted small fw-bold mb-1"><i class="fa fa-spinner text-info me-1"></i> IN PROGRESS</p>
-                                <h3 class="fw-bold text-dark m-0"><?php echo $count_inprogress; ?></h3>
+                            <div class="card bg-white border-0 shadow-sm p-2 rounded-3 stat-card border-info-custom">
+                                <p class="text-muted small fw-bold mb-0"><i class="fa fa-spinner text-info me-1"></i> IN PROGRESS</p>
+                                <h4 class="fw-bold text-dark m-0"><?php echo $count_inprogress; ?></h4>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card bg-white border-0 shadow-sm p-3 rounded-3 stat-card border-success-custom">
-                                <p class="text-muted small fw-bold mb-1"><i class="fa fa-check text-success me-1"></i> RESOLVED</p>
-                                <h3 class="fw-bold text-dark m-0"><?php echo $count_resolved; ?></h3>
+                            <div class="card bg-white border-0 shadow-sm p-2 rounded-3 stat-card border-success-custom">
+                                <p class="text-muted small fw-bold mb-0"><i class="fa fa-check text-success me-1"></i> RESOLVED</p>
+                                <h4 class="fw-bold text-dark m-0"><?php echo $count_resolved; ?></h4>
                             </div>
                         </div>
                     </div>
 
-                    <!-- History Table -->
-                    <div class="card card-custom border-0 shadow-sm overflow-hidden">
-                        <div class="card-header bg-white pt-4 px-4 pb-3 d-flex justify-content-between align-items-center border-bottom">
-                            <h5 class="fw-bold m-0 text-dark">My Request History</h5>
+                    <!-- History Table (Fills remaining height, hides overflowing rows) -->
+                    <div class="card card-custom border-0 shadow-sm flex-grow-1 d-flex flex-column" style="overflow: hidden;">
+                        <div class="card-header bg-white pt-3 px-4 pb-2 d-flex justify-content-between align-items-center border-bottom flex-shrink-0">
+                            <h6 class="fw-bold m-0 text-dark">My Request History</h6>
                             <span class="badge bg-light text-secondary border">Total: <?php echo $total_requests; ?></span>
                         </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead class="bg-light">
-                                        <tr>
-                                            <th class="ps-4 py-3 text-muted small text-uppercase" style="width: 15%;">Date</th>
-                                            <th class="py-3 text-muted small text-uppercase" style="width: 60%;">Details</th>
-                                            <th class="py-3 text-muted small text-uppercase" style="width: 25%;">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php if ($total_requests > 0): ?>
-                                            <?php foreach ($requests_data as $row): ?>
-                                                <tr>
-                                                    <td class="ps-4 text-nowrap">
-                                                        <div class="fw-bold text-dark"><?php echo date('M d', strtotime($row['date_created'])); ?></div>
-                                                        <small class="text-muted"><?php echo date('Y', strtotime($row['date_created'])); ?></small>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-secondary bg-opacity-10 text-secondary mb-1 border">
-                                                            <?php echo $row['request_type']; ?>
-                                                        </span>
-                                                        <p class="mb-0 text-dark small" style="white-space: pre-wrap;"><?php echo htmlspecialchars($row['description']); ?></p>
-                                                    </td>
-                                                    <td>
-                                                        <?php
-                                                        $status = $row['status'];
-                                                        if ($status == 'Resolved') {
-                                                            echo '<span class="badge bg-success rounded-pill px-3 py-2"><i class="fa fa-check me-1"></i> Resolved</span>';
-                                                        } elseif ($status == 'In Progress') {
-                                                            echo '<span class="badge bg-info text-dark rounded-pill px-3 py-2"><i class="fa fa-spinner fa-spin me-1"></i> In Progress</span>';
-                                                        } else {
-                                                            echo '<span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="fa fa-clock me-1"></i> Pending</span>';
-                                                        }
-                                                        ?>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
+                        <div class="card-body p-0 flex-grow-1" style="overflow: hidden;">
+                            <table class="table table-hover align-middle mb-0 table-fixed">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4 py-2 text-muted small text-uppercase" style="width: 20%;">Date</th>
+                                        <th class="py-2 text-muted small text-uppercase" style="width: 55%;">Details</th>
+                                        <th class="py-2 text-muted small text-uppercase" style="width: 25%;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if ($total_requests > 0): ?>
+                                        <?php foreach ($requests_data as $row): ?>
                                             <tr>
-                                                <td colspan="3" class="text-center py-5">
-                                                    <div class="text-muted">
-                                                        <i class="fa fa-clipboard-check fa-3x mb-3 opacity-25 d-block"></i>
-                                                        <p class="mb-0">You have no active or past requests.</p>
-                                                    </div>
+                                                <td class="ps-4">
+                                                    <div class="fw-bold text-dark small"><?php echo date('M d', strtotime($row['date_created'])); ?></div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-secondary bg-opacity-10 text-secondary mb-1 border" style="font-size: 0.65rem;">
+                                                        <?php echo $row['request_type']; ?>
+                                                    </span>
+                                                    <div class="text-dark small text-truncate"><?php echo htmlspecialchars($row['description']); ?></div>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $status = $row['status'];
+                                                    if ($status == 'Resolved') {
+                                                        echo '<span class="badge bg-success rounded-pill px-2 py-1" style="font-size: 0.7rem;"><i class="fa fa-check me-1"></i> Resolved</span>';
+                                                    } elseif ($status == 'In Progress') {
+                                                        echo '<span class="badge bg-info text-dark rounded-pill px-2 py-1" style="font-size: 0.7rem;"><i class="fa fa-spinner me-1"></i> In Progress</span>';
+                                                    } else {
+                                                        echo '<span class="badge bg-warning text-dark rounded-pill px-2 py-1" style="font-size: 0.7rem;"><i class="fa fa-clock me-1"></i> Pending</span>';
+                                                    }
+                                                    ?>
                                                 </td>
                                             </tr>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="3" class="text-center py-4">
+                                                <div class="text-muted small">No active or past requests.</div>
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
