@@ -1,26 +1,35 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const toggleBtn = document.getElementById("darkModeToggle");
-    const icon = toggleBtn.querySelector("i");
-    const body = document.body;
+    if (!toggleBtn) return;
 
-    // Check LocalStorage for preference
-    if (localStorage.getItem("theme") === "dark") {
-        body.classList.add("dark-mode");
+    const icon = toggleBtn.querySelector("i");
+    const htmlElement = document.documentElement; // Targets the <html> tag
+
+    // 1. Check LocalStorage for preference on load
+    const currentTheme = localStorage.getItem("theme") || "light";
+    htmlElement.setAttribute("data-bs-theme", currentTheme);
+
+    if (currentTheme === "dark") {
         icon.classList.remove("fa-moon");
         icon.classList.add("fa-sun");
     }
 
-    // Handle Click
-    toggleBtn.addEventListener("click", function(e) {
+    // 2. Handle Click Event
+    toggleBtn.addEventListener("click", function (e) {
         e.preventDefault();
-        body.classList.toggle("dark-mode");
 
-        if (body.classList.contains("dark-mode")) {
-            localStorage.setItem("theme", "dark");
+        const current = htmlElement.getAttribute("data-bs-theme");
+        const nextTheme = current === "dark" ? "light" : "dark";
+
+        // Apply the theme to Bootstrap natively
+        htmlElement.setAttribute("data-bs-theme", nextTheme);
+        localStorage.setItem("theme", nextTheme);
+
+        // Swap the icons
+        if (nextTheme === "dark") {
             icon.classList.remove("fa-moon");
             icon.classList.add("fa-sun");
         } else {
-            localStorage.setItem("theme", "light");
             icon.classList.remove("fa-sun");
             icon.classList.add("fa-moon");
         }

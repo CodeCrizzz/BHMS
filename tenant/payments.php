@@ -62,11 +62,11 @@ $paid_total = $stmt_paid->get_result()->fetch_assoc()['total'] ?? 0.00;
         <div class="flex-grow-1 p-4 d-flex flex-column" style="overflow-y: auto;">
             <h2 class="fw-bold mb-4">Billing Statement</h2>
 
-            <div class="card border-0 shadow-sm mb-4 flex-shrink-0" style="border-radius: 20px; background: linear-gradient(to right, #ffffff, #f8fafc);">
+            <div class="card border-0 shadow-sm mb-4 flex-shrink-0 bg-white" style="border-radius: 20px;">
                 <div class="card-body p-4 d-flex justify-content-between align-items-center">
                     <div>
                         <p class="text-muted small mb-1 fw-bold text-uppercase">Total Outstanding Amount</p>
-                        <h1 class="fw-bold text-danger m-0">₱<?php echo number_format($pending_total, 2); ?></h1>
+                        <h1 class="fw-bold m-0" style="color: #ff6b6b !important;">₱<?php echo number_format($pending_total, 2); ?></h1>
                     </div>
                     <div class="text-end">
                         <span class="badge bg-success-subtle text-success p-2 px-3 rounded-pill" style="font-size: 0.85rem;">
